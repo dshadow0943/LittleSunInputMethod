@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>handwriting.txt</file>
+        <file>symbol.txt</file>
+        <file>icon/arrow_b.svg</file>
+        <file>icon/arrow_r.svg</file>
+        <file>icon/close.svg</file>
+        <file>icon/site.svg</file>
+        <file>numhandwriting.txt</file>
+    </qresource>
+</RCC>
