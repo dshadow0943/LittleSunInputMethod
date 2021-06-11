@@ -1,10 +1,10 @@
 
 include (keyboard/keyboard.pri)
-#include (handtrain/handtrain.pri)
+include (train/train.pri)
 
 INCLUDEPATH += \
         $$PWD/keyboard \
-#        $$PWD/handtrain \
+        $$PWD/train \
 
 SOURCES += \
     $$PWD/centercontroller.cpp \

@@ -25,8 +25,7 @@ SoftKeyboard::SoftKeyboard(QWidget *parent) :
 
     arrowChange();
 
-    ui->site->setPixmap(QPixmap(":/icon/site.svg"));  //加载设置图标eehnfdkffvavg35
-
+    ui->site->setPixmap(QPixmap(":/icon/site.svg"));  //加载设置图标
 }
 
 SoftKeyboard::~SoftKeyboard()
@@ -159,7 +158,6 @@ void SoftKeyboard::showEvent(QShowEvent* event)
  */
 void SoftKeyboard::switchPage(int type)
 {
-    qDebug() << "switchPage: " << type;
     //如需要切换的键盘和当前显示的键盘是同一个则直接不做处理，放置多次重复点击
     if (ui->key_page->currentIndex() == type){
         return;
@@ -344,10 +342,10 @@ void SoftKeyboard::switchPreviousKey()
  * 重写鼠标按下键，获取鼠标左键按下时的全局位置，将窗口的可移动标志设置为true
  */
 void SoftKeyboard::mousePressEvent(QMouseEvent *event) {
+    cursorGlobalPos = event->globalPos();  //获取鼠标按下时的全局位置
     if (event->button() == Qt::LeftButton && ui->title->geometry().contains(event->pos()))//左键按下
     {
         isMousePress = true;
-        cursorGlobalPos = event->globalPos();//获取鼠标按下时的全局位置
     }
 
     arrowRect = QRect(ui->close->mapTo(this, QPoint(0, 0)), ui->close->size());
@@ -361,6 +359,7 @@ void SoftKeyboard::mousePressEvent(QMouseEvent *event) {
     {
         sitePressed = true;
     }
+    event->ignore();
 }
 
 /**
@@ -369,12 +368,12 @@ void SoftKeyboard::mousePressEvent(QMouseEvent *event) {
  * 重写鼠标移动事件，使窗口跟着鼠标移动
  */
 void SoftKeyboard::mouseMoveEvent(QMouseEvent *event) {
-    //不可以用event.button()==Qt::LeftButton来判断，因为在鼠标移动事件里该方法一直返回Qt::NoButton
+
     if (event->buttons() & Qt::LeftButton && isMousePress && isMoveEnabled) {
-        QPoint position = this->pos() + event->globalPos() - cursorGlobalPos;
-        move(position.x(), position.y());
+        window()->move(window()->pos() +  event->globalPos() - cursorGlobalPos);
         cursorGlobalPos = event->globalPos();
     }
+    event->ignore();
 }
 
 /**
@@ -399,6 +398,7 @@ void SoftKeyboard::mouseReleaseEvent(QMouseEvent *event) {
         }
         sitePressed = false;
     }
+    event->ignore();
 }
 
 void SoftKeyboard::paintEvent(QPaintEvent *e)

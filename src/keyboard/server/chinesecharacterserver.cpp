@@ -13,11 +13,6 @@ ChineseCharacterServer::ChineseCharacterServer()
 
 void ChineseCharacterServer::init()    //初始化
 {
-//    if (mHandWrite.loadModelFile(":/ChineseHandwrite")){
-//        qDebug() << "打开文件成功";
-//    } else {
-//        qDebug() << "打开文件失败:";
-//    }
 
     if (mHandWrite.loadModelFileNew(":/handwriting.txt")){
         qDebug() << "打开文件成功";

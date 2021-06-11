@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "softkeyboard.h"
+#include "handkeyboardtrain.h"
 
 namespace Ui {
 class CenterController;
@@ -17,7 +18,10 @@ public:
     explicit CenterController(QWidget *parent = nullptr);
     ~CenterController();
 
-
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
 public slots:
     int initView();
@@ -41,9 +45,16 @@ private slots:
 
     void on_btn_dbus_clicked();
 
+    void on_btn_site_clicked();
+
 private:
     Ui::CenterController *ui;
     SoftKeyboard* softKeyboard;
+    HandKeyboardTrain* handkeyboatd;
+
+    //无边框窗口移动相关参数
+    QPoint cursorGlobalPos;
+    bool isMousePress=false;
 };
 
 #endif // CENTERCONTROLLER_H

@@ -115,7 +115,7 @@ private:
 
     //无边框窗口移动相关参数
     QPoint cursorGlobalPos;
-    bool isMousePress=true;
+    bool isMousePress=false;
     bool isMoveEnabled;
 
     QString s;
