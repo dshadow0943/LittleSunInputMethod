@@ -18,11 +18,9 @@ PuncKeyboard::PuncKeyboard(SoftKeyboard *parent) : QWidget(parent)
 
 
     setRightToolWidget();
-    //initKeyboard();
     QHBoxLayout *hLayout = new QHBoxLayout(this);
     hLayout->addWidget(customViw, 5);
     QWidget *w = new QWidget;
-//    w->setMaximumWidth(100);
     w->setLayout(layout);
     hLayout->addWidget(w, 1);
     layout->setSpacing(4);
@@ -49,20 +47,23 @@ void PuncKeyboard::setRightToolWidget()
     connect(btnDel, &CustomPushButton::clicked1, parent, &SoftKeyboard::deleteSlot);
 
     //确认按钮
-    btnSure = new CustomPushButton("无",0,this);
+    btnSure = new CustomPushButton(" ",0,this);
 
     //abc按钮
-    btnabc = new CustomPushButton("无",0,this);
+    btnabc = new CustomPushButton(" ",0,this);
 
     //123按钮
-    btn123 = new CustomPushButton("无",0,this);
+    btn123 = new CustomPushButton(" ",0,this);
 
     //上一页
-    btnLast = new CustomPushButton("无",0,this);
+    btnLast = new CustomPushButton(" ",0,this);
 
     //下一页
     btnBack = new CustomPushButton("返回",Qt::Key_Back, this);
     connect(btnBack, &CustomPushButton::clicked1, parent, &SoftKeyboard::switchPreviousKey);
+    connect(btnBack, &CustomPushButton::clicked1, parent, [=]()->void{
+        qDebug() << "back:  ";
+    });
 
 //    设置按钮在布局中大小变化的属性，设置成随着布局的变化变化
     btnDel->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);

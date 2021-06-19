@@ -204,15 +204,14 @@ void CustomPushButton::mouseReleaseEvent(QMouseEvent *e)
     switch(generalKey)
     {
     case Qt::Key_Meta:
-        emit clicked1();
-        break;
     case Qt::Key_WWW:
-        emit clicked1();
-        break;
     case Qt::Key_Word:
+    case Qt::Key_Back:
+    case Qt::Key_Backspace:
         emit clicked1();
         break;
     default:
+//        emit clicked1();
         break;
     }
 

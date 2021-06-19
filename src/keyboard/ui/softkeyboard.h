@@ -5,7 +5,7 @@
 #include <QStackedWidget>
 #include <QLineEdit>
 #include <QLabel>
-
+#include <QPushButton>
 #include "customwidget.h"
 #include "customcharview.h"
 #include "htranslateview.h"
@@ -96,7 +96,7 @@ protected:
 private:
     Ui::SoftKeyboard *ui;
 
-    QWidget *keyTypeTab[4];          //更改键盘的控件
+    QPushButton *keyTypeTab[4];          //更改键盘的控件
 
     /* 相关配置参数  */
     int winSizeH = 500;   //键盘顶层布局高度，默认(最大)500

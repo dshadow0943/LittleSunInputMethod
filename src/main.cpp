@@ -9,6 +9,17 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    //加载样式表
+    QFile file(":/qss/psblack.css");
+    if (file.open(QFile::ReadOnly)) {
+        QString qss = QLatin1String(file.readAll());
+        QString paletteColor = qss.mid(20, 7);
+//        qApp->setPalette(QPalette(QColor(paletteColor)));
+//        qApp->setStyleSheet(qss);
+        file.close();
+    }
+
     //建立到session bus的连接
     QDBusConnection connection = QDBusConnection::sessionBus();
     //在session bus上注册名为com.fcitx.littlesun.server的服务

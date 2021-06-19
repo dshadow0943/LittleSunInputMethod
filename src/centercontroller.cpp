@@ -18,7 +18,8 @@ CenterController::CenterController(QWidget *parent) :
     ui(new Ui::CenterController)
 {
     ui->setupUi(this);
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::WindowDoesNotAcceptFocus);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool | Qt::WindowDoesNotAcceptFocus);
+    qDebug() << "启动: " << qApp->applicationDirPath();
     softKeyboard = new SoftKeyboard();
     handkeyboatd = new HandKeyboardTrain();
     connect(softKeyboard, &SoftKeyboard::sendCandidateCharacter, this, &CenterController::candidateCharacterSlots);
@@ -114,17 +115,6 @@ int CenterController::hideView()
 {
     softKeyboard->hide();
     return 0;
-}
-
-void CenterController::on_btn_dbus_clicked()
-{
-    QDBusMessage message = QDBusMessage::createMethodCall("org.fcitx.Fcitx",
-                            "/libpinyin",
-                            "org.fcitx.Fcitx.LibPinyin",
-                            "ClearDict");
-    message << int(1);
-     //发送消息
-     QDBusMessage response = QDBusConnection::sessionBus().call(message);
 }
 
 /**

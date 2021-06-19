@@ -19,8 +19,8 @@ bool HandWriteModel::loadModelFileNew(const char* filePath, int charType)
         perror("open");
         return false;
     }
-    QTextStream in(&ifs);
-    in.setCodec("GBK");     //以GBK的编码读取字符串
+//    QTextStream in(&ifs);
+//    in.setCodec("GBK");     //以GBK的编码读取字符串
 
     QList<CharacterItem>* cItems;
     if (charType == CHAR_CHINESE){
@@ -95,7 +95,6 @@ bool HandWriteModel::recognize(CharacterEntity character, QStringList* resultWor
             if (d >= 0 && d < mdist){
                 mdist = d;
             }
-            qDebug() << "d: " << d;
         }
 
         WordEntity word;
@@ -110,7 +109,6 @@ bool HandWriteModel::recognize(CharacterEntity character, QStringList* resultWor
     for(unsigned int i = 0; i < words.size(); ++i){
         WordEntity word = words[i];
         if (i < 5 )
-            qDebug() << word.word << word.dist;
         resultWords->push_back(word.word);
     }
     return true;

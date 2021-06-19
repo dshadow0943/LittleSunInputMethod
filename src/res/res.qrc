@@ -7,5 +7,10 @@
         <file>icon/close.svg</file>
         <file>icon/site.svg</file>
         <file>numhandwriting.txt</file>
+        <file>words.txt</file>
+        <file>chineseBase/chinese.db</file>
+        <file>qss/lightblue.css</file>
+        <file>qss/psblack.css</file>
+        <file>qss/flatwhite.css</file>
     </qresource>
 </RCC>

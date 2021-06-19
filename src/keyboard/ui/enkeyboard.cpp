@@ -15,11 +15,20 @@ void EnKeyboard::initPinyinDictionary()
 {
     bool ret = XYInputSearchInterface::getInstance()->initInputBase(qApp->applicationDirPath()
                                                                     + "/chineseBase/chinese.db");
+
+
+
     if(!ret)
     {
 #ifdef Q_OS_LINUX
         ret = XYInputSearchInterface::getInstance()->initInputBase(qApp->applicationDirPath()
                                                                    + "/../LittleSunInputMethod/chineseBase/chinese.db");
+
+        if (!ret) {
+            ret = XYInputSearchInterface::getInstance()->initInputBase(qApp->applicationDirPath()
+                                                                       + "/usr/local/littlesun/chineseBase/chinese.db");
+        }
+
 #endif
 
 #ifdef Q_OS_WIN

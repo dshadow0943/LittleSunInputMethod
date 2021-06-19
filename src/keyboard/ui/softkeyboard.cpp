@@ -20,12 +20,13 @@ SoftKeyboard::SoftKeyboard(QWidget *parent) :
     chineseServer.init();
     initView();
     initCandidate();
+    initKeyboard();
 
     arrowIcon = new QImage;
 
     arrowChange();
-
     ui->site->setPixmap(QPixmap(":/icon/site.svg"));  //加载设置图标
+    setStyleSheet("background:#EAF7FF;");
 }
 
 SoftKeyboard::~SoftKeyboard()
@@ -87,34 +88,34 @@ void SoftKeyboard::initCandidate()
  */
 void SoftKeyboard::initKeyboard()
 {
-
+    keyTypeTab[0] = ui->btn_num_key;
+    keyTypeTab[1] = ui->btn_en_key;
+    keyTypeTab[2] = ui->btn_hand_key;
+    keyTypeTab[3] = ui->btn_punc_key;
 }
 
 /**
  * @brief SoftKeyboard::arrowClicked
  * 右上角箭头按钮按下事件
+ * 根据当前输入状态执行相应的下一步操作
  */
 void SoftKeyboard::arrowClicked()
 {
-    qDebug() << "arrowStatus: " << arrowStatus;
     switch(arrowStatus) {
         case ARROW_CLOSE:
-             hide();   //只隐藏不退出
+             qApp->quit();   //直接退出
         break;
-        case ARROW_CAND: switchPreviousKey();
+        case ARROW_CAND: switchPreviousKey();    //（当前是查看更多候选词状态）返回上一界面
         break;
-        case ARROW_SHOW: switchPage(KEYBOARD_CAND);
+        case ARROW_SHOW: switchPage(KEYBOARD_CAND);  //（当前是输入状态）进入更多候选词界面
         break;
     }
-
-
 }
 
 void SoftKeyboard::arrowChange()
 {
 
     if (hTranslateView->dataStrings.isEmpty()){
-
         arrowIcon->load(":/icon/arrow_b.svg");
         arrowStatus = ARROW_CLOSE;
     } else if (ui->key_page->currentIndex() == KEYBOARD_CAND){
@@ -184,25 +185,27 @@ void SoftKeyboard::switchPage(int type)
         default:
             return;
     }
-
     //切换键盘是将手写界面初始化为汉字识别
     CustomPushButton::abc123 = false;
 
     previousKey = ui->key_page->currentIndex();
-//    for (int i = 0; i < 4; i++) {
-//         keyTypeTab[i]->setStyleSheet("background-color:transparent;");
-//    }
-//    if (type < 4){
-//        keyTypeTab[type]->setStyleSheet("background-color:white;");
-//    }
+    for (int i = 0; i < 4; i++) {
+        keyTypeTab[i]->setFlat(false);
+    }
+    if (type < 4){
+        keyTypeTab[type]->setFlat(true);
+    }
     ui->key_page->setCurrentIndex(type);        //更新QStackedWidget栈布局内容
-    arrowChange();
 
-    //查看更多候选词时不用重新调节界面大小
-    if (type != KEYBOARD_CAND){
+
+    //查看更多候选词界面切换时不用重新调节界面大小
+    if (type != KEYBOARD_CAND && previousKey != KEYBOARD_CAND){
+        clearHistory(); //重置清空候选词
         this->resize(w, h);    //更新窗口大小
     }
 
+
+    arrowChange();
 }
 
 /**
@@ -257,7 +260,7 @@ void SoftKeyboard::searchBegin(QList<XYTranslateItem *> lists)
     }
     letterLabel->setText(XYInputSearchInterface::getInstance()->getCurLetters());
     hTranslateView->update();
-    arrowChange();  //更改箭头状态
+    arrowChange();  //更新箭头状态
 }
 
 /**
@@ -274,12 +277,22 @@ void SoftKeyboard::userSelectChinese(const QString &text, int index)
 
     if(lists.isEmpty()){        //点击候选词后无剩余候选字母
         //这里完成输入
-        addCandidateCharacterText(alreadySelectTranslates.join("").append(text));  //将数据发送出去
+        QString word = alreadySelectTranslates.join("").append(text);
+        addCandidateCharacterText(word);  //将数据发送出去
         clearHistory();        //清空数据
+
         //如果是查看更多候选词界面则模拟点击箭头返回到原来界面
         if (ui->key_page->currentIndex() == KEYBOARD_CAND){
             arrowClicked();
         }
+        arrowChange();
+
+        //查找联想词
+        QStringList words = chineseServer.getWordAssociate(word);
+        if (words.size() != 0) {
+            fillCandidateText(words);
+        }
+
     }
     else    //如果还剩候选字母则留着等着再次处理globalPos()
     {
