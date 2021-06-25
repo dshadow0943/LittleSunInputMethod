@@ -4,6 +4,10 @@
 #include <QPainter>
 #include <QPaintEvent>
 
+/**
+ * @brief VTranslateView::candidateInstace
+ * 纵向候选框
+ */
 VTranslateView *VTranslateView::candidateInstace = NULL;
 VTranslateView *VTranslateView::puncInstance = NULL;
 VTranslateView::VTranslateView(QWidget *parent) : CustomCharView(parent)

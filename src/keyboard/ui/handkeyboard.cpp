@@ -5,7 +5,11 @@
 #include <QColorDialog>
 #include <QFontDialog>
 
-
+/**
+ * @brief HandKeyboard::HandKeyboard
+ * @param parent
+ * 手写键盘
+ */
 HandKeyboard::HandKeyboard(SoftKeyboard *parent) :
     QWidget(parent),
     ui(new Ui::HandKeyboard)
@@ -46,15 +50,6 @@ void HandKeyboard::setRightToolWidget()
     connect(btnKeyBoard, &CustomPushButton::clicked1, parent, [=]()->void{
         parent->switchPage(KEYBOARD_EN);
     });
-
-
-
-    //设置右侧边框栏的所有按钮的样式
-//    setStyleSheet("QToolButton{background-color: rgb(220, 220, 220);}"
-//                     "QToolButton:hover{background-color: rgb(170, 170, 170); font-weight: 30px;}"
-//                     "QToolButton:press{background-color: rgb(170, 170, 170); font-weight: 30px;}");
-
-
 
     //设置按钮在布局中大小变化的属性，设置成随着布局的变化变化
     btnDel->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);

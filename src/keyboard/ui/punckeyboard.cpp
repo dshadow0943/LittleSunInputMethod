@@ -5,6 +5,11 @@
 #include <QFile>
 #include <QHBoxLayout>
 
+/**
+ * @brief PuncKeyboard::PuncKeyboard
+ * @param parent
+ * 符号键盘
+ */
 PuncKeyboard::PuncKeyboard(SoftKeyboard *parent) : QWidget(parent)
 {
     this->parent = parent;

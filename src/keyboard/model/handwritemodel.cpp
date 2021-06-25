@@ -6,11 +6,22 @@
 #include <QFile>
 #include <QDebug>
 
+/**
+ * @brief HandWriteModel::HandWriteModel
+ * 手写字匹配实现类
+ */
 HandWriteModel::HandWriteModel()
 {
 
 }
 
+/**
+ * @brief HandWriteModel::loadModelFileNew
+ * @param filePath 文件路径
+ * @param charType 读取类型
+ * @return
+ * 读取文件
+ */
 bool HandWriteModel::loadModelFileNew(const char* filePath, int charType)
 {
     QFile ifs(filePath);
@@ -38,7 +49,6 @@ bool HandWriteModel::loadModelFileNew(const char* filePath, int charType)
         if (line.length() == 0){
             continue;
         }
-//        qDebug() << line;
         CharacterItem charItem;
         QStringList chs = line.split(":");
         charItem.word = chs[0];
@@ -46,8 +56,6 @@ bool HandWriteModel::loadModelFileNew(const char* filePath, int charType)
             CharacterEntity character;
             character.strokeCount = 0;
             QStringList strokeList = chs[i].split("|");
-//            character.text = strokeList[0];
-    //        qDebug() << character.text;
             for (int i = 0; i < strokeList.length(); ++i){
                 QStringList points = strokeList.at(i).split(",");
                 StrokeEntity strocke;
@@ -61,17 +69,30 @@ bool HandWriteModel::loadModelFileNew(const char* filePath, int charType)
             }
             charItem.charItem.push_back(character);
         }
-//        qDebug() << charItem.toDireString();
         cItems->push_back(charItem);
     }
     return true;
 }
 
+/**
+ * @brief cmpWordDist
+ * @param word1
+ * @param word2
+ * @return
+ * 比较两个词差异值大小
+ */
 static bool cmpWordDist(const WordEntity word1, const WordEntity word2)
 {
     return word1.dist < word2.dist;
 }
 
+/**
+ * @brief HandWriteModel::recognize
+ * @param character   //待匹配字
+ * @param resultWords //字储存位置
+ * @return
+ * 字匹配入口
+ */
 bool HandWriteModel::recognize(CharacterEntity character, QStringList* resultWords)
 {
     if(character.strokeCount == 0)
@@ -87,6 +108,7 @@ bool HandWriteModel::recognize(CharacterEntity character, QStringList* resultWor
         cItems = &numItems;
     }
 
+    //循环匹配
     for(unsigned int i = 0; i < cItems->size(); ++i){
         int mdist = 100000;
         for (int j = 0; j < cItems->at(i).charItem.size(); ++j){
@@ -114,6 +136,13 @@ bool HandWriteModel::recognize(CharacterEntity character, QStringList* resultWor
     return true;
 }
 
+/**
+ * @brief HandWriteModel::dist
+ * @param character1
+ * @param character2
+ * @return 差异值
+ * 获取两字之间的差异值
+ */
 double HandWriteModel::dist(const CharacterEntity* character1, const CharacterEntity* character2)
 {
     double dist = MAXDIST;
@@ -131,12 +160,19 @@ double HandWriteModel::dist(const CharacterEntity* character1, const CharacterEn
                 return allStrokeDist;
             }
         }
-        // 笔画更接近的优先级更高
+        // 笔画更接近的优先级更高、对笔画数不一样的增加差异值
         return allStrokeDist / character1->strokeCount + (character2->strokeCount - character1->strokeCount)*10000/character1->strokeCount;
     }
     return dist;
 }
 
+/**
+ * @brief HandWriteModel::distBetweenStrokes
+ * @param stroke1
+ * @param stroke2
+ * @return
+ * 获取笔画差异值
+ */
 double HandWriteModel::distBetweenStrokes(const StrokeEntity stroke1, const StrokeEntity stroke2)
 {
     double strokeDist = MAXDIST;
@@ -145,7 +181,7 @@ double HandWriteModel::distBetweenStrokes(const StrokeEntity stroke1, const Stro
     StrokeEntity largeStroke = stroke1.points.size() > minLength ? stroke1 : stroke2;
     StrokeEntity smallStroke = stroke1.points.size() > minLength ? stroke2 : stroke1;
 
-
+    //比较minLength-1个特征点，最后一个最后比较
     for(int j = 0; j < minLength-1; ++j){
         double diretion1 = largeStroke.points[j].direc;
         double diretion2 = smallStroke.points[j].direc;
@@ -154,9 +190,9 @@ double HandWriteModel::distBetweenStrokes(const StrokeEntity stroke1, const Stro
             d = 36000 - d;
         }
         dist += d;
-
-
     }
+
+    //特征点数量不一致的特征点多的笔画的除倒数第一个外的后续特征点以特征点少的笔画的倒数第二个特征点作比较
     for (int j = minLength-1; j < largeStroke.points.size()-1; ++j){
         double d = fabs(largeStroke.points[j].direc - smallStroke.points[minLength-1].direc);
         if (d > 18000){
@@ -165,18 +201,22 @@ double HandWriteModel::distBetweenStrokes(const StrokeEntity stroke1, const Stro
         dist += d;
     }
 
+    //单独比较最后一个特征点
     double d = fabs(largeStroke.points[largeStroke.points.size()-1].direc - smallStroke.points[smallStroke.points.size()-1].direc);
     if (d > 18000){
         d = 36000 - d;
     }
     dist += d;
-
-//    qDebug() << "偏差值: " << dist;
-
+    //收缩差异值
     strokeDist = dist / minLength;
     return strokeDist;
 }
 
+/**
+ * @brief HandWriteModel::getTurnPoints
+ * @param character
+ * 获取特征点
+ */
 void HandWriteModel::getTurnPoints(CharacterEntity* character)
 {
     for(int i = 0; i < character->strokeCount; ++i){
@@ -194,6 +234,14 @@ void HandWriteModel::getTurnPoints(CharacterEntity* character)
      }
 }
 
+/**
+ * @brief HandWriteModel::turnPoints
+ * @param stroke
+ * @param points
+ * @param pointIndex1
+ * @param pointIndex2
+ * 递归计算特征点值
+ */
 void HandWriteModel::turnPoints(StrokeEntity *stroke, std::vector<PointEntity> *points, int pointIndex1, int pointIndex2)
 {
     if(pointIndex1 < 0 || pointIndex2 <= 0 || pointIndex1 >= pointIndex2 - 1)
@@ -220,6 +268,11 @@ void HandWriteModel::turnPoints(StrokeEntity *stroke, std::vector<PointEntity> *
     }
 }
 
+/**
+ * @brief HandWriteModel::norm
+ * @param character
+ * 获取特征点值
+ */
 void HandWriteModel::norm(CharacterEntity* character)
 {
     PointEntity lastPoint(-1, -1);

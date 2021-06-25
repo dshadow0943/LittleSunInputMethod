@@ -2,6 +2,11 @@
 #include <QMessageBox>
 #include <QApplication>
 
+/**
+ * @brief EnKeyboard::EnKeyboard
+ * @param parent
+ * 拼音键盘
+ */
 EnKeyboard::EnKeyboard(SoftKeyboard *parent) : QWidget(parent)
 {
     this->parent = parent;

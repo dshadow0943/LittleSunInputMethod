@@ -6,6 +6,10 @@
 #include "model/filereadandwrite.h"
 #include <QDir>
 
+/**
+ * @brief ChineseCharacterServer::ChineseCharacterServer
+ * 服务类
+ */
 ChineseCharacterServer::ChineseCharacterServer()
 {
 
@@ -34,11 +38,15 @@ void ChineseCharacterServer::init()    //初始化
 
 }
 
+/**
+ * @brief ChineseCharacterServer::getWordAssociate
+ * @param word
+ * @return
+ * 检索联想词
+ */
 QStringList ChineseCharacterServer::getWordAssociate(QString word)
 {
     return mWordAssociate.searchWords(word);
-
-//    qDebug() << "words: " << mWordAssociate.searchWords(word);
 
 }
 
@@ -61,7 +69,6 @@ QStringList ChineseCharacterServer::getChineseByHand(CharacterEntity character, 
     this->wordCount = count;
     this->index = 0;
     mHandWrite.recognize(character, &resultWords); //将查找到的候选词存放在候选词列表中
-//    qDebug() << "1:" << character.toString();
     return getNext();   //返回候选词
 }
 
@@ -76,6 +83,12 @@ QStringList ChineseCharacterServer::getNext()
     return str;
 }
 
+/**
+ * @brief ChineseCharacterServer::writeFile
+ * @param text
+ * @return
+ * 训练字库保存
+ */
 bool ChineseCharacterServer::writeFile(QString text){
-    return FileReadAndWrite::writeFile(QDir::currentPath()+"/" + "handpoint.txt", text);
+    return FileReadAndWrite::writeFile("./handpoint.txt", text);
 }

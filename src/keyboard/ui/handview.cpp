@@ -1,6 +1,12 @@
 #include "handkeyboard.h"
 #include "handview.h"
 
+/**
+ * @brief HandView::HandView
+ * @param parent
+ * 手写绘画界面
+ */
+
 HandView::HandView(QWidget *parent) : QWidget(parent)
 {
     strokeId = 0;

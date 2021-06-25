@@ -7,12 +7,6 @@
 #include <QApplication>
 #include <QKeyEvent>
 
-// must keep X11 haeder under QT header
-#include <X11/XKBlib.h>
-#include <X11/Xlib.h>
-#include <X11/extensions/XTest.h>
-#include <X11/keysym.h>
-
 CenterController::CenterController(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CenterController)
@@ -74,22 +68,6 @@ void CenterController::candidateCharacterSlots(QString character)
  */
 void CenterController::deleteCharacterSlots()
 {
-
-    Display* disp = XOpenDisplay(nullptr);
-
-    if(disp == nullptr) {
-        return;
-    }
-
-    KeyCode key = XKeysymToKeycode(disp, XK_BackSpace);
-
-    XTestFakeKeyEvent(disp, key, true, CurrentTime);
-    XTestFakeKeyEvent(disp, key, false, CurrentTime);
-
-    XFlush(disp);
-
-    XCloseDisplay(disp);
-
     QDBusMessage message = QDBusMessage::createMethodCall("org.fcitx.Fcitx",
                             "/littlesun",
                             "org.fcitx.Fcitx.LittleSun",

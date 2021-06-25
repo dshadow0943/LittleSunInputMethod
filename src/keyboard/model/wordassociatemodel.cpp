@@ -1,12 +1,21 @@
 #include "wordassociatemodel.h"
 #include <QDebug>
 
+/**
+ * @brief WordAssociateModel::WordAssociateModel
+ * 联想词检索实现类
+ */
 WordAssociateModel::WordAssociateModel()
 {
 
 }
 
-
+/**
+ * @brief WordAssociateModel::loadModelFile
+ * @param filePath
+ * @return
+ * 读取文件
+ */
 bool WordAssociateModel::loadModelFile(const QString filePath)
 {
     QFile ifs(filePath);
@@ -29,6 +38,12 @@ bool WordAssociateModel::loadModelFile(const QString filePath)
     return true;
 }
 
+/**
+ * @brief WordAssociateModel::searchWords
+ * @param word
+ * @return
+ * 采用二分法查找匹配词汇
+ */
 QStringList WordAssociateModel::searchWords(QString word)
 {
     int front = 0;
@@ -50,6 +65,13 @@ QStringList WordAssociateModel::searchWords(QString word)
     return result;
 }
 
+/**
+ * @brief WordAssociateModel::backResult
+ * @param word
+ * @param index
+ * @return
+ * 获取匹配的词汇
+ */
 QStringList WordAssociateModel::backResult(QString word, int index)
 {
     while (index >= 0 && QString::compare(word, words.at(index)->word.left(word.size())) == 0) {

@@ -5,6 +5,11 @@
 #include <QPaintEvent>
 #include <QDebug>
 
+/**
+ * @brief HTranslateView::instance
+ * 横向候选框
+ */
+
 HTranslateView *HTranslateView::instance = NULL;
 HTranslateView::HTranslateView(QWidget *parent) : CustomCharView(parent)
 {
