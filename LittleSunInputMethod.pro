@@ -17,8 +17,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 include (src/src.pri)
 
 QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN\'"
-QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN/lib\'"
-QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN/../lib\'"
 QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN/../lib/littlesun\'"
 
 SOURCES += \

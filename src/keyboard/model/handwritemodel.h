@@ -20,7 +20,7 @@ public:
     HandWriteModel();
 
     bool loadModelFileNew(const char* filePath, int charType = CHAR_CHINESE);
-    bool recognize(CharacterEntity ch, QStringList *resultWords);
+    bool recognize(CharacterEntity& ch, QStringList *resultWords);
     static void getTurnPoints(CharacterEntity* character);
     static void turnPoints(StrokeEntity *stroke, std::vector<PointEntity> *points, int pointIndex1, int pointIndex2);
 

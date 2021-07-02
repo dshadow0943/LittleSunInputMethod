@@ -35,6 +35,12 @@ PuncKeyboard::PuncKeyboard(SoftKeyboard *parent) : QWidget(parent)
     connect(punctuations, &VTranslateView::clicked, this, &PuncKeyboard::userSelectPunctuation);
 }
 
+void PuncKeyboard::setParent(SoftKeyboard *parent){
+    this->parent = parent;
+    connect(btnBack, &CustomPushButton::clicked1, parent, &SoftKeyboard::switchPreviousKey);
+    connect(btnDel, &CustomPushButton::clicked1, parent, &SoftKeyboard::deleteSlot);
+}
+
 void PuncKeyboard::userSelectPunctuation(const QString &text, int index)
 {
     parent->addCandidateCharacterText(text);
@@ -49,7 +55,7 @@ void PuncKeyboard::setRightToolWidget()
     layout = new QVBoxLayout;
     //删除按钮
     btnDel = new CustomPushButton("删除", Qt::Key_Backspace, this);
-    connect(btnDel, &CustomPushButton::clicked1, parent, &SoftKeyboard::deleteSlot);
+
 
     //确认按钮
     btnSure = new CustomPushButton(" ",0,this);
@@ -65,10 +71,6 @@ void PuncKeyboard::setRightToolWidget()
 
     //下一页
     btnBack = new CustomPushButton("返回",Qt::Key_Back, this);
-    connect(btnBack, &CustomPushButton::clicked1, parent, &SoftKeyboard::switchPreviousKey);
-    connect(btnBack, &CustomPushButton::clicked1, parent, [=]()->void{
-        qDebug() << "back:  ";
-    });
 
 //    设置按钮在布局中大小变化的属性，设置成随着布局的变化变化
     btnDel->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);

@@ -211,10 +211,9 @@ void CustomPushButton::mouseReleaseEvent(QMouseEvent *e)
         emit clicked1();
         break;
     default:
-//        emit clicked1();
+        emit clicked1();
         break;
     }
-
 
     emit clicked(unicode ,key);
 }

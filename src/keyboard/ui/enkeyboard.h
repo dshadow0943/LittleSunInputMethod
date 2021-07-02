@@ -18,6 +18,8 @@ class EnKeyboard : public QWidget
 public:
     explicit EnKeyboard(SoftKeyboard *parent = nullptr);
 
+    void setParent(SoftKeyboard *parent);
+
 protected:
     bool eventFilter(QObject *obj, QEvent *e);
 
@@ -27,6 +29,9 @@ signals:
     void toHandWidget();
     void toPunKeyBoard();
     void send_commit(const QString&);
+    void sendCandidateCharacterText(QString character);  //非中文输入时的添加字符到输入框 / 中文输入时将选中的候选框的文字添加到候选框
+    bool a2zkeyClicked(int unicode, int key);      //添加中文搜索字母
+    void userSelectChinese(const QString&, int);    //拼音输入时点击候选词的处理方法
 
 public slots:
     void keyClicked(int general, int key);

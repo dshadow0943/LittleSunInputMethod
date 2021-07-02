@@ -93,7 +93,7 @@ static bool cmpWordDist(const WordEntity word1, const WordEntity word2)
  * @return
  * 字匹配入口
  */
-bool HandWriteModel::recognize(CharacterEntity character, QStringList* resultWords)
+bool HandWriteModel::recognize(CharacterEntity& character, QStringList* resultWords)
 {
     if(character.strokeCount == 0)
         return false;
@@ -240,7 +240,7 @@ void HandWriteModel::getTurnPoints(CharacterEntity* character)
  * @param points
  * @param pointIndex1
  * @param pointIndex2
- * 递归计算特征点值
+ * 递归获取特征点
  */
 void HandWriteModel::turnPoints(StrokeEntity *stroke, std::vector<PointEntity> *points, int pointIndex1, int pointIndex2)
 {

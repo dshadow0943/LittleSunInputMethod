@@ -37,19 +37,18 @@ public:
     explicit SoftKeyboard(QWidget *parent = nullptr);
     ~SoftKeyboard();
 
-    void switchPage(int type);      //切换键盘
     void setMoveEnabled(bool moveEnabled=true);//设置无边框窗口移动使能
 
     /* 给子布局的接口 */
 
-    void addCandidateCharacterText(QString character);  //非中文输入时的添加字符到输入框 / 中文输入时将选中的候选框的文字添加到候选框
+
 
     void clearHistory();           //重置候选框
 
     void searchBegin(QList<XYTranslateItem *> lists);  //根据候选字母映射出候选词
 
-    void userSelectChinese(const QString&, int);    //拼音输入时点击候选词的处理方法
-    bool a2zkeyClicked(int unicode, int key);      //添加中文搜索字母
+
+
 
     QLineEdit *textShow;        //文本显示区域
 
@@ -66,6 +65,10 @@ public slots:
 //    void finishSlot();  //完成输入键被点击的响应槽
     void getTextByHand(CharacterEntity character);
     void switchPreviousKey();
+    void switchPage(int type = -1);      //切换键盘
+    void addCandidateCharacterText(QString character);  //非中文输入时的添加字符到输入框 / 中文输入时将选中的候选框的文字添加到候选框
+    bool a2zkeyClicked(int unicode, int key);      //添加中文搜索字母
+    void userSelectChinese(const QString&, int);    //拼音输入时点击候选词的处理方法
 
 private slots:
     void on_btn_num_key_clicked();

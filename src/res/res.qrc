@@ -12,5 +12,6 @@
         <file>qss/lightblue.css</file>
         <file>qss/psblack.css</file>
         <file>qss/flatwhite.css</file>
+        <file>icon/littlesun.png</file>
     </qresource>
 </RCC>

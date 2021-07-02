@@ -12,13 +12,11 @@ HandView::HandView(QWidget *parent) : QWidget(parent)
     strokeId = 0;
     /*鼠标离开定时器*/
     mouseReleaseTimer = new QTimer();
-//    this->setStyleSheet("background-color:white");
     /*清空输入框并开始处理用户输入*/
     connect(mouseReleaseTimer, &QTimer::timeout, this, [=]()->void{
 
         clearPoints();
         update();
-//        qDebug() << "用户离开界面超过1秒，输入完毕";
 
         /*停止计时器*/
         mouseReleaseTimer->stop();
@@ -28,9 +26,6 @@ HandView::HandView(QWidget *parent) : QWidget(parent)
 //重写绘画事件
 void HandView::paintEvent(QPaintEvent *)
 {
-    if(points.empty()){
-        return;
-    }
     //创建画家
     QPainter painter(this);
     //设置抗锯齿
@@ -41,17 +36,6 @@ void HandView::paintEvent(QPaintEvent *)
     pen.setWidth(3);
     pen.setColor(Qt::red);
     painter.setPen(pen);
-
-    //创建画刷
-    //QBrush brush;
-
-//    //画图
-//    for(int i = 0; i < pointsSize; i++){
-//        for(int j = 0; j < points[i].size()-2; j++){
-//            //每两点间画线，避免捕捉事件不及时导致写字过程中出现空白
-//            painter.drawLine(points[i][j],points[i][j+1]);
-//        }
-//    }
 
     for(int i = 0; i < character.strokes.size(); i++){
         StrokeEntity stroke = character.strokes.at(i);
@@ -75,6 +59,8 @@ void HandView::mouseReleaseEvent(QMouseEvent* e)
             mouseReleaseTimer->stop();
             mouseReleaseTimer->start(inputInterval);
         }
+        //发送数据
+        emit charToParent(character);
     }
     return QWidget::mouseReleaseEvent(e);
 }
@@ -85,7 +71,6 @@ void HandView::mouseMoveEvent(QMouseEvent* e)
     if(e->buttons() & Qt::LeftButton){
         PointEntity point(e->x(), e->y());
         character.addPoint(strokeId, e->x(), e->y());
-        points[pointsSize-1].push_back(QPoint(e->x(), e->y()));
         update();
     }
     return QWidget::mouseMoveEvent(e);
@@ -104,21 +89,15 @@ void HandView::mousePressEvent(QMouseEvent* e)
     }
     //鼠标每一次按下都创建一个新的集合并保存
     if(e->button()  == Qt::LeftButton){
-        points.push_back(QVector<QPoint>());
         strokeId++;
-        pointsSize++;
         return;
     }
     return QWidget::mousePressEvent(e);
 }
+
 //清空用户输入
 void HandView::clearPoints()
 {
-    if (strokeId != 0){
-        charToParent(character);
-    }
-
+    character.clear();
     strokeId = 0;
-    this->pointsSize = 0;
-    this->points.clear();
 }

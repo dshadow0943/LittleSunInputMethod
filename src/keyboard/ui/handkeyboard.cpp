@@ -22,16 +22,26 @@ HandKeyboard::HandKeyboard(SoftKeyboard *parent) :
     connect(ui->handWritingWidget, &HandView::charToParent, this, &HandKeyboard::recognizeChinese);
 }
 
+void HandKeyboard::setParent(SoftKeyboard *parent){
+    this->parent = parent;
+    connect(btnDel, &CustomPushButton::clicked1, parent, &SoftKeyboard::deleteSlot);
+    connect(btnSure, &CustomPushButton::clicked1, parent, &SoftKeyboard::enterSlot);
+    connect(btnChar, &CustomPushButton::clicked1, parent, [=]()->void{
+        parent->switchPage(KEYBOARD_PUNC);
+    });
+    connect(btnKeyBoard, &CustomPushButton::clicked1, parent, [=]()->void{
+        parent->switchPage(KEYBOARD_EN);
+    });
+}
+
 void HandKeyboard::setRightToolWidget()
 {
     layout = new QVBoxLayout;
     //删除按钮
     btnDel = new CustomPushButton("删除",Qt::Key_Backspace, 2, this);
-    connect(btnDel, &CustomPushButton::clicked1, parent, &SoftKeyboard::deleteSlot);
 
     //确认按钮
     btnSure = new CustomPushButton("确认",Qt::Key_Enter, 2, this);
-    connect(btnSure, &CustomPushButton::clicked1, parent, &SoftKeyboard::enterSlot);
 
     //abc按钮
     btnabc = new CustomPushButton("A&8", Qt::Key_WWW, 2, this);
@@ -40,16 +50,10 @@ void HandKeyboard::setRightToolWidget()
     });
 
     //字符按钮
-    btnChar = new CustomPushButton("&?", Qt::Key_Meta, 2, this);
-    connect(btnChar, &CustomPushButton::clicked, parent, [=]()->void{
-        parent->switchPage(KEYBOARD_PUNC);
-    });
+    btnChar = new CustomPushButton("符号", Qt::Key_Meta, 2, this);
 
     //键盘按钮
-    btnKeyBoard = new CustomPushButton("键盘",Qt::Key_Meta, 2, this);
-    connect(btnKeyBoard, &CustomPushButton::clicked1, parent, [=]()->void{
-        parent->switchPage(KEYBOARD_EN);
-    });
+    btnKeyBoard = new CustomPushButton("拼音",Qt::Key_Meta, 2, this);
 
     //设置按钮在布局中大小变化的属性，设置成随着布局的变化变化
     btnDel->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
@@ -79,15 +83,15 @@ void HandKeyboard::KeyClicked(int unicode, int key)
     switch(key)
     {
     case Qt::Key_Backspace:
-        parent->deleteSlot();
+//        parent->deleteSlot();
         break;
     case Qt::Key_Enter:
-        parent->enterSlot();
+//        parent->enterSlot();
         break;
     }
 }
 
-void HandKeyboard::recognizeChinese(CharacterEntity character)
+void HandKeyboard::recognizeChinese(CharacterEntity& character)
 {
     if (parent == nullptr){
         qDebug() << "null";

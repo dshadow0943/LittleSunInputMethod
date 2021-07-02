@@ -18,24 +18,26 @@ ChineseCharacterServer::ChineseCharacterServer()
 void ChineseCharacterServer::init()    //初始化
 {
 
+    this->start();
+}
+
+void ChineseCharacterServer::run()
+{
     if (mHandWrite.loadModelFileNew(":/handwriting.txt")){
-//        qDebug() << "打开文件成功";
     } else {
-//        qDebug() << "打开文件失败:";
+
     }
 
     if (mHandWrite.loadModelFileNew(":/numhandwriting.txt", CHAR_NUM)){
-//        qDebug() << "打开文件成功";
     } else {
-//        qDebug() << "打开文件失败:";
+
     }
 
     if (mWordAssociate.loadModelFile(":/words.txt")) {
 
     } else {
-        qDebug() << "words文件打开失败";
-    }
 
+    }
 }
 
 /**
@@ -62,7 +64,7 @@ QStringList ChineseCharacterServer::getChineseByPinyin(QString str)
  * @return 候选词列表
  * 根据传进来的手写数据和数量查找到相应的候选词并返回
  */
-QStringList ChineseCharacterServer::getChineseByHand(CharacterEntity character, int count)
+QStringList ChineseCharacterServer::getChineseByHand(CharacterEntity& character, int count)
 {
     //清空候选词列表
     resultWords.clear();

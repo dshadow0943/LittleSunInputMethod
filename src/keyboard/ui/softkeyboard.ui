@@ -86,6 +86,12 @@
       </item>
       <item>
        <widget class="QLabel" name="label">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>6</height>
+         </size>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -138,7 +144,7 @@
          <string notr="true"/>
         </property>
         <property name="text">
-         <string>键盘</string>
+         <string>拼音</string>
         </property>
         <property name="flat">
          <bool>false</bool>

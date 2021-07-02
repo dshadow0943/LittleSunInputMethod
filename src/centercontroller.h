@@ -41,14 +41,12 @@ private slots:
 
     void on_btn_close_clicked();
 
-    void on_pushButton_clicked();
-
     void on_btn_site_clicked();
 
 private:
     Ui::CenterController *ui;
-    SoftKeyboard* softKeyboard;
-    HandKeyboardTrain* handkeyboatd;
+    SoftKeyboard* softKeyboard = nullptr;
+    HandKeyboardTrain* handkeyboatd = nullptr;
 
     //无边框窗口移动相关参数
     QPoint cursorGlobalPos;

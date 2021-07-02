@@ -28,19 +28,16 @@ public:
 private:
 
     //离开手写界面多久后输入结束,单位毫秒
-    int inputInterval = 500;
+    int inputInterval = 700;
 
     //用来存储用户写字时按下的所有点
-    int strokeId;
+    int strokeId = 0;
     CharacterEntity character;
-    QVector<QVector<QPoint>> points;
-    //用来存储笔画数，points中的集合个数
-    int pointsSize = 0;
     //定时器，用户鼠标/手抬起后计时，如果在指定时间内没有按下，就当做用户输入完毕
     QTimer *mouseReleaseTimer;
 
 public: signals:
-    void charToParent(CharacterEntity);
+    void charToParent(CharacterEntity&);
 };
 
 #endif // HANDWRITING_H

@@ -19,6 +19,10 @@ NumKeyboard::NumKeyboard(SoftKeyboard *parent) : QWidget(parent)
     this->setLayout(gridLayout);
 }
 
+void NumKeyboard::setParent(SoftKeyboard *parent){
+    this->parent = parent;
+}
+
 /**
  * @brief num_keyboard::initKeyboard
  * 初始化键盘
@@ -82,7 +86,7 @@ void NumKeyboard::initKeyValue()
 {
     QList<QString> values = {",", "1", "2", "3", ".", "4", "5", "6", "*", "@", "7", "8", "9", "#", "0"};
     //初始化第一行
-    BtnsLine1.push_back(new CustomPushButton("*",Qt::Key_Asterisk,0, this));
+    BtnsLine1.push_back(new CustomPushButton("*", Qt::Key_Asterisk,0, this));
     BtnsLine1.push_back(new CustomPushButton("1", Qt::Key_1, 0, this));
     BtnsLine1.push_back(new CustomPushButton("2", Qt::Key_2, 0, this));
     BtnsLine1.push_back(new CustomPushButton("3", Qt::Key_3, 0, this));
@@ -104,7 +108,7 @@ void NumKeyboard::initKeyValue()
 
     //初始化第四行
     BtnsLine4.push_back(new CustomPushButton("符号",Qt::Key_Meta,0, this));
-    BtnsLine4.push_back(new CustomPushButton("abc",Qt::Key_Meta,0, this));
+    BtnsLine4.push_back(new CustomPushButton("拼音",Qt::Key_Meta,0, this));
     BtnsLine4.push_back(new CustomPushButton("0",Qt::Key_0,0, this));
     BtnsLine4.push_back(new CustomPushButton("空格",Qt::Key_Space,0, this));
     BtnsLine4.push_back(new CustomPushButton("手写",Qt::Key_Word,0, this));
@@ -154,11 +158,18 @@ void NumKeyboard::keyClicked(int unicode, int key)
     case Qt::Key_Meta: //跳转到abc/符号键盘
 
         break;
-    case Qt::Key_Comma://,符号
-    case Qt::Key_Period://.符号
-    case Qt::Key_Context1://@符号
-    case Qt::Key_Context2://#符号
+    case Qt::Key_Comma://,
+    case Qt::Key_Period://.
         parent->addCandidateCharacterText(QString(QChar(unicode)));
+        break;
+    case Qt::Key_Context1://@
+        parent->addCandidateCharacterText(QString("@"));
+        break;
+    case Qt::Key_Context2://#
+        parent->addCandidateCharacterText(QString("#"));
+        break;
+    case Qt::Key_Asterisk: //*
+        parent->addCandidateCharacterText(QString("*"));
         break;
     default:
         if(Qt::Key_0 <= key && key <= Qt::Key_9)

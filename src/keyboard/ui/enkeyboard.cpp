@@ -16,13 +16,28 @@ EnKeyboard::EnKeyboard(SoftKeyboard *parent) : QWidget(parent)
     caseChanged(CustomPushButton::shift);
 }
 
+void EnKeyboard::setParent(SoftKeyboard *parent){
+    this->parent = parent;
+
+    connect(BtnsTool[6], &CustomPushButton::clicked1, this, [=]()->void{
+        parent->switchPage(KEYBOARD_HAND);
+    });
+    connect(BtnsTool[1], &CustomPushButton::clicked1, this, [=]()->void{
+        parent->switchPage(KEYBOARD_NUM);
+    });
+    connect(BtnsTool[0], &CustomPushButton::clicked1, this, [=]()->void{
+        parent->switchPage(KEYBOARD_PUNC);
+    });
+
+    connect(this, &EnKeyboard::sendCandidateCharacterText, parent, &SoftKeyboard::addCandidateCharacterText);
+    connect(this, &EnKeyboard::a2zkeyClicked, parent, &SoftKeyboard::a2zkeyClicked);
+    connect(this, &EnKeyboard::userSelectChinese, parent, &SoftKeyboard::userSelectChinese);
+}
+
 void EnKeyboard::initPinyinDictionary()
 {
     bool ret = XYInputSearchInterface::getInstance()->initInputBase(qApp->applicationDirPath()
                                                                     + "/chineseBase/chinese.db");
-
-
-
     if(!ret)
     {
 #ifdef Q_OS_LINUX
@@ -155,7 +170,7 @@ void EnKeyboard::initView()
     for(int i = 0; i < 10; i++){
         //设置按钮属性
         BtnsABC3[i]->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-        gridLayout->addWidget(BtnsABC3[i],4, i*2,1,2);
+        gridLayout->addWidget(BtnsABC3[i], 4, i*2, 1, 2);
 
     }
 
@@ -166,32 +181,27 @@ void EnKeyboard::initView()
     BtnsTool.push_back(new CustomPushButton(".", Qt::Key_Period, this));
     BtnsTool.push_back(new CustomPushButton("", Qt::Key_Menu, this));
     BtnsTool.push_back(new CustomPushButton("手写", Qt::Key_Word, this));
-    connect(BtnsTool[6], &CustomPushButton::clicked1, this, [=]()->void{
-        parent->switchPage(KEYBOARD_HAND);
-    });
-    connect(BtnsTool[1], &CustomPushButton::clicked1, this, [=]()->void{
-        parent->switchPage(KEYBOARD_NUM);
-    });
-    connect(BtnsTool[0], &CustomPushButton::clicked1, this, [=]()->void{
-        parent->switchPage(KEYBOARD_PUNC);
-    });
+
     //初始化第五行
+    int row = 0;
     for(int i = 0; i < 7; i++){
         //设置按钮属性
         BtnsTool[i]->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
         //将按钮添加到布局中
-        if(i == 2){
-            gridLayout->addWidget(BtnsTool[i],5,6,1,2);
-        }else if(i == 4){
-            gridLayout->addWidget(BtnsTool[i],5,12,1,2);
-        }else if(i == 3){
-            gridLayout->addWidget(BtnsTool[i],5,8,1,4);
-        }else if(i == 0 || i == 1){
-            gridLayout->addWidget(BtnsTool[i],5,i*3,1,3);
-        }else if(i == 5 || i == 6){
-            gridLayout->addWidget(BtnsTool[i],5,14+3*(i-5),1,3);
+        if (i == 0 || i == 6){
+            gridLayout->addWidget(BtnsTool[i],5,row,1,3);
+            row += 3;
         }
-    }    //初始化键盘
+        if (i == 1 || i == 2 || i == 4 || i == 5){
+            gridLayout->addWidget(BtnsTool[i],5,row,1,2);
+            row += 2;
+        }
+        if (i == 3){
+            gridLayout->addWidget(BtnsTool[i],5,row,1,6);
+            row += 6;
+        }
+    }
+    //初始化键盘
     caseChanged(CustomPushButton::shift);
 
     createConnect();
@@ -228,23 +238,29 @@ void EnKeyboard::keyClicked(int unicode, int key)
                 caseChanged(CustomPushButton::shift);
             }
             break;
+        case Qt::Key_Comma:
+            emit sendCandidateCharacterText("，");
+            break;
+        case Qt::Key_Period:
+            emit sendCandidateCharacterText("。");
+            break;
         default:            //普通按键处理
             if(Qt::Key_A <= key && key <= Qt::Key_Z)
             {
-                parent->a2zkeyClicked(unicode, key);
+                emit a2zkeyClicked(unicode, key);
                 return;
-            }else if(Qt::Key_1 <= key && key <= Qt::Key_9)      //中文输入时数字按键点击事件处理
+            }else if(Qt::Key_0 <= key && key <= Qt::Key_9)      //中文输入时数字按键点击事件处理
             {
                 //如果候选框为空,代表用户想输入的是数字
                 if(hTranslateView->dataStrings.isEmpty()){
-                    parent->addCandidateCharacterText(QString(QChar(unicode)));
+                    emit sendCandidateCharacterText(QString(QChar(unicode)));
 
                 }else{
                     //如果候选框不为空,代表用户选择的是下表为index的候选字
                     int index = QString(QChar(key)).toInt()-1;
-                    if(hTranslateView->dataStrings.size() > index)
+                    if(hTranslateView->dataStrings.size() > index && index >= 0)
                     {
-                        parent->userSelectChinese(hTranslateView->dataStrings.at(index),index);
+                        emit userSelectChinese(hTranslateView->dataStrings.at(index),index);
                         return;
                     }
                 }
@@ -259,20 +275,31 @@ void EnKeyboard::keyClicked(int unicode, int key)
             break;
         case Qt::Key_Menu:
             break;
+        case Qt::Key_Comma:
+            emit sendCandidateCharacterText(",");
+            break;
+        case Qt::Key_Period:
+            emit sendCandidateCharacterText(".");
+            break;
         default:
             if(Qt::Key_A <= key && key <= Qt::Key_Z){
                 if(CustomPushButton::shift){
-                    parent->addCandidateCharacterText(QString(QChar(unicode)));
+                    emit sendCandidateCharacterText(QString(QChar(unicode)));
+
                 }else{
-                    parent->addCandidateCharacterText(QString(QChar(unicode).toLower()));
+                    emit sendCandidateCharacterText(QString(QChar(unicode).toLower()));
                 }
-            }else if(Qt::Key_1 <= key && key <= Qt::Key_9)      //英文输入时数字按键点击事件处理
+            }else if(Qt::Key_0 <= key && key <= Qt::Key_9)      //英文输入时数字按键点击事件处理
             {
-                parent->addCandidateCharacterText(QString(QChar(unicode)));
+                emit sendCandidateCharacterText(QString(QChar(unicode)));
             }
             break;
         }
         //qDebug() << QChar(unicode);
+    }
+
+    if (parent == nullptr){
+        return;
     }
     //由父布局去处理空格、退格和回车事件
     switch(key)

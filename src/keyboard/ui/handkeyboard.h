@@ -25,9 +25,19 @@ public:
     explicit HandKeyboard(SoftKeyboard *parent = nullptr);
     ~HandKeyboard();
 
+    void setParent(SoftKeyboard *parent);
 
-    void setRightToolWidget();
+signals:
+    void toEN_keyBoard();
 
+public slots:
+    void recognizeChinese(CharacterEntity&);
+    void KeyClicked(int unicode, int key);
+
+private:
+    Ui::HandKeyboard *ui;
+
+    SoftKeyboard *parent;
     //右侧工具栏__相关
     //删除按钮
     CustomPushButton *btnDel;
@@ -42,17 +52,8 @@ public:
     //右侧工具栏布局
     QVBoxLayout *layout;
 
-signals:
-    void toEN_keyBoard();
-
-public slots:
-    void recognizeChinese(CharacterEntity);
-    void KeyClicked(int unicode, int key);
-
 private:
-    Ui::HandKeyboard *ui;
-
-    SoftKeyboard *parent;
+        void setRightToolWidget();
 
 };
 

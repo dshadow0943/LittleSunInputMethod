@@ -26,7 +26,18 @@ SoftKeyboard::SoftKeyboard(QWidget *parent) :
 
     arrowChange();
     ui->site->setPixmap(QPixmap(":/icon/site.svg"));  //加载设置图标
-    setStyleSheet("background:#EAF7FF;");
+
+    //填充logo
+    QImage Image;
+    Image.load(":/icon/littlesun.png");
+    QPixmap pixmap = QPixmap::fromImage(Image);
+    int with = ui->title->width();
+    int height = ui->title->height();
+    QPixmap fitpixmap = pixmap.scaled(with, height, Qt::IgnoreAspectRatio, Qt::SmoothTransformation); // 饱满填充
+    //QPixmap fitpixmap = pixmap.scaled(with, height, Qt::KeepAspectRatio, Qt::SmoothTransformation); // 按比例缩放
+    ui->title->setPixmap(fitpixmap);
+
+//    setStyleSheet("background:#EAF7FF;");
 }
 
 SoftKeyboard::~SoftKeyboard()
@@ -52,7 +63,7 @@ void SoftKeyboard::initView(){
 
     winSizeH = winSizeW * 0.5;       //设置顶层窗口的默认高度
 
-    winScale = winSizeW*1.0/900;    //根据界面大小等比例变换窗口大小
+    winScale = winSizeW*1.0/800;    //根据界面大小等比例变换窗口大小
 
 }
 
@@ -92,6 +103,12 @@ void SoftKeyboard::initKeyboard()
     keyTypeTab[1] = ui->btn_en_key;
     keyTypeTab[2] = ui->btn_hand_key;
     keyTypeTab[3] = ui->btn_punc_key;
+
+    ui->page_en->setParent(this);
+    ui->page_hand->setParent(this);
+    ui->page_num->setParent(this);
+    ui->page_punc->setParent(this);
+
 }
 
 /**
@@ -159,6 +176,8 @@ void SoftKeyboard::showEvent(QShowEvent* event)
  */
 void SoftKeyboard::switchPage(int type)
 {
+
+    qDebug() << "switch: " << type;
     //如需要切换的键盘和当前显示的键盘是同一个则直接不做处理，放置多次重复点击
     if (ui->key_page->currentIndex() == type){
         return;
@@ -190,10 +209,12 @@ void SoftKeyboard::switchPage(int type)
 
     previousKey = ui->key_page->currentIndex();
     for (int i = 0; i < 4; i++) {
-        keyTypeTab[i]->setFlat(false);
+//        keyTypeTab[i]->setFlat(false);
+        keyTypeTab[i]->setStyleSheet("background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #EAF7FF,stop:1 #EAF7FF);");
     }
     if (type < 4){
-        keyTypeTab[type]->setFlat(true);
+        keyTypeTab[type]->setStyleSheet("background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #C0DEF6,stop:1 #C0DEF6);");
+//        keyTypeTab[type]->setFlat(true);
     }
     ui->key_page->setCurrentIndex(type);        //更新QStackedWidget栈布局内容
 
@@ -430,11 +451,11 @@ void SoftKeyboard::deleteSlot()
     if (!alreadyInputLetters.isEmpty()){
         alreadyInputLetters = alreadyInputLetters.mid(0, alreadyInputLetters.size()-1);
         searchBegin(XYInputSearchInterface::getInstance()->searchTranslates(alreadyInputLetters));
-    } else{
-        if(!hTranslateView->dataStrings.isEmpty()){
-            clearHistory();
-        }
+    } else if (!hTranslateView->dataStrings.isEmpty()){
+        clearHistory();
         arrowChange();
+
+    } else {
         emit sendDeleteCharacter();
     }
 

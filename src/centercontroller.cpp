@@ -13,11 +13,21 @@ CenterController::CenterController(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool | Qt::WindowDoesNotAcceptFocus);
-    qDebug() << "启动: " << qApp->applicationDirPath();
     softKeyboard = new SoftKeyboard();
-    handkeyboatd = new HandKeyboardTrain();
+//    handkeyboatd = new HandKeyboardTrain();
     connect(softKeyboard, &SoftKeyboard::sendCandidateCharacter, this, &CenterController::candidateCharacterSlots);
     connect(softKeyboard, &SoftKeyboard::sendDeleteCharacter, this, &CenterController::deleteCharacterSlots);
+    //填充log
+    QImage Image;
+    Image.load(":/icon/littlesun.png");
+    QPixmap pixmap = QPixmap::fromImage(Image);
+    int with = ui->title->width();
+    int height = ui->title->height();
+    QPixmap fitpixmap = pixmap.scaled(with, height, Qt::IgnoreAspectRatio, Qt::SmoothTransformation); // 饱满填充
+    //QPixmap fitpixmap = pixmap.scaled(with, height, Qt::KeepAspectRatio, Qt::SmoothTransformation); // 按比例缩放
+    ui->title->setPixmap(fitpixmap);
+
+//    setStyleSheet("background:#EAF7FF;");
 }
 
 CenterController::~CenterController()
@@ -32,6 +42,9 @@ void CenterController::on_btn_key_clicked()
 
 void CenterController::on_btn_hand_clicked()
 {
+    if (handkeyboatd == nullptr){
+        handkeyboatd = new HandKeyboardTrain();
+    }
     handkeyboatd->show();
 }
 
@@ -40,15 +53,10 @@ void CenterController::on_btn_close_clicked()
     qApp->quit();
 }
 
-void CenterController::on_pushButton_clicked()
-{
-    this->window()->showMinimized();
-}
-
 /**
  * @brief CenterController::candidateCharacterSlots
  * @param character
- * 想客戶端發送字符信號
+ * 向插件发送字符
  */
 void CenterController::candidateCharacterSlots(QString character)
 {
@@ -64,7 +72,7 @@ void CenterController::candidateCharacterSlots(QString character)
 
 /**
  * @brief CenterController::deleteCharacterSlots
- * 模擬backspace鍵發送到系統
+ * 发送退格信号
  */
 void CenterController::deleteCharacterSlots()
 {

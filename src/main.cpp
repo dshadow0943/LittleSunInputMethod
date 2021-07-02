@@ -10,15 +10,35 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+//    qApp->setStyleSheet("background:#EAF7FF;");
+
     //加载样式表
-    QFile file(":/qss/psblack.css");
-    if (file.open(QFile::ReadOnly)) {
-        QString qss = QLatin1String(file.readAll());
-        QString paletteColor = qss.mid(20, 7);
+//    QFile file(":/qss/psblack.css");
+//    if (file.open(QFile::ReadOnly)) {
+//        QString qss = QLatin1String(file.readAll());
+//        QString paletteColor = qss.mid(20, 7);
 //        qApp->setPalette(QPalette(QColor(paletteColor)));
 //        qApp->setStyleSheet(qss);
-        file.close();
-    }
+//        file.close();
+//    }
+
+    qApp->setPalette(QPalette(QColor("#EAF7FF")));
+    qApp->setStyleSheet(".QPushButton,.QToolButton{ \
+                            border-style:none;\
+                            border:1px solid #C0DCF2;\
+                            color:#386487;\
+                            padding:5px;\
+                            min-height:15px;\
+                            border-radius:5px;\
+                            background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #DEF0FE,stop:1 #C0DEF6);\
+                            }\
+                            .QPushButton:hover,.QToolButton:hover{\
+                            background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #F2F9FF,stop:1 #DAEFFF);\
+                            }\
+                            .QPushButton:pressed,.QToolButton:pressed{\
+                            background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #DEF0FE,stop:1 #C0DEF6);\
+                            }\
+                            ");
 
     //建立到session bus的连接
     QDBusConnection connection = QDBusConnection::sessionBus();

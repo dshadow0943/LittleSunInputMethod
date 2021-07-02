@@ -20,6 +20,7 @@ class PuncKeyboard : public QWidget
     Q_OBJECT
 public:
     explicit PuncKeyboard(SoftKeyboard *parent = nullptr);
+    void setParent(SoftKeyboard *parent);
 
 public slots:
     void userSelectPunctuation(const QString &text, int index);
