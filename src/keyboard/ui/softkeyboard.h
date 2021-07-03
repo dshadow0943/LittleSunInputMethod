@@ -24,6 +24,10 @@
 #define ARROW_CAND 1
 #define ARROW_SHOW 2
 #define ARROW_CLEAR 3
+#define EN_DEFAULT_WIDTH 1000
+#define EN_DEFAULT_HEIGHT 500
+#define DEFAULT_WIDTH 800
+#define DEFAULT_HEIGHT 500
 
 namespace Ui {
 class SoftKeyboard;

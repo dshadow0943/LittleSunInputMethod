@@ -54,7 +54,7 @@ void SoftKeyboard::initView(){
     applicationRect = QGuiApplication::screens().at(0)->geometry();     //获取显示屏像素
 
     int w = applicationRect.width()*0.6;            //显示屏的宽
-    int h = applicationRect.height()*0.5;           //显示屏的高
+    int h = applicationRect.height();           //显示屏的高
 
     if (w < winSizeW){
         winSizeW = w;               //根据显示屏大小设置顶层窗口的默认大小
@@ -63,8 +63,8 @@ void SoftKeyboard::initView(){
 
     winSizeH = winSizeW * 0.5;       //设置顶层窗口的默认高度
 
-    winScale = winSizeW*1.0/800;    //根据界面大小等比例变换窗口大小
-
+    winScale = winSizeW*1.0/EN_DEFAULT_WIDTH;    //根据界面大小等比例变换窗口大小
+    ui->key_tabs->setMaximumWidth(110*winScale);
 }
 
 /**
@@ -104,6 +104,7 @@ void SoftKeyboard::initKeyboard()
     keyTypeTab[2] = ui->btn_hand_key;
     keyTypeTab[3] = ui->btn_punc_key;
 
+    //建立键盘布局与当前实例的连接
     ui->page_en->setParent(this);
     ui->page_hand->setParent(this);
     ui->page_num->setParent(this);
@@ -177,7 +178,6 @@ void SoftKeyboard::showEvent(QShowEvent* event)
 void SoftKeyboard::switchPage(int type)
 {
 
-    qDebug() << "switch: " << type;
     //如需要切换的键盘和当前显示的键盘是同一个则直接不做处理，放置多次重复点击
     if (ui->key_page->currentIndex() == type){
         return;
@@ -189,13 +189,13 @@ void SoftKeyboard::switchPage(int type)
         case KEYBOARD_NUM:
         case KEYBOARD_HAND:
         case KEYBOARD_PUNC:
-            w = 800 * winScale;
-            h = 500 * winScale;
+            w = DEFAULT_WIDTH * winScale;
+            h = DEFAULT_HEIGHT * winScale;
 
             break;
         case KEYBOARD_EN:
-            w = 1000 * winScale;
-            h = 500 * winScale;
+            w = EN_DEFAULT_WIDTH * winScale;
+            h = EN_DEFAULT_HEIGHT * winScale;
         break;
         case KEYBOARD_CAND:
             vTranslateView->dataStrings = hTranslateView->dataStrings;
@@ -204,17 +204,16 @@ void SoftKeyboard::switchPage(int type)
         default:
             return;
     }
+
     //切换键盘是将手写界面初始化为汉字识别
     CustomPushButton::abc123 = false;
 
     previousKey = ui->key_page->currentIndex();
     for (int i = 0; i < 4; i++) {
-//        keyTypeTab[i]->setFlat(false);
         keyTypeTab[i]->setStyleSheet("background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #EAF7FF,stop:1 #EAF7FF);");
     }
     if (type < 4){
         keyTypeTab[type]->setStyleSheet("background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #C0DEF6,stop:1 #C0DEF6);");
-//        keyTypeTab[type]->setFlat(true);
     }
     ui->key_page->setCurrentIndex(type);        //更新QStackedWidget栈布局内容
 
@@ -224,7 +223,6 @@ void SoftKeyboard::switchPage(int type)
         clearHistory(); //重置清空候选词
         this->resize(w, h);    //更新窗口大小
     }
-
 
     arrowChange();
 }

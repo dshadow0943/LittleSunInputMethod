@@ -9,9 +9,6 @@
         <file>numhandwriting.txt</file>
         <file>words.txt</file>
         <file>chineseBase/chinese.db</file>
-        <file>qss/lightblue.css</file>
-        <file>qss/psblack.css</file>
-        <file>qss/flatwhite.css</file>
         <file>icon/littlesun.png</file>
     </qresource>
 </RCC>

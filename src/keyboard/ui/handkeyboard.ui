@@ -33,8 +33,8 @@
     <widget class="QWidget" name="widget_2" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>8</verstretch>
+       <horstretch>6</horstretch>
+       <verstretch>1</verstretch>
       </sizepolicy>
      </property>
      <property name="styleSheet">
@@ -43,6 +43,12 @@
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <widget class="HandView" name="handWritingWidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>1</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="styleSheet">
          <string notr="true">background-color:white</string>
         </property>
@@ -61,6 +67,12 @@
        <horstretch>1</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>50</width>
+       <height>0</height>
+      </size>
      </property>
      <property name="maximumSize">
       <size>

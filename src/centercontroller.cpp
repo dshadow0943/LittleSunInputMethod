@@ -99,6 +99,7 @@ int CenterController::showView()
 
 int CenterController::hideView()
 {
+    this->hide();
     softKeyboard->hide();
     return 0;
 }
