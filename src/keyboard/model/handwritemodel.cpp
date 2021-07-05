@@ -22,7 +22,7 @@ HandWriteModel::HandWriteModel()
  * @return
  * 读取文件
  */
-bool HandWriteModel::loadModelFileNew(const char* filePath, int charType)
+bool HandWriteModel::loadModelFile(const char* filePath, int charType)
 {
     QFile ifs(filePath);
 
@@ -128,9 +128,9 @@ bool HandWriteModel::recognize(CharacterEntity& character, QStringList* resultWo
     }
 
     std::sort(words.begin(), words.end(), cmpWordDist);
-    for(unsigned int i = 0; i < words.size(); ++i){
+    for(unsigned int i = 0; i < words.size() && i < 10; ++i){
         WordEntity word = words[i];
-        if (i < 5 )
+        qDebug() << word.word << " dist: " << word.dist;
         resultWords->push_back(word.word);
     }
     return true;

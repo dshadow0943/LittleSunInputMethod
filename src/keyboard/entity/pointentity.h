@@ -11,7 +11,8 @@ public:
 
     int x;
     int y;
-    double direc;
+    int leaf;
+    double direc = -1;
 
     void setDire(PointEntity);
     static double setDire(PointEntity, PointEntity);
@@ -20,6 +21,7 @@ public:
     static int getDegree(PointEntity vertexPoint, PointEntity point1, PointEntity point2);
     static int getDegree(int vertexPointX, int vertexPointY, int point0X, int point0Y, int point1X, int point1Y);
     QString toString();
+    double getDiff(const PointEntity& point);
 
 };
 

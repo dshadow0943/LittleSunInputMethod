@@ -3,6 +3,7 @@
 
 #include "handwritemodel.h"
 #include "wordassociatemodel.h"
+#include "handwritetreemodel.h"
 #include <QStringList>
 #include <QThread>
 
@@ -26,6 +27,7 @@ private:
     int wordCount;
     int index;
     HandWriteModel mHandWrite;
+    HandwriteTreeModel mHandTree;
     WordAssociateModel mWordAssociate;
 
 protected:

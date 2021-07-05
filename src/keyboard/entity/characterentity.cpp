@@ -62,7 +62,7 @@ QString CharacterEntity::toDireString(){
             if (j != 0){
                 str.append(",");
             }
-            str.append(QString::number(strokes.at(i).points.at(j).direc));
+            str.append(QString::number(strokes.at(i).points.at(j).direc*10 + strokes.at(i).points.at(j).leaf));
         }
     }
     return str;

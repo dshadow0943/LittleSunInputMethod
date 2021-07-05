@@ -10,5 +10,7 @@
         <file>words.txt</file>
         <file>chineseBase/chinese.db</file>
         <file>icon/littlesun.png</file>
+        <file>numhandwritingtree.txt</file>
+        <file>handwritingtree.txt</file>
     </qresource>
 </RCC>

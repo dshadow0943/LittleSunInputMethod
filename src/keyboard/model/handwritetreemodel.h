@@ -1,5 +1,5 @@
-#ifndef HANDWRITEMODEL_H
-#define HANDWRITEMODEL_H
+#ifndef HANDWRITETREEMODEL_H
+#define HANDWRITETREEMODEL_H
 
 #include "characteritem.h"
 #include "characterentity.h"
@@ -14,25 +14,25 @@
 #define CHAR_CHINESE 0
 #define CHAR_NUM 1
 
-class HandWriteModel
+class HandwriteTreeModel
 {
 public:
-    HandWriteModel();
+    HandwriteTreeModel();
 
     bool loadModelFile(const char* filePath, int charType = CHAR_CHINESE);
     bool recognize(CharacterEntity& ch, QStringList *resultWords);
     static void getTurnPoints(CharacterEntity* character);
-    static void turnPoints(StrokeEntity *stroke, std::vector<PointEntity> *points, int pointIndex1, int pointIndex2);
+    static int turnPoints(StrokeEntity *stroke, std::vector<PointEntity> *points, int start, int end, const PointEntity& point);
 
 private:
-//    std::vector<CharacterEntity> characters;
     QList<CharacterItem> charItems;
     QList<CharacterItem> numItems;
-    double dist(const CharacterEntity* character1, const CharacterEntity* character2);
-    double distBetweenStrokes(const StrokeEntity stroke1, const StrokeEntity stroke2);
+    double distCharacter(CharacterEntity* character1, CharacterEntity* character2);
 
     void norm(CharacterEntity* character);
 
+    static double distStrokes(StrokeEntity& stroke1, StrokeEntity& stroke2);
+    static double distTail(StrokeEntity& stroke, int& index);
 };
 
-#endif // HANDWRITEMODEL_H
+#endif // HANDWRITETREEMODEL_H

@@ -69,6 +69,15 @@ int PointEntity::getDegree(PointEntity vertexPoint, PointEntity point1, PointEnt
     return PointEntity::getDegree(vertexPoint.x, vertexPoint.y, point1.x, point1.y, point2.x, point2.y);
 }
 
+double PointEntity::getDiff(const PointEntity& point)
+{
+    double d = fabs(this->direc - point.direc);
+    if (d > 18000){
+        d = 36000 - d;
+    }
+    return d;
+}
+
 /**
  *
  * @param vertexPointX -- 角度对应顶点X坐标值
