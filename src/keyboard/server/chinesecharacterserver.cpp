@@ -26,10 +26,10 @@ void ChineseCharacterServer::run()
 
     //顺序比对算法
 //    mHandWrite.loadModelFile(":/handwriting.txt");
-//    mHandWrite.loadModelFile(":/numhandwriting.txt", CHAR_NUM);
+    mHandWrite.loadModelFile(":/numhandwriting.txt", CHAR_NUM);
 
     //树型比对算法
-    mHandTree.loadModelFile(":/numhandwritingtree.txt", CHAR_NUM);
+//    mHandTree.loadModelFile(":/numhandwritingtree.txt", CHAR_NUM);
     mHandTree.loadModelFile(":/handwritingtree.txt");
 
     if (mWordAssociate.loadModelFile(":/words.txt")) {
@@ -69,7 +69,11 @@ QStringList ChineseCharacterServer::getChineseByHand(CharacterEntity& character,
     resultWords.clear();
     this->wordCount = count;
     this->index = 0;
-    mHandTree.recognize(character, &resultWords);
+    if (character.isNum) {
+        mHandWrite.recognize(character, &resultWords);
+    } else {
+        mHandTree.recognize(character, &resultWords);
+    }
 //    mHandWrite.recognize(character, &resultWords); //将查找到的候选词存放在候选词列表中
     return getNext();   //返回候选词
 }

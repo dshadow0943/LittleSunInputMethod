@@ -128,9 +128,8 @@ bool HandWriteModel::recognize(CharacterEntity& character, QStringList* resultWo
     }
 
     std::sort(words.begin(), words.end(), cmpWordDist);
-    for(unsigned int i = 0; i < words.size() && i < 10; ++i){
+    for(unsigned int i = 0; i < words.size(); ++i){
         WordEntity word = words[i];
-        qDebug() << word.word << " dist: " << word.dist;
         resultWords->push_back(word.word);
     }
     return true;

@@ -80,7 +80,6 @@ bool HandwriteTreeModel::recognize(CharacterEntity& character, QStringList* resu
     if(character.strokeCount == 0)
         return false;
     getTurnPoints(&character);
-    qDebug() << character.toDireString();
     QList<WordEntity> words;
 
     QList<CharacterItem>* cItems;
@@ -110,9 +109,8 @@ bool HandwriteTreeModel::recognize(CharacterEntity& character, QStringList* resu
     }
 
     std::sort(words.begin(), words.end(), WordEntity::cmpWordDist);
-    for(unsigned int i = 0; i < words.size() && i < 10; ++i){
+    for(unsigned int i = 0; i < words.size(); ++i){
         WordEntity word = words[i];
-        qDebug() << word.word << " dist: " << word.dist;
         resultWords->push_back(word.word);
     }
     return true;
@@ -130,9 +128,6 @@ double HandwriteTreeModel::distCharacter(CharacterEntity* character1, CharacterE
     double dist = MAXDIST;
     if(character2->strokeCount >= character1->strokeCount && character2->strokeCount <= character1->strokeCount + 2){
         double allStrokeDist = 0.0f;
-//        qDebug() << "ch1: " << character1->word << " ch2: " << character2->word;
-//        qDebug() << character1->toDireString();
-//        qDebug() << character2->toDireString();
         for(int i = 0; i < character1->strokeCount; ++i){
             StrokeEntity stroke1 = character1->strokes[i];
             StrokeEntity stroke2 = character2->strokes[i];
@@ -170,7 +165,6 @@ double HandwriteTreeModel::distStrokes(StrokeEntity& stroke1, StrokeEntity& stro
         std::vector<int> stack1, stack2;
         int index1 = 1, index2 = 1;
         while (index1 < stroke1.points.size() - 1 && index2 < stroke2.points.size()) {
-//            qDebug() << "index1: " << index1 << "  index2: " << index2;
             dist += stroke1.points[index1].getDiff(stroke2.points[index2]);
             stack1.push_back(index1);
             stack2.push_back(index2);
@@ -184,7 +178,6 @@ double HandwriteTreeModel::distStrokes(StrokeEntity& stroke1, StrokeEntity& stro
                 } else if (stroke2.points.at(index2).leaf % 2 == 1) {
                     dist += distTail(stroke2, index2);
                 }
-//                qDebug() << "L index1: " << index1 << "  index2: " << index2;
                 while (stack1.size() > 0 && stack2.size() > 0) {
                     int p1 = stack1[stack1.size()-1];
                     int p2 = stack2[stack2.size()-1];
@@ -199,7 +192,6 @@ double HandwriteTreeModel::distStrokes(StrokeEntity& stroke1, StrokeEntity& stro
                         dist += distTail(stroke2, index2);
                     }
                 }
-//                qDebug() << "R index1: " << index1 << "  index2: " << index2;
                 index1++;
                 index2++;
             }
