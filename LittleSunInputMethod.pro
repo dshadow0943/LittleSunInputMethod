@@ -34,3 +34,15 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES += \
     chineseBase/chinese.db
+
+# ***********************************************************
+# Linux平台下配置
+# ***********************************************************
+linux {
+    # 输出目录
+    CONFIG(debug, debug|release) {
+        DESTDIR = $$PWD/output/debug
+    } else {
+        DESTDIR = $$PWD/output/release
+    }
+}

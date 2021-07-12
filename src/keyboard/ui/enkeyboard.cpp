@@ -42,7 +42,7 @@ void EnKeyboard::initPinyinDictionary()
     {
 #ifdef Q_OS_LINUX
         ret = XYInputSearchInterface::getInstance()->initInputBase(qApp->applicationDirPath()
-                                                                   + "/../LittleSunInputMethod/chineseBase/chinese.db");
+                                                                   + "/../../chineseBase/chinese.db");
 
         if (!ret) {
             ret = XYInputSearchInterface::getInstance()->initInputBase(qApp->applicationDirPath()
