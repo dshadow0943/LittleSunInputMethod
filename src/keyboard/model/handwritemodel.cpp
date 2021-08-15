@@ -22,7 +22,7 @@ HandWriteModel::HandWriteModel()
  * @return
  * 读取文件
  */
-bool HandWriteModel::loadModelFile(const char* filePath, int charType)
+bool HandWriteModel::loadModelFile(const QString filePath, int charType)
 {
     QFile ifs(filePath);
 
@@ -30,8 +30,6 @@ bool HandWriteModel::loadModelFile(const char* filePath, int charType)
         perror("open");
         return false;
     }
-//    QTextStream in(&ifs);
-//    in.setCodec("GBK");     //以GBK的编码读取字符串
 
     QList<CharacterItem>* cItems;
     if (charType == CHAR_CHINESE){
@@ -74,16 +72,21 @@ bool HandWriteModel::loadModelFile(const char* filePath, int charType)
     return true;
 }
 
-/**
- * @brief cmpWordDist
- * @param word1
- * @param word2
- * @return
- * 比较两个词差异值大小
- */
-static bool cmpWordDist(const WordEntity word1, const WordEntity word2)
+bool HandWriteModel::wirteFile(const QString& filePath)
 {
-    return word1.dist < word2.dist;
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadWrite)){
+        perror("open");
+        return false;
+    }
+    QTextStream streamFileOut(&file);
+    for (CharacterItem cItem : charItems){
+        streamFileOut << cItem.toDireString() << '\n';
+    }
+    streamFileOut.flush();
+    file.close();
+
+    return true;
 }
 
 /**
@@ -101,19 +104,17 @@ bool HandWriteModel::recognize(CharacterEntity& character, QStringList* resultWo
     norm(&character);
     QList<WordEntity> words;
 
-    QList<CharacterItem>* cItems;
-    if (!character.isNum){
+    QList<CharacterItem>* cItems = &numItems;
+    if (!character.isNum) {
         cItems = &charItems;
-    } else {
-        cItems = &numItems;
     }
 
     //循环匹配
-    for(unsigned int i = 0; i < cItems->size(); ++i){
+    for(int i = 0; i < cItems->size(); ++i){
         int mdist = 100000;
         for (int j = 0; j < cItems->at(i).charItem.size(); ++j){
             CharacterEntity tmpCharacter = cItems->at(i).charItem[j];
-            int d = dist(&character, &tmpCharacter);
+            int d = int(dist(&character, &tmpCharacter));
             if (d >= 0 && d < mdist){
                 mdist = d;
             }
@@ -127,12 +128,52 @@ bool HandWriteModel::recognize(CharacterEntity& character, QStringList* resultWo
         }
     }
 
-    std::sort(words.begin(), words.end(), cmpWordDist);
-    for(unsigned int i = 0; i < words.size(); ++i){
+    std::sort(words.begin(), words.end(), WordEntity::cmpWordDist);
+    for(int i = 0; i < words.size(); ++i){
         WordEntity word = words[i];
         resultWords->push_back(word.word);
     }
     return true;
+}
+
+int HandWriteModel::megerCharacter(QList<CharacterEntity>& characters)
+{
+    int count = 0;
+    for (CharacterEntity c : characters) {
+        getTurnPoints(&c);
+        qDebug() << "megerCharacter: " << c.word << c.toDireString();
+        //循环匹配
+        int i = 0;
+        for(i = 0; i < charItems.size(); ++i){
+            int mdist = 100000;
+            if (c.word != charItems.at(i).word) {
+                continue;
+            }
+            for (int j = 0; j < charItems.at(i).charItem.size(); ++j){
+                CharacterEntity tmpCharacter = charItems.at(i).charItem[j];
+                int d = int(dist(&c, &tmpCharacter));
+                if (d >= 0 && d < mdist){
+                    mdist = d;
+                }
+                if (mdist < 500) {
+                    break;
+                }
+            }
+            if (mdist >= 500) {
+                charItems[i].charItem.push_back(c);
+                count++;
+            }
+            break;
+        }
+        if (i == charItems.size()) {
+            CharacterItem cItem;
+            cItem.word = c.word;
+            cItem.charItem.push_back(c);
+            charItems.push_back(cItem);
+            count ++;
+        }
+    }
+    return count;
 }
 
 /**
@@ -146,7 +187,7 @@ double HandWriteModel::dist(const CharacterEntity* character1, const CharacterEn
 {
     double dist = MAXDIST;
     if(character2->strokeCount >= character1->strokeCount && character2->strokeCount <= character1->strokeCount + 2){
-        double allStrokeDist = 0.0f;
+        double allStrokeDist = 0.0;
         for(int i = 0; i < character1->strokeCount; ++i){
             StrokeEntity stroke1 = character1->strokes[i];
             StrokeEntity stroke2 = character2->strokes[i];
@@ -175,8 +216,8 @@ double HandWriteModel::dist(const CharacterEntity* character1, const CharacterEn
 double HandWriteModel::distBetweenStrokes(const StrokeEntity stroke1, const StrokeEntity stroke2)
 {
     double strokeDist = MAXDIST;
-    double dist = 0.0f;
-    int minLength = fmin(stroke1.points.size(), stroke2.points.size());
+    double dist = 0.0;
+    int minLength = int(fmin(stroke1.points.size(), stroke2.points.size()));
     StrokeEntity largeStroke = stroke1.points.size() > minLength ? stroke1 : stroke2;
     StrokeEntity smallStroke = stroke1.points.size() > minLength ? stroke2 : stroke1;
 
@@ -223,7 +264,7 @@ void HandWriteModel::getTurnPoints(CharacterEntity* character)
          if(stroke->points.size() > 1){
              std::vector<PointEntity> points;
              points.push_back(stroke->points[0]);
-             turnPoints(stroke, &points, 0, (int)stroke->points.size() - 1);
+             turnPoints(stroke, &points, 0, stroke->points.size() - 1);
              points.push_back(stroke->points[stroke->points.size() - 1]);
              stroke->points.clear();
              for(unsigned int i = 0; i < points.size(); ++i){
@@ -245,16 +286,16 @@ void HandWriteModel::turnPoints(StrokeEntity *stroke, std::vector<PointEntity> *
 {
     if(pointIndex1 < 0 || pointIndex2 <= 0 || pointIndex1 >= pointIndex2 - 1)
         return;
-    const float b = stroke->points[pointIndex1].x - stroke->points[pointIndex2].x;
-    const float a = stroke->points[pointIndex2].y - stroke->points[pointIndex1].y;
-    const float c = stroke->points[pointIndex1].x * a + stroke->points[pointIndex1].y * b;
-    float len = sqrt(a*a + b*b)/2;
-    float max = 0.17632698;    //tan(10°)
+    const double b = stroke->points[pointIndex1].x - stroke->points[pointIndex2].x;
+    const double a = stroke->points[pointIndex2].y - stroke->points[pointIndex1].y;
+    const double c = stroke->points[pointIndex1].x * a + stroke->points[pointIndex1].y * b;
+    double len = sqrt(a*a + b*b)/2;
+    double max = 0.17632698;    //tan(10°)
     int maxDistPointIndex = -1;
     for(int i = pointIndex1 + 1; i < pointIndex2 && len > 2; ++i){
         PointEntity point = stroke->points[i];
-        float h = abs(a * point.x + b * point.y - c)/sqrt(a*a + b*b);
-        const float dist = h/len;
+        double h = abs(a * point.x + b * point.y - c)/sqrt(a*a + b*b);
+        const double dist = h/len;
         if (dist > max) {
             max = dist;
             maxDistPointIndex = i;
@@ -279,7 +320,7 @@ void HandWriteModel::norm(CharacterEntity* character)
     for(int i = 0; i < character->strokes.size(); ++i){
         StrokeEntity stroke = character->strokes[i];
         PointEntity tmpPoint(-1, -1);
-        for(unsigned int j = 0; j < stroke.points.size(); ++j){
+        for(int j = 0; j < stroke.points.size(); ++j){
             tmpPoint = stroke.points[j];
             if (lastPoint.x == -1 && lastPoint.y == -1){
                 character->strokes[i].points[j].direc = 0;

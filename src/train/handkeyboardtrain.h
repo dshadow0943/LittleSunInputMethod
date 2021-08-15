@@ -18,31 +18,39 @@ class HandKeyboardTrain : public QWidget
 public:
     explicit HandKeyboardTrain(QWidget *parent = nullptr);
 
-       void setRightToolWidget();
+private:
+    void setRightToolWidget();
 
-       //右侧工具栏__相关
-       //删除按钮
-       QToolButton *btnDel;
-       //确认按钮
-        QToolButton *btnSure;
+    //右侧工具栏__相关
+    //删除按钮
+    QToolButton *btnDel;
+    //确认按钮
+    QToolButton *btnSure;
+    //保存按钮
+    QToolButton *btnSave;
 
-       HandViewTrain *keyboard;
-       //右侧工具栏布局
-       QVBoxLayout *layout;
+    QToolButton *btnReset;
 
-   private:
+    HandViewTrain *keyboard;
+    //右侧工具栏布局
+    QVBoxLayout *layout;
 
-       ChineseCharacterServer server;
+    QList<CharacterEntity> characters;
 
-       void savePoint(CharacterEntity);
+private:
 
-   signals:
-       void toEN_keyBoard();
+    ChineseCharacterServer server;
 
-   public slots:
-       void recognizeChinese(CharacterEntity);
-       void enterSlot();
+    void enterPoint(CharacterEntity);
 
-   };
+signals:
+    void toEN_keyBoard();
+
+public slots:
+    void recognizeChinese(CharacterEntity);
+    void saveSolt();
+    void resetSolt();
+
+};
 
 #endif // HANDKEYBOARDTRAIN_H

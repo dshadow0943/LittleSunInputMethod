@@ -16,7 +16,8 @@ class CenterController : public QWidget
 
 public:
     explicit CenterController(QWidget *parent = nullptr);
-    ~CenterController();
+    bool getInputState();
+    ~CenterController()  override;
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

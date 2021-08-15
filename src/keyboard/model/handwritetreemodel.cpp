@@ -18,7 +18,7 @@ HandwriteTreeModel::HandwriteTreeModel()
  * @return
  * 读取文件
  */
-bool HandwriteTreeModel::loadModelFile(const char* filePath, int charType)
+bool HandwriteTreeModel::loadModelFile(const QString filePath, int charType)
 {
     QFile ifs(filePath);
 
@@ -68,6 +68,23 @@ bool HandwriteTreeModel::loadModelFile(const char* filePath, int charType)
     return true;
 }
 
+bool HandwriteTreeModel::wirteFile(const QString& filePath)
+{
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadWrite)){
+        perror("open");
+        return false;
+    }
+    QTextStream streamFileOut(&file);
+    for (CharacterItem cItem : charItems){
+        streamFileOut << cItem.toDireString() << '\n';
+    }
+    streamFileOut.flush();
+    file.close();
+
+    return true;
+}
+
 /**
  * @brief HandWriteModel::recognize
  * @param character   //待匹配字
@@ -80,21 +97,21 @@ bool HandwriteTreeModel::recognize(CharacterEntity& character, QStringList* resu
     if(character.strokeCount == 0)
         return false;
     getTurnPoints(&character);
+    qDebug() << "recognize: " << character.strokes[0].points[0].direc;
+    qDebug() << "recognize: " << character.toDireString();
     QList<WordEntity> words;
 
-    QList<CharacterItem>* cItems;
-    if (!character.isNum){
+    QList<CharacterItem>* cItems = &numItems;
+    if (!character.isNum) {
         cItems = &charItems;
-    } else {
-        cItems = &numItems;
     }
 
     //循环匹配
-    for(unsigned int i = 0; i < cItems->size(); ++i){
+    for(int i = 0; i < cItems->size(); ++i){
         int mdist = 100000;
         for (int j = 0; j < cItems->at(i).charItem.size(); ++j){
             CharacterEntity tmpCharacter = cItems->at(i).charItem[j];
-            int d = distCharacter(&character, &tmpCharacter);
+            int d = int(distCharacter(&character, &tmpCharacter));
             if (d >= 0 && d < mdist){
                 mdist = d;
             }
@@ -109,11 +126,51 @@ bool HandwriteTreeModel::recognize(CharacterEntity& character, QStringList* resu
     }
 
     std::sort(words.begin(), words.end(), WordEntity::cmpWordDist);
-    for(unsigned int i = 0; i < words.size(); ++i){
+    for(int i = 0; i < words.size(); ++i){
         WordEntity word = words[i];
         resultWords->push_back(word.word);
     }
     return true;
+}
+
+int HandwriteTreeModel::megerCharacter(QList<CharacterEntity>& characters)
+{
+    int count = 0;
+    for (CharacterEntity c : characters) {
+        getTurnPoints(&c);
+        qDebug() << "megerCharacter: " << c.word << c.toDireString();
+        //循环匹配
+        int i = 0;
+        for(i = 0; i < charItems.size(); ++i){
+            int mdist = 100000;
+            if (c.word != charItems.at(i).word) {
+                continue;
+            }
+            for (int j = 0; j < charItems.at(i).charItem.size(); ++j){
+                CharacterEntity tmpCharacter = charItems.at(i).charItem[j];
+                int d = int(distCharacter(&c, &tmpCharacter));
+                if (d >= 0 && d < mdist){
+                    mdist = d;
+                }
+                if (mdist < 500) {
+                    break;
+                }
+            }
+            if (mdist >= 500) {
+                charItems[i].charItem.push_back(c);
+                count++;
+            }
+            break;
+        }
+        if (i == charItems.size()) {
+            CharacterItem cItem;
+            cItem.word = c.word;
+            cItem.charItem.push_back(c);
+            charItems.push_back(cItem);
+            count ++;
+        }
+    }
+    return count;
 }
 
 /**
@@ -127,7 +184,7 @@ double HandwriteTreeModel::distCharacter(CharacterEntity* character1, CharacterE
 {
     double dist = MAXDIST;
     if(character2->strokeCount >= character1->strokeCount && character2->strokeCount <= character1->strokeCount + 2){
-        double allStrokeDist = 0.0f;
+        double allStrokeDist = 0.0;
         for(int i = 0; i < character1->strokeCount; ++i){
             StrokeEntity stroke1 = character1->strokes[i];
             StrokeEntity stroke2 = character2->strokes[i];
@@ -148,7 +205,7 @@ double HandwriteTreeModel::distCharacter(CharacterEntity* character1, CharacterE
 double HandwriteTreeModel::distStrokes(StrokeEntity& stroke1, StrokeEntity& stroke2)
 {
     double strokeDist = 100000;
-    double dist = 0.0f;
+    double dist = 0.0;
 
     dist += stroke1.points[0].getDiff(stroke2.points[0]);
     dist += stroke1.points[stroke1.points.size()-1].getDiff(stroke2.points[stroke2.points.size()-1]);
@@ -201,7 +258,6 @@ double HandwriteTreeModel::distStrokes(StrokeEntity& stroke1, StrokeEntity& stro
     //收缩差异值
     strokeDist = dist / stroke1.points.size();
     return strokeDist;
-
 }
 
 
@@ -209,7 +265,6 @@ double HandwriteTreeModel::distTail(StrokeEntity& stroke, int& index)
 {
     double dist = 0;
     int count = 1;
-    int i = index;
     while (count > 0) {
         index++;
         count--;
@@ -230,13 +285,13 @@ void HandwriteTreeModel::getTurnPoints(CharacterEntity* character)
          StrokeEntity *stroke = &character->strokes[i];
          if(stroke->points.size() > 0){
              std::vector<PointEntity> points;
-             stroke->points[0].direc = 0;
-             if (i != 0){
-                 stroke->points[0].setDire(character->strokes.at(i - 1).points[0]);
-             }
              points.push_back(stroke->points[0]);
-             turnPoints(stroke, &points, 0, (int)stroke->points.size() - 1, stroke->points[0]);
-             if (stroke->points[stroke->points.size()-1].direc == -1) {
+             points[0].direc = 0;
+             if (i != 0){
+                 points[0].setDire(character->strokes.at(i - 1).points[0]);
+             }
+             turnPoints(stroke, &points, 0, stroke->points.size() - 1, stroke->points[0]);
+             if (0 > int(stroke->points[stroke->points.size()-1].direc)) {
                  stroke->points[stroke->points.size()-1].setDire(points.at(points.size()-1));
              }
              points.push_back(stroke->points[stroke->points.size() - 1]);
@@ -260,16 +315,16 @@ int HandwriteTreeModel::turnPoints(StrokeEntity *stroke, std::vector<PointEntity
 {
     if(start < 0 || end <= 0 || start >= end - 1)
         return 0;
-    const float b = stroke->points[start].x - stroke->points[end].x;
-    const float a = stroke->points[end].y - stroke->points[start].y;
-    const float c = stroke->points[start].x * a + stroke->points[start].y * b;
-    float len = sqrt(a*a + b*b)/2;
-    float max = 0.17632698;    //tan(10°)
+    const double b = stroke->points[start].x - stroke->points[end].x;
+    const double a = stroke->points[end].y - stroke->points[start].y;
+    const double c = stroke->points[start].x * a + stroke->points[start].y * b;
+    double len = sqrt(a*a + b*b)/2;
+    double max = 0.17632698;    //tan(10°)
     int maxDistPointIndex = -1;
     for(int i = start + 1; i < end && len > 2; ++i){
         PointEntity p = stroke->points[i];
-        float h = abs(a * p.x + b * p.y - c)/sqrt(a*a + b*b);
-        const float dist = h/len;
+        double h = abs(a * p.x + b * p.y - c)/sqrt(a*a + b*b);
+        const double dist = h/len;
         if (dist > max) {
             max = dist;
             maxDistPointIndex = i;
@@ -277,7 +332,7 @@ int HandwriteTreeModel::turnPoints(StrokeEntity *stroke, std::vector<PointEntity
     }
     if(maxDistPointIndex != -1){
         points->push_back(stroke->points[maxDistPointIndex]);
-        int i = points->size()-1;
+        unsigned long i = points->size()-1;
         int ret = 0;
         ret += turnPoints(stroke, points, start, maxDistPointIndex, point);
         if (ret == 0){

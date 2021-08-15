@@ -19,8 +19,10 @@ class HandwriteTreeModel
 public:
     HandwriteTreeModel();
 
-    bool loadModelFile(const char* filePath, int charType = CHAR_CHINESE);
+    bool loadModelFile(const QString filePath, int charType = CHAR_CHINESE);
     bool recognize(CharacterEntity& ch, QStringList *resultWords);
+    bool wirteFile(const QString& filePath);
+    int megerCharacter(QList<CharacterEntity>&);
     static void getTurnPoints(CharacterEntity* character);
     static int turnPoints(StrokeEntity *stroke, std::vector<PointEntity> *points, int start, int end, const PointEntity& point);
 

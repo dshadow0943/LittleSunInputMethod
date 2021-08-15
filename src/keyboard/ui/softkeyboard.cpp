@@ -53,7 +53,7 @@ void SoftKeyboard::initView(){
 
     applicationRect = QGuiApplication::screens().at(0)->geometry();     //获取显示屏像素
 
-    int w = applicationRect.width()*0.6;            //显示屏的宽
+    int w = int(applicationRect.width()*0.6);            //显示屏的宽
     int h = applicationRect.height();           //显示屏的高
 
     if (w < winSizeW){
@@ -61,10 +61,10 @@ void SoftKeyboard::initView(){
     }
     winSizeW = winSizeW > h? h : winSizeW;
 
-    winSizeH = winSizeW * 0.5;       //设置顶层窗口的默认高度
+    winSizeH = int(winSizeW * 0.5);       //设置顶层窗口的默认高度
 
     winScale = winSizeW*1.0/EN_DEFAULT_WIDTH;    //根据界面大小等比例变换窗口大小
-    ui->key_tabs->setMaximumWidth(110*winScale);
+    ui->key_tabs->setMaximumWidth(int(110*winScale));
 }
 
 /**
@@ -183,19 +183,19 @@ void SoftKeyboard::switchPage(int type)
         return;
     }
 
-    int w, h;
+    int w = EN_DEFAULT_WIDTH, h = EN_DEFAULT_HEIGHT;
 
     switch (type) {
         case KEYBOARD_NUM:
         case KEYBOARD_HAND:
         case KEYBOARD_PUNC:
-            w = DEFAULT_WIDTH * winScale;
-            h = DEFAULT_HEIGHT * winScale;
+            w = int(DEFAULT_WIDTH * winScale);
+            h = int(DEFAULT_HEIGHT * winScale);
 
             break;
         case KEYBOARD_EN:
-            w = EN_DEFAULT_WIDTH * winScale;
-            h = EN_DEFAULT_HEIGHT * winScale;
+            w = int(EN_DEFAULT_WIDTH * winScale);
+            h = int(EN_DEFAULT_HEIGHT * winScale);
         break;
         case KEYBOARD_CAND:
             vTranslateView->dataStrings = hTranslateView->dataStrings;
@@ -339,6 +339,7 @@ void SoftKeyboard::userSelectChinese(const QString &text, int index)
  */
 bool SoftKeyboard::a2zkeyClicked(int unicode, int key)
 {
+    Q_UNUSED(key);
     alreadyInputLetters.append(QChar(unicode).toLower());
 
     searchBegin(XYInputSearchInterface::getInstance()->searchTranslates(alreadyInputLetters));
@@ -431,11 +432,6 @@ void SoftKeyboard::mouseReleaseEvent(QMouseEvent *event) {
         sitePressed = false;
     }
     event->ignore();
-}
-
-void SoftKeyboard::paintEvent(QPaintEvent *e)
-{
-
 }
 
 /* 特殊按键响应槽 */

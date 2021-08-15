@@ -98,7 +98,6 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
-    void paintEvent(QPaintEvent *e);
 
 private:
     Ui::SoftKeyboard *ui;
@@ -108,7 +107,7 @@ private:
     /* 相关配置参数  */
     int winSizeH = 500;   //键盘顶层布局高度，默认(最大)500
     int winSizeW = 1000;   //键盘顶层布局宽度，默认(最大)1000
-    float winScale = 1;    //默认缩放比例
+    double winScale = 1;    //默认缩放比例
     int previousKey = KEYBOARD_EN;
     QRect applicationRect;      //显示屏相关数据对象
     ChineseCharacterServer chineseServer;

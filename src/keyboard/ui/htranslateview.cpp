@@ -18,7 +18,7 @@ HTranslateView::HTranslateView(QWidget *parent) : CustomCharView(parent)
 
 HTranslateView *HTranslateView::getHTranslateView()
 {
-    if(instance == NULL){
+    if(instance == nullptr){
         instance = new HTranslateView;
     }
     return instance;

@@ -3,10 +3,10 @@
 #include <QDebug>
 #include <QFile>
 
-XYInputSearchInterface *XYInputSearchInterface::instance = NULL;
+XYInputSearchInterface *XYInputSearchInterface::instance = nullptr;
 XYInputSearchInterface *XYInputSearchInterface::getInstance()
 {
-    if (instance == NULL)
+    if (instance == nullptr)
     {
         instance = new XYInputSearchInterface;
     }
@@ -314,7 +314,7 @@ XYTranslateItem *XYInputSearchInterface::autoCreateWords(const QString &keyword)
 
     if (exists == keyword || it == mmapTempItems.end() || it.value().isEmpty())
     {
-        return NULL;
+        return nullptr;
     }
 
     XYTranslateItem *comAll = &moAutoCompleteItem;
@@ -600,7 +600,7 @@ QList<XYTranslateItem *> &XYInputSearchInterface::completeInput(const QString &t
         else
         {
             saveItem(item);
-            if (mbEnglish && item == NULL)
+            if (mbEnglish && item == nullptr)
             {
                 XYTranslateItem *temp = new XYTranslateItem;
                 temp->msComplete = text;

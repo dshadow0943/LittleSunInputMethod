@@ -1,4 +1,5 @@
 #include "characterentity.h"
+#include <QDebug>
 
 CharacterEntity::CharacterEntity()
 {
@@ -62,7 +63,9 @@ QString CharacterEntity::toDireString(){
             if (j != 0){
                 str.append(",");
             }
-            str.append(QString::number(strokes.at(i).points.at(j).direc*10 + strokes.at(i).points.at(j).leaf));
+            int d = int(strokes.at(i).points.at(j).direc) * 10 + strokes.at(i).points.at(j).leaf;
+
+            str.append(QString::number(d));
         }
     }
     return str;

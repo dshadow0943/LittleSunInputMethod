@@ -1,21 +1,18 @@
 #include "handviewtrain.h"
 #include "handwritemodel.h"
 
-HandViewTrain::HandViewTrain(QWidget *parent) : QWidget(parent)
+HandViewTrain::HandViewTrain(QWidget *parent) : QLabel(parent)
 {
     setWindowFlag(Qt::WindowFlags::enum_type::WindowDoesNotAcceptFocus);
     strokeId = 0;
       /*鼠标离开定时器*/
       mouseReleaseTimer = new QTimer();
-  //    this->setStyleSheet("background-color:white");
       /*清空输入框并开始处理用户输入*/
       connect(mouseReleaseTimer, &QTimer::timeout, this, [=]()->void{
 
-  //        clearPoints();
           characterAll = character;
           HandWriteModel::getTurnPoints(&character);
           update();
-  //        qDebug() << "用户离开界面超过1秒，输入完毕";
 
           /*停止计时器*/
           mouseReleaseTimer->stop();
@@ -25,6 +22,7 @@ HandViewTrain::HandViewTrain(QWidget *parent) : QWidget(parent)
 //重写绘画事件
 void HandViewTrain::paintEvent(QPaintEvent *event)
 {
+    Q_UNUSED(event);
     if(points.empty()){
         return;
     }
@@ -39,16 +37,6 @@ void HandViewTrain::paintEvent(QPaintEvent *event)
     pen.setColor(Qt::red);
     painter.setPen(pen);
 
-    //创建画刷
-    //QBrush brush;
-
-    //画图
-//    for(int i = 0; i < pointsSize; i++){
-//        for(int j = 0; j < points[i].size()-2; j++){
-//            //每两点间画线，避免捕捉事件不及时导致写字过程中出现空白
-//            painter.drawLine(points[i][j],points[i][j+1]);
-//        }
-//    }
     for(int i = 0; i < character.strokes.size(); i++){
         StrokeEntity stroke = character.strokes.at(i);
         for(int j = 0; j < stroke.points.size()-1; j++){
@@ -60,7 +48,6 @@ void HandViewTrain::paintEvent(QPaintEvent *event)
 //鼠标离开事件
 void HandViewTrain::mouseReleaseEvent(QMouseEvent* e)
 {
-//    qDebug() << "鼠标离开事件";
     //如果用户离开屏幕0.5秒没有书写，就当做用户本次输入完毕
     if(e->button() == Qt::LeftButton){
         //鼠标离开，开启定时器，如果定时器已开启，刷新定时器
@@ -92,7 +79,6 @@ void HandViewTrain::mousePressEvent(QMouseEvent* e)
     if (strokeId == 0){
         character.clear();
     }
-//    qDebug() << "鼠标按下事件";
     //按下时判断鼠标离开定时器是否在计时，如果正在计时就将其关闭
     if(mouseReleaseTimer->isActive()){
         mouseReleaseTimer->stop();
@@ -107,7 +93,7 @@ void HandViewTrain::mousePressEvent(QMouseEvent* e)
     return QWidget::mousePressEvent(e);
 }
 
-void HandViewTrain::savePoint()
+void HandViewTrain::enterSolt()
 {
     if (strokeId != 0){
         charToParent(characterAll);
@@ -117,7 +103,6 @@ void HandViewTrain::savePoint()
 //清空用户输入
 void HandViewTrain::clearPoints()
 {
-
     update();
 
     strokeId = 0;

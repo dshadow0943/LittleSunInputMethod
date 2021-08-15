@@ -9,14 +9,18 @@ INCLUDEPATH += \
 SOURCES += \
     $$PWD/centercontroller.cpp \
     $$PWD/keyboardAdaptor.cpp \
-    $$PWD/main.cpp
+    $$PWD/main.cpp \
+    $$PWD/globalapplication.cpp \
+    $$PWD/mousethread.cpp
 
 FORMS += \
     $$PWD/centercontroller.ui
 
 HEADERS += \
     $$PWD/centercontroller.h \
-    $$PWD/keyboardAdaptor.h
+    $$PWD/keyboardAdaptor.h \
+    $$PWD/globalapplication.h \
+    $$PWD/mousethread.h
 
 RESOURCES += \
     $$PWD/res/res.qrc

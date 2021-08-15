@@ -43,6 +43,7 @@ void PuncKeyboard::setParent(SoftKeyboard *parent){
 
 void PuncKeyboard::userSelectPunctuation(const QString &text, int index)
 {
+    Q_UNUSED(index);
     parent->addCandidateCharacterText(text);
 }
 

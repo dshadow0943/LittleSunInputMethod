@@ -14,7 +14,6 @@ CenterController::CenterController(QWidget *parent) :
     ui->setupUi(this);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool | Qt::WindowDoesNotAcceptFocus);
     softKeyboard = new SoftKeyboard();
-//    handkeyboatd = new HandKeyboardTrain();
     connect(softKeyboard, &SoftKeyboard::sendCandidateCharacter, this, &CenterController::candidateCharacterSlots);
     connect(softKeyboard, &SoftKeyboard::sendDeleteCharacter, this, &CenterController::deleteCharacterSlots);
     //填充log
@@ -24,10 +23,8 @@ CenterController::CenterController(QWidget *parent) :
     int with = ui->title->width();
     int height = ui->title->height();
     QPixmap fitpixmap = pixmap.scaled(with, height, Qt::IgnoreAspectRatio, Qt::SmoothTransformation); // 饱满填充
-    //QPixmap fitpixmap = pixmap.scaled(with, height, Qt::KeepAspectRatio, Qt::SmoothTransformation); // 按比例缩放
     ui->title->setPixmap(fitpixmap);
 
-//    setStyleSheet("background:#EAF7FF;");
 }
 
 CenterController::~CenterController()
@@ -64,9 +61,9 @@ void CenterController::candidateCharacterSlots(QString character)
                             "/littlesun",
                             "org.fcitx.Fcitx.LittleSun",
                             "CommitString");
-     //发送消息
-     message << QString(character);
-     QDBusMessage response = QDBusConnection::sessionBus().call(message);
+    //发送消息
+    message << QString(character);
+    QDBusMessage response = QDBusConnection::sessionBus().call(message);
     emit sendCandidateCharacter((character));
 }
 
@@ -91,9 +88,19 @@ int CenterController::initView()
 
 int CenterController::showView()
 {
-
-    this->show();
-    softKeyboard->show();
+    QDBusMessage message = QDBusMessage::createMethodCall("org.fcitx.Fcitx",
+                                "/inputmethod",
+                                "org.fcitx.Fcitx.InputMethod",
+                                "GetCurrentIM");
+    //发送消息
+    QDBusMessage response = QDBusConnection::sessionBus().call(message);
+    if (response.arguments().first().value<QString>() == "keyboard-littlesun") {
+        this->show();
+        softKeyboard->show();
+    } else {
+        qDebug() << response.arguments().first().value<QString>();
+        qApp->quit();
+    }
     return 0;
 }
 
@@ -101,6 +108,7 @@ int CenterController::hideView()
 {
     this->hide();
     softKeyboard->hide();
+    qApp->quit();
     return 0;
 }
 
@@ -116,7 +124,7 @@ void CenterController::mousePressEvent(QMouseEvent *event) {
     {
         isMousePress = true;
     }
-    event->ignore();
+    return QWidget::mousePressEvent(event);
 }
 
 /**
@@ -130,7 +138,7 @@ void CenterController::mouseMoveEvent(QMouseEvent *event) {
         window()->move(window()->pos() +  event->globalPos() - cursorGlobalPos);
         cursorGlobalPos = event->globalPos();
     }
-    event->ignore();
+    return QWidget::mousePressEvent(event);
 }
 
 /**
@@ -143,7 +151,7 @@ void CenterController::mouseReleaseEvent(QMouseEvent *event) {
     {
         isMousePress = false;
     }
-    event->ignore();
+    return QWidget::mousePressEvent(event);
 }
 
 void CenterController::on_btn_site_clicked()

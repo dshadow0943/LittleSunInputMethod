@@ -11,7 +11,7 @@ public:
 
     int x;
     int y;
-    int leaf;
+    int leaf = 0;
     double direc = -1;
 
     void setDire(PointEntity);

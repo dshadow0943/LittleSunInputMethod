@@ -19,13 +19,14 @@ class HandWriteModel
 public:
     HandWriteModel();
 
-    bool loadModelFile(const char* filePath, int charType = CHAR_CHINESE);
+    bool loadModelFile(const QString filePath, int charType = CHAR_CHINESE);
     bool recognize(CharacterEntity& ch, QStringList *resultWords);
+    bool wirteFile(const QString& filePath);
+    int megerCharacter(QList<CharacterEntity>&);
     static void getTurnPoints(CharacterEntity* character);
     static void turnPoints(StrokeEntity *stroke, std::vector<PointEntity> *points, int pointIndex1, int pointIndex2);
 
 private:
-//    std::vector<CharacterEntity> characters;
     QList<CharacterItem> charItems;
     QList<CharacterItem> numItems;
     double dist(const CharacterEntity* character1, const CharacterEntity* character2);

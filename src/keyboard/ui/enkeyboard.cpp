@@ -60,7 +60,7 @@ void EnKeyboard::initPinyinDictionary()
 
     //如果最终还是加载失败，警告
     if (!ret) {
-        QMessageBox::warning(NULL, "warning", "Load lexicon failed!", QMessageBox::Ok);
+        QMessageBox::warning(nullptr, "warning", "Load lexicon failed!", QMessageBox::Ok);
 
     }
 }

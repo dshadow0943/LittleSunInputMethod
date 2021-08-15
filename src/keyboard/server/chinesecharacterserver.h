@@ -6,6 +6,7 @@
 #include "handwritetreemodel.h"
 #include <QStringList>
 #include <QThread>
+#include <QStandardPaths>
 
 class ChineseCharacterServer : public QThread
 {
@@ -14,12 +15,14 @@ public:
 
     void init();    //初始化
     QStringList getChineseByPinyin(QString);
-    QStringList getChineseByHand(CharacterEntity& Character, int count = 8);
+    QStringList getChineseByHand(CharacterEntity& Character, int count = 20);
     QStringList getNext();
 
     QStringList getWordAssociate(QString word);
 
     bool writeFile(QString text);
+    int saveCharaters(QList<CharacterEntity>&);
+    bool deleteFont();
 
 private:
 
@@ -29,6 +32,8 @@ private:
     HandWriteModel mHandWrite;
     HandwriteTreeModel mHandTree;
     WordAssociateModel mWordAssociate;
+
+    QString dirPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.littlesun";
 
 protected:
     void run();

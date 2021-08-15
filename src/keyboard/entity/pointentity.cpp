@@ -38,7 +38,7 @@ double PointEntity::setDire(const PointEntity lastPoint, const PointEntity start
      if (result < 0){
          result += 360;
      }
-     return (int)(result * 100);
+     return int(result * 100);
 }
 
 /**
@@ -99,5 +99,5 @@ int PointEntity::getDegree(int vertexPointX, int vertexPointY, int point0X, int 
     //反余弦计算弧度
     double radian = acos(vector / sq);
     //弧度转角度制
-    return (int) (180 * radian / 3.14159265358979323846);
+    return int(180 * radian / 3.14159265358979323846);
 }

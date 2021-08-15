@@ -8,8 +8,8 @@
  * @brief VTranslateView::candidateInstace
  * 纵向候选框
  */
-VTranslateView *VTranslateView::candidateInstace = NULL;
-VTranslateView *VTranslateView::puncInstance = NULL;
+VTranslateView *VTranslateView::candidateInstace = nullptr;
+VTranslateView *VTranslateView::puncInstance = nullptr;
 VTranslateView::VTranslateView(QWidget *parent) : CustomCharView(parent)
 {
 
@@ -17,14 +17,14 @@ VTranslateView::VTranslateView(QWidget *parent) : CustomCharView(parent)
 
 VTranslateView *VTranslateView::getVTranslateView()
 {
-    if(candidateInstace == NULL){
+    if(candidateInstace == nullptr){
         candidateInstace = new VTranslateView;
     }
     return candidateInstace;
 }
 VTranslateView *VTranslateView::getPunctuation()
 {
-    if(puncInstance == NULL){
+    if(puncInstance == nullptr){
         puncInstance= new VTranslateView;
     }
     return puncInstance;

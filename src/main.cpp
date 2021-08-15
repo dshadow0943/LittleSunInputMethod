@@ -5,12 +5,11 @@
 #include <QDebug>
 #include <QDBusError>
 #include <QApplication>
+#include "globalapplication.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-
-//    qApp->setStyleSheet("background:#EAF7FF;");
+    GlobalApplication a(argc, argv);
 
     qApp->setPalette(QPalette(QColor("#EAF7FF")));
     qApp->setStyleSheet(".QPushButton,.QToolButton{ \

@@ -8,9 +8,10 @@
 #include <QTimer>
 #include <QPainter>
 #include <QBoxLayout>
+#include <QLabel>
 #include "characterentity.h"
 
-class HandViewTrain : public QWidget
+class HandViewTrain : public QLabel
 {
     Q_OBJECT
 public:
@@ -47,7 +48,7 @@ public:
  public slots:
      //清空用户输入
      void clearPoints();
-     void savePoint();
+     void enterSolt();
 
 };
 

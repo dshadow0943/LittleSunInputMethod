@@ -19,8 +19,38 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "mousethread.h"
+#include <QDBusMessage>
+#include <QDBusConnection>
+#include <QDebug>
+#include <QApplication>
 
 MouseThread::MouseThread()
 {
+}
 
+/**
+ * @brief MouseThread::run
+ * 监测当前输入法是否是可用状态，不可用将状态终止进程
+ */
+void MouseThread::run()
+{
+    while (!isInterruptionRequested()) {
+        QDBusMessage message = QDBusMessage::createMethodCall("org.fcitx.Fcitx",
+                                    "/inputmethod",
+                                    "org.fcitx.Fcitx.InputMethod",
+                                    "GetCurrentState");
+        //发送消息
+        QDBusMessage response = QDBusConnection::sessionBus().call(message);
+        if (!response.arguments().first().value<bool>()) {
+            QDBusMessage message = QDBusMessage::createMethodCall("org.fcitx.Fcitx",
+                                        "/inputmethod",
+                                        "org.fcitx.Fcitx.InputMethod",
+                                        "GetCurrentIM");
+            //发送消息
+            QDBusMessage response = QDBusConnection::sessionBus().call(message);
+            if (response.arguments().first().value<QString>() == "keyboard-littlesun") {
+                qApp->quit();
+            }
+        }
+    }
 }

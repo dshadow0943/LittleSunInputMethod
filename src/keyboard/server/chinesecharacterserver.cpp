@@ -5,6 +5,7 @@
 #include <QDebug>
 #include "model/filereadandwrite.h"
 #include <QDir>
+#include <QDateTime>
 
 /**
  * @brief ChineseCharacterServer::ChineseCharacterServer
@@ -17,7 +18,6 @@ ChineseCharacterServer::ChineseCharacterServer()
 
 void ChineseCharacterServer::init()    //初始化
 {
-
     this->start();
 }
 
@@ -25,18 +25,25 @@ void ChineseCharacterServer::run()
 {
 
     //顺序比对算法
-//    mHandWrite.loadModelFile(":/handwriting.txt");
-    mHandWrite.loadModelFile(":/numhandwriting.txt", CHAR_NUM);
+    if (!mHandWrite.loadModelFile(dirPath + "/numhandwriting.txt", CHAR_NUM)) {
+        mHandWrite.loadModelFile(":/numhandwriting.txt", CHAR_NUM);
+    }
+
+//    if (!mHandWrite.loadModelFile(":/handwriting.txt")){
+//        mHandWrite.loadModelFile(":/handwriting.txt");
+//    }
 
     //树型比对算法
-//    mHandTree.loadModelFile(":/numhandwritingtree.txt", CHAR_NUM);
-    mHandTree.loadModelFile(":/handwritingtree.txt");
+//    if (!mHandTree.loadModelFile(dirPath + "/numhandwritingtree.txt", CHAR_NUM)) {
+//        mHandTree.loadModelFile(":/numhandwritingtree.txt", CHAR_NUM);
+//    }
 
-    if (mWordAssociate.loadModelFile(":/words.txt")) {
-
-    } else {
-
+    if (!mHandTree.loadModelFile(dirPath + "/handwritingtree.txt")) {
+        mHandTree.loadModelFile(":/handwritingtree.txt");
     }
+
+
+    mWordAssociate.loadModelFile(":/words.txt");
 }
 
 /**
@@ -53,6 +60,7 @@ QStringList ChineseCharacterServer::getWordAssociate(QString word)
 
 QStringList ChineseCharacterServer::getChineseByPinyin(QString str)
 {
+    Q_UNUSED(str);
     return getNext();
 }
 
@@ -69,12 +77,12 @@ QStringList ChineseCharacterServer::getChineseByHand(CharacterEntity& character,
     resultWords.clear();
     this->wordCount = count;
     this->index = 0;
+    //将查找到的候选词存放在候选词列表中
     if (character.isNum) {
         mHandWrite.recognize(character, &resultWords);
     } else {
         mHandTree.recognize(character, &resultWords);
     }
-//    mHandWrite.recognize(character, &resultWords); //将查找到的候选词存放在候选词列表中
     return getNext();   //返回候选词
 }
 
@@ -96,5 +104,29 @@ QStringList ChineseCharacterServer::getNext()
  * 训练字库保存
  */
 bool ChineseCharacterServer::writeFile(QString text){
-    return FileReadAndWrite::writeFile("./handpoint.txt", text);
+    QDir dir;
+    if (!dir.exists(dirPath)) {
+        dir.mkpath(dirPath);
+    }
+    return FileReadAndWrite::writeFile(dirPath + "/handpoint.txt", text);
+}
+
+int ChineseCharacterServer::saveCharaters(QList<CharacterEntity>& charactrs)
+{
+    int count = mHandTree.megerCharacter(charactrs);
+    mHandTree.wirteFile(dirPath + "/handwritingtree.txt");
+    return count;
+}
+
+bool ChineseCharacterServer::deleteFont()
+{
+    QFile file(QString("%1/handwritingtree.txt").arg(dirPath));
+
+    int timeT = QDateTime::currentDateTime().toTime_t()/1000%(365*24*60*60);   //获取当前时间戳
+
+    bool ok = file.rename(QString("%1/handwritingtree_%2.txt").arg(dirPath).arg(timeT));
+    if (!ok) {
+        perror("rename");
+    }
+    return ok;
 }

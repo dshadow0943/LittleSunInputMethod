@@ -80,13 +80,12 @@ void HandKeyboard::setRightToolWidget()
 
 void HandKeyboard::KeyClicked(int unicode, int key)
 {
+    Q_UNUSED(unicode);
     switch(key)
     {
     case Qt::Key_Backspace:
-//        parent->deleteSlot();
         break;
     case Qt::Key_Enter:
-//        parent->enterSlot();
         break;
     }
 }
