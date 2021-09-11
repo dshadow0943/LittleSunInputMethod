@@ -37,6 +37,14 @@ qt版本: 5.11
 
 ## 安装及使用
 
+### 安装包下载
+
+   客户端: https://github.com/dshadow0943/LittleSunInputMethod/releases/tag/v1.0.2
+
+   插件: https://github.com/dshadow0943/fcitx-littlesun/releases/tag/v1.0.1
+
+### 安装
+
 1. 可自行下载deb安装自行安装
 
     dpkg命令： sudo dpkg -i fcitx-littlesun-1.0.1-linux.deb
