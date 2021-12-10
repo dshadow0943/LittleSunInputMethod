@@ -51,7 +51,7 @@ void NumKeyboard::initKeyValue()
     mButLine.push_back(ButtonItem::getNumButton("拼音", ButtonBase::keyPinyin, ButtonBase::Func, this));
     mButLine.push_back(ButtonItem::getNumButton("手写", ButtonBase::keyHand, ButtonBase::Func, this));
 
-    createConnect();
+    initConnect();
 }
 
 /**
@@ -82,7 +82,7 @@ void NumKeyboard::initKeyboard()
     }
 }
 
-void NumKeyboard::createConnect()
+void NumKeyboard::initConnect()
 {
     for (NumButton *but : mButLine) {
         connect(but, &NumButton::sendClicked, this, &NumKeyboard::onClicked);

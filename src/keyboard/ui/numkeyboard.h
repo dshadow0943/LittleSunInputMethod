@@ -22,33 +22,16 @@ public:
 private:
 
     SoftKeyboard *parent;
-
-
-    //第一行
-    QList<NumButton*> mButLine;
-    //第二行
-    QList<NumButton*> mButLine2;
-    //第三行
-    QList<NumButton*> mButLine3;
-    //第四行
-    QList<NumButton*> mButLine4;
-
-    //第一行
-    QList<CustomPushButton*> BtnsLine1;
-    //第二行
-    QList<CustomPushButton*> BtnsLine2;
-    //第三行
-    QList<CustomPushButton*> BtnsLine3;
-    //第四行
-    QList<CustomPushButton*> BtnsLine4;
+    QList<NumButton*> mButLine; //按键集合
 
 private:
-    //链接所有按钮的槽函数
-    void createConnect();
-    //初始化数字键盘布局
-    void initKeyboard();
+
     //初始化数字键盘按钮
     void initKeyValue();
+    //初始化数字键盘布局
+    void initKeyboard();
+    //链接所有按钮的槽函数
+    void initConnect();
 
 signals:
 
