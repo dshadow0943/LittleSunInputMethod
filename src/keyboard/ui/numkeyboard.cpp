@@ -10,72 +10,14 @@ NumKeyboard::NumKeyboard(SoftKeyboard *parent) : QWidget(parent)
     this->parent = parent;
 
     //创建栅格布局
-    gridLayout = new QGridLayout;
+
+    initKeyValue();
     initKeyboard();
-    //设置控件之间的间距
-    gridLayout->setSpacing(1);
-    //设置栅格布局控件与窗体之间的间距
-    gridLayout->setContentsMargins(0,0,0,0);
-    this->setLayout(gridLayout);
+
 }
 
 void NumKeyboard::setParent(SoftKeyboard *parent){
     this->parent = parent;
-}
-
-/**
- * @brief num_keyboard::initKeyboard
- * 初始化键盘
- */
-void NumKeyboard::initKeyboard()
-{
-    initKeyValue();
-    int line = 0;
-    int count = 0;
-    for(int i = 0; i < 5; i++){
-        if(i == 0 || i == 4){
-            gridLayout->addWidget(BtnsLine1[i], line, count, 1, 2);
-            count+=2;
-        }else{
-            gridLayout->addWidget(BtnsLine1[i], line, count, 1, 3);
-            count+=3;
-        }
-    }
-    line++;
-    count = 0;
-    for(int i = 0; i < 5; i++){
-        if(i == 0 || i == 4){
-            gridLayout->addWidget(BtnsLine2[i], line, count, 1, 2);
-            count+=2;
-        }else{
-            gridLayout->addWidget(BtnsLine2[i], line, count, 1, 3);
-            count+=3;
-        }
-    }
-    line++;
-    count = 0;
-    for(int i = 0; i < 5; i++){
-        if(i == 0 || i == 4){
-            gridLayout->addWidget(BtnsLine3[i], line, count, 1, 2);
-            count+=2;
-        }else{
-            gridLayout->addWidget(BtnsLine3[i], line, count, 1, 3);
-            count+=3;
-        }
-    }
-    line++;
-    count = 0;
-    for(int i = 0; i < 5; i++){
-        if(i == 0 || i == 4){
-            gridLayout->addWidget(BtnsLine4[i], line, count, 1, 2);
-            count+=2;
-        }else{
-            gridLayout->addWidget(BtnsLine4[i], line, count, 1, 3);
-            count+=3;
-        }
-    }
-
-
 }
 
 /**
@@ -84,96 +26,96 @@ void NumKeyboard::initKeyboard()
  */
 void NumKeyboard::initKeyValue()
 {
-    QList<QString> values = {",", "1", "2", "3", ".", "4", "5", "6", "*", "@", "7", "8", "9", "#", "0"};
-    //初始化第一行
-    BtnsLine1.push_back(new CustomPushButton("*", Qt::Key_Asterisk,0, this));
-    BtnsLine1.push_back(new CustomPushButton("1", Qt::Key_1, 0, this));
-    BtnsLine1.push_back(new CustomPushButton("2", Qt::Key_2, 0, this));
-    BtnsLine1.push_back(new CustomPushButton("3", Qt::Key_3, 0, this));
-    BtnsLine1.push_back(new CustomPushButton("删除", Qt::Key_Backspace, 0, this));
 
-    //初始化第二行
-    BtnsLine2.push_back(new CustomPushButton("#",Qt::Key_Context2,0, this));
-    BtnsLine2.push_back(new CustomPushButton("4",Qt::Key_4,0, this));
-    BtnsLine2.push_back(new CustomPushButton("5",Qt::Key_5,0, this));
-    BtnsLine2.push_back(new CustomPushButton("6",Qt::Key_6,0, this));
-    BtnsLine2.push_back(new CustomPushButton(",",Qt::Key_Comma, 0, this));
+    mButLine.push_back(ButtonItem::getNumButton("-", 0, ButtonBase::Punc, this));
+    mButLine.push_back(ButtonItem::getNumButton("1", Qt::Key_1, ButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("2", Qt::Key_2, ButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("3", Qt::Key_3, ButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("删除", Qt::Key_Backspace, ButtonBase::Func, this));
 
-    //初始化第三行
-    BtnsLine3.push_back(new CustomPushButton("@",Qt::Key_Context1,0, this));
-    BtnsLine3.push_back(new CustomPushButton("7",Qt::Key_7,0, this));
-    BtnsLine3.push_back(new CustomPushButton("8",Qt::Key_8,0, this));
-    BtnsLine3.push_back(new CustomPushButton("9",Qt::Key_9,0, this));
-    BtnsLine3.push_back(new CustomPushButton(".",Qt::Key_Period,0, this));
+    mButLine.push_back(ButtonItem::getNumButton("+", 0, ButtonBase::Punc, this));
+    mButLine.push_back(ButtonItem::getNumButton("4", Qt::Key_4, ButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("5", Qt::Key_5, ButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("6", Qt::Key_6, ButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("0", Qt::Key_0, ButtonBase::Num, this));
 
-    //初始化第四行
-    BtnsLine4.push_back(new CustomPushButton("符号",Qt::Key_Meta,0, this));
-    BtnsLine4.push_back(new CustomPushButton("拼音",Qt::Key_Meta,0, this));
-    BtnsLine4.push_back(new CustomPushButton("0",Qt::Key_0,0, this));
-    BtnsLine4.push_back(new CustomPushButton("空格",Qt::Key_Space,0, this));
-    BtnsLine4.push_back(new CustomPushButton("手写",Qt::Key_Word,0, this));
+    mButLine.push_back(ButtonItem::getNumButton("*", 0, ButtonBase::Punc, this));
+    mButLine.push_back(ButtonItem::getNumButton("7", Qt::Key_7, ButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("8", Qt::Key_8, ButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("9", Qt::Key_9, ButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("@", Qt::Key_At, ButtonBase::Func, this));
 
-
-    connect(BtnsLine4[0], &CustomPushButton::clicked1, this, [=]()->void{
-        parent->switchPage(KEYBOARD_PUNC);
-    });
-    connect(BtnsLine4[1], &CustomPushButton::clicked1, this, [=]()->void{
-        parent->switchPage(KEYBOARD_EN);
-    });
-    //点击手写跳转到手写页面
-    connect(BtnsLine4[4], &CustomPushButton::clicked1, this, [=]()->void{
-        parent->switchPage(KEYBOARD_HAND);
-    });
+    mButLine.push_back(ButtonItem::getNumButton("/", 0, ButtonBase::Punc, this));
+    mButLine.push_back(ButtonItem::getNumButton("符号", ButtonBase::keyPunc, ButtonBase::Func, this));
+    mButLine.push_back(ButtonItem::getNumButton(" ", Qt::Key_Space, ButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("拼音", ButtonBase::keyPinyin, ButtonBase::Func, this));
+    mButLine.push_back(ButtonItem::getNumButton("手写", ButtonBase::keyHand, ButtonBase::Func, this));
 
     createConnect();
+}
 
+/**
+ * @brief num_keyboard::initKeyboard
+ * 初始化键盘
+ */
+void NumKeyboard::initKeyboard()
+{
+    QGridLayout *gridLayout = new QGridLayout(this);
+    //设置控件之间的间距
+    gridLayout->setSpacing(1);
+    gridLayout->setContentsMargins(0,0,0,0);
+    this->setLayout(gridLayout);
+
+    int count = 0;
+    for(int i = 0; i < mButLine.size(); ++i) {
+        int col = i%5;
+        if (col == 0) {
+            count = 0;
+        }
+        if (col == 0 || col == 4) {
+            gridLayout->addWidget(mButLine[i], i/5, count, 1, 2);
+            count += 2;
+        } else {
+            gridLayout->addWidget(mButLine[i], i/5, count, 1, 3);
+            count+=3;
+        }
+    }
 }
 
 void NumKeyboard::createConnect()
 {
-    if(CustomPushButton::allNumBtns.size() != 0){
-        for(int i = 0; i < CustomPushButton::allNumBtns.size(); i++){
-            connect(CustomPushButton::allNumBtns[i], &CustomPushButton::clicked,
-                    this, &NumKeyboard::keyClicked);
-        }
-    }else{
-        qDebug() << "数字键盘按钮个数为0";
+    for (NumButton *but : mButLine) {
+        connect(but, &NumButton::sendClicked, this, &NumKeyboard::onClicked);
     }
-
 }
 
-void NumKeyboard::keyClicked(int unicode, int key)
+void NumKeyboard::onClicked(ButtonBase* but)
 {
-    switch(key)
-    {
+    if (but->getId() == Qt::Key_At) {
+        parent->addCandidateCharacterText(QString("@"));
+        return;
+    }
+
+    if (but->getType() == ButtonBase::Num || but->getType() == ButtonBase::Punc) {
+        parent->addCandidateCharacterText(but->text());
+        return;
+    }
+
+    switch (but->getId()) {
     case Qt::Key_Space:
         parent->spaceSlot();
         break;
     case Qt::Key_Backspace:
         parent->deleteSlot();
         break;
-    case Qt::Key_Word://跳转到手写键盘
-
+    case ButtonBase::keyPunc:
+        parent->switchPage(3);
         break;
-    case Qt::Key_Meta: //跳转到abc/符号键盘
-
+    case ButtonBase::keyPinyin:
+        parent->switchPage(1);
         break;
-    case Qt::Key_Comma://,
-    case Qt::Key_Period://.
-        parent->addCandidateCharacterText(QString(QChar(unicode)));
-        break;
-    case Qt::Key_Context1://@
-        parent->addCandidateCharacterText(QString("@"));
-        break;
-    case Qt::Key_Context2://#
-        parent->addCandidateCharacterText(QString("#"));
-        break;
-    case Qt::Key_Asterisk: //*
-        parent->addCandidateCharacterText(QString("*"));
-        break;
-    default:
-        if(Qt::Key_0 <= key && key <= Qt::Key_9)
-            parent->addCandidateCharacterText(QString(QChar(unicode)));
+    case ButtonBase::keyHand:
+        parent->switchPage(2);
         break;
     }
 }

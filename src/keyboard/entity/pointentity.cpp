@@ -22,7 +22,7 @@ void PointEntity::setDire(PointEntity lastPoint)
     if (d < 0){
         d += 360;
     }
-    this->direc = (int)(d * 100);
+    this->direc = int(d * 100);
 }
 
 /**

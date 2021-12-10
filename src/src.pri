@@ -1,6 +1,11 @@
-
 include (keyboard/keyboard.pri)
 include (train/train.pri)
+include (widget/widget.pri)
+
+INCLUDEPATH += \
+        $$PWD/keyboard \
+        $$PWD/train \
+        $$PWD/widget \
 
 INCLUDEPATH += \
         $$PWD/keyboard \

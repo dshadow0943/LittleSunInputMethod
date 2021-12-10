@@ -1,6 +1,9 @@
 #ifndef NUMKEYBOARD_H
 #define NUMKEYBOARD_H
 
+#include "custompushbutton.h"
+#include "buttonitem.h"
+
 #include <QWidget>
 #include <QList>
 #include <QGridLayout>
@@ -8,7 +11,6 @@
 #include <QDebug>
 #include <QPropertyAnimation>
 #include <softkeyboard.h>
-#include "custompushbutton.h"
 
 class NumKeyboard : public QWidget
 {
@@ -20,7 +22,16 @@ public:
 private:
 
     SoftKeyboard *parent;
-    QGridLayout *gridLayout;
+
+
+    //第一行
+    QList<NumButton*> mButLine;
+    //第二行
+    QList<NumButton*> mButLine2;
+    //第三行
+    QList<NumButton*> mButLine3;
+    //第四行
+    QList<NumButton*> mButLine4;
 
     //第一行
     QList<CustomPushButton*> BtnsLine1;
@@ -42,7 +53,7 @@ private:
 signals:
 
 public slots:
-    void keyClicked(int unicode, int key);
+    void onClicked(ButtonBase* but);
 };
 
 #endif // NUMKEYBOARD_H

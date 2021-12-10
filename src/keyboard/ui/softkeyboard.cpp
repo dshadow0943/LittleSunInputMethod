@@ -1,5 +1,9 @@
 #include "softkeyboard.h"
 #include "ui_softkeyboard.h"
+#include "numkeyboard.h"
+#include "handkeyboard.h"
+#include "enkeyboard.h"
+#include "punckeyboard.h"
 #include "handkeyboard.h"
 #include "htranslateview.h"
 #include "customskin.h"
@@ -45,6 +49,11 @@ SoftKeyboard::~SoftKeyboard()
     delete ui;
 }
 
+void SoftKeyboard::initUi()
+{
+//    mKeyboardSidebar = new KeyboardSidebar(ui->tab);
+}
+
 /**
  * @brief SoftKeyboard::init
  * 窗口初始化函数
@@ -78,10 +87,10 @@ void SoftKeyboard::initCandidate()
     translateHDragableWidget->init(hTranslateView, CustomWidget::HORIZONTAL1);
     translateHDragableWidget->setMouseSensitivity(5);
 
-    //初始化垂直候选词拖拽控件
-    translateVDragableWidget = ui->page_cand;
-    translateVDragableWidget->init(vTranslateView,CustomWidget::VERTICAL1);
-    translateVDragableWidget->setMouseSensitivity(5);
+//    //初始化垂直候选词拖拽控件
+//    translateVDragableWidget = ui->page_cand;
+//    translateVDragableWidget->init(vTranslateView,CustomWidget::VERTICAL1);
+//    translateVDragableWidget->setMouseSensitivity(5);
 
     letterLabel = ui->candidate;
     QFont font = letterLabel->font();
@@ -99,6 +108,12 @@ void SoftKeyboard::initCandidate()
  */
 void SoftKeyboard::initKeyboard()
 {
+//    ui->key_page->addWidget(new NumKeyboard(this));
+//    ui->key_page->addWidget(new EnKeyboard(this));
+//    ui->key_page->addWidget(new HandKeyboard(this));
+//    ui->key_page->addWidget(new PuncKeyboard(this));
+
+
     keyTypeTab[0] = ui->btn_num_key;
     keyTypeTab[1] = ui->btn_en_key;
     keyTypeTab[2] = ui->btn_hand_key;

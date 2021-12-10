@@ -1,11 +1,7 @@
 #ifndef SOFTKEYBOARD_H
 #define SOFTKEYBOARD_H
 
-#include <QWidget>
-#include <QStackedWidget>
-#include <QLineEdit>
-#include <QLabel>
-#include <QPushButton>
+#include "keyboardsidebar.h"
 #include "customwidget.h"
 #include "customcharview.h"
 #include "htranslateview.h"
@@ -14,6 +10,13 @@
 #include "xyinputsearchinterface.h"
 #include "xytranslateitem.h"
 #include "chinesecharacterserver.h"
+
+#include <QWidget>
+#include <QStackedWidget>
+#include <QLineEdit>
+#include <QLabel>
+#include <QPushButton>
+
 
 #define KEYBOARD_NUM 0
 #define KEYBOARD_EN 1
@@ -44,15 +47,9 @@ public:
     void setMoveEnabled(bool moveEnabled=true);//设置无边框窗口移动使能
 
     /* 给子布局的接口 */
-
-
-
     void clearHistory();           //重置候选框
 
     void searchBegin(QList<XYTranslateItem *> lists);  //根据候选字母映射出候选词
-
-
-
 
     QLineEdit *textShow;        //文本显示区域
 
@@ -103,6 +100,7 @@ private:
     Ui::SoftKeyboard *ui;
 
     QPushButton *keyTypeTab[4];          //更改键盘的控件
+//    KeyboardSidebar *mKeyboardSidebar;    //侧边栏
 
     /* 相关配置参数  */
     int winSizeH = 500;   //键盘顶层布局高度，默认(最大)500
@@ -137,6 +135,7 @@ private:
 
     /* 控件相关初始化方法 */
     void initView();            //初始化函数
+    void initUi();
     void initKeyboard();    //初始化键盘
     void initCandidate();   //初始化候选框
 

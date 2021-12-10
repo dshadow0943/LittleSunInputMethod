@@ -10,7 +10,8 @@ HEADERS += \
     $$PWD/numkeyboard.h \
     $$PWD/punckeyboard.h \
     $$PWD/softkeyboard.h \
-    $$PWD/vtranslateview.h
+    $$PWD/vtranslateview.h \
+    $$PWD/keyboardsidebar.h
 
 SOURCES += \
     $$PWD/enkeyboard.cpp \
@@ -20,4 +21,5 @@ SOURCES += \
     $$PWD/numkeyboard.cpp \
     $$PWD/punckeyboard.cpp \
     $$PWD/softkeyboard.cpp \
-    $$PWD/vtranslateview.cpp
+    $$PWD/vtranslateview.cpp \
+    $$PWD/keyboardsidebar.cpp

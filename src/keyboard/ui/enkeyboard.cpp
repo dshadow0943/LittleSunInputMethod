@@ -99,7 +99,6 @@ void EnKeyboard::initView()
     BtnsABC1.push_back(new CustomPushButton("O", Qt::Key_O, this));
     BtnsABC1.push_back(new CustomPushButton("P", Qt::Key_P, this));
 
-
     //初始化字母按键第一行
     for(int i = 0; i < 10; i++){
         //设置按钮属性
