@@ -23,6 +23,8 @@
 
 #include "englishbutton.h"
 #include "numbutton.h"
+#include "shiftbutton.h"
+#include "ce_switchbutton.h"
 
 #include <QObject>
 #include <QList>
@@ -36,6 +38,8 @@ public:
 
     static EnglishButton* getEnglishButton(QString str1, QString str2, int id = 0, ButtonBase::KeyType type = ButtonBase::Invalid, QWidget *parent = nullptr);
     static NumButton* getNumButton(QString num, int id = 0, ButtonBase::KeyType type = ButtonBase::Invalid, QWidget *parent = nullptr);
+    static ShiftButton* getShiftButton();
+    static CE_SwitchButton* getSwitchButton();
 
 signals:
 

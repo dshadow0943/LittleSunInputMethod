@@ -1,6 +1,12 @@
 #ifndef MYWIDGET_H
 #define MYWIDGET_H
 
+
+#include "softkeyboard.h"
+#include "custompushbutton.h"
+#include "characteritem.h"
+#include "buttonitem.h"
+
 #include <QWidget>
 #include <QToolButton>
 #include <QVBoxLayout>
@@ -8,10 +14,6 @@
 #include <QPaintEvent>
 #include <QTimer>
 #include <QPainter>
-#include <softkeyboard.h>
-
-#include "custompushbutton.h"
-#include "characteritem.h"
 
 namespace Ui {
 class HandKeyboard;
@@ -32,13 +34,16 @@ signals:
 
 public slots:
     void recognizeChinese(CharacterEntity&);
-    void KeyClicked(int unicode, int key);
+//    void KeyClicked(int unicode, int key);
+    void onClicked(ButtonBase* but);
 
 private:
     Ui::HandKeyboard *ui;
 
     SoftKeyboard *parent;
     //右侧工具栏__相关
+
+    QList<ButtonBase*> mButs;
     //删除按钮
     CustomPushButton *btnDel;
     //确认按钮
@@ -50,7 +55,7 @@ private:
     //键盘按钮
     CustomPushButton *btnKeyBoard;
     //右侧工具栏布局
-    QVBoxLayout *layout;
+
 
 private:
         void setRightToolWidget();

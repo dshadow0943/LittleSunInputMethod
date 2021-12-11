@@ -29,6 +29,15 @@ EnglishButton* ButtonItem::getEnglishButton(QString str1, QString str2, int id, 
 {
     EnglishButton *but = new EnglishButton(str1, str2, id, type, parent);
     but->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
+
+    if (ButtonBase::PinyinLetter == type) {
+        connect(getShiftButton(), &ShiftButton::sendShiftClicked, but, &EnglishButton::onShiftClicked);
+    }
+
+    if (ButtonBase::PinyinPunc == type) {
+        connect(getSwitchButton(), &CE_SwitchButton::sendSwitchClicked, but, &EnglishButton::onShiftClicked);
+    }
+
     return but;
 }
 
@@ -39,3 +48,17 @@ NumButton* ButtonItem::getNumButton(QString num, int id, ButtonBase::KeyType typ
     return but;
 }
 
+ShiftButton* ButtonItem::getShiftButton()
+{
+    static ShiftButton but;
+    but.setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
+    return &but;
+}
+
+CE_SwitchButton* ButtonItem::getSwitchButton()
+{
+    static CE_SwitchButton but;
+    but.setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
+    connect(&but, &CE_SwitchButton::sendSwitchClicked, getShiftButton(), &ShiftButton::onEnglishInput);
+    return &but;
+}

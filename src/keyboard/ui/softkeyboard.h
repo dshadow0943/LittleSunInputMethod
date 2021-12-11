@@ -17,7 +17,6 @@
 #include <QLabel>
 #include <QPushButton>
 
-
 #define KEYBOARD_NUM 0
 #define KEYBOARD_EN 1
 #define KEYBOARD_HAND 2

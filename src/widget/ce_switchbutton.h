@@ -1,9 +1,9 @@
 /*
 * Copyright (C) 2019 ~ 2019 UnionTech Software Technology Co.,Ltd.
 *
-* Author:     leilong <leilong@uniontech.com>
+* Author:     leilong <dshadow@foxmail.com>
 *
-* Maintainer: leilong <leilong@uniontech.com>
+* Maintainer: leilong <dshadow@foxmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,30 +18,36 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef ENGLISHBUTTON_H
-#define ENGLISHBUTTON_H
+#ifndef CE_SWITCHBUTTON_H
+#define CE_SWITCHBUTTON_H
 
 #include "buttonbase.h"
 
-class EnglishButton : public ButtonBase
+/**
+ * @brief The CE_SwitchButton class
+ * 拼音键盘中英文切换按键
+ */
+class CE_SwitchButton : public ButtonBase
 {
     Q_OBJECT
 public:
-    explicit EnglishButton(QString str1, QString str2, int id = 0, KeyType type = Invalid, QWidget *parent = nullptr);
+    explicit CE_SwitchButton(QString str1 = "En", QString str2 = "中", int id = KeySwitch, KeyType type = Func, QWidget *parent = nullptr);
 
-    //设置显示字母
-    void setLetter(bool isCaps);
+    bool getIsEnglish();
 
 signals:
+    void sendSwitchClicked(bool isEnflish);
 
 public slots:
-
-    void onShiftClicked(bool isCaps);
+    void onClicked();
 
 private:
+    void switchText(bool isEnglish);
 
+private:
     QString str1, str2;  //需要显示的字符
 
+    bool mIsEnglish = true;
 };
 
-#endif // ENGLISHBUTTON_H
+#endif // CE_SWITCHBUTTON_H

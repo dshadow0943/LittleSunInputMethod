@@ -1,9 +1,9 @@
 /*
 * Copyright (C) 2019 ~ 2019 UnionTech Software Technology Co.,Ltd.
 *
-* Author:     leilong <leilong@uniontech.com>
+* Author:     leilong <dshadow@foxmail.com>
 *
-* Maintainer: leilong <leilong@uniontech.com>
+* Maintainer: leilong <dshadow@foxmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,30 +18,27 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef ENGLISHBUTTON_H
-#define ENGLISHBUTTON_H
+#include "shiftbutton.h"
 
-#include "buttonbase.h"
-
-class EnglishButton : public ButtonBase
+ShiftButton::ShiftButton(QString text, int id, ButtonBase::KeyType type, QWidget *parent) : ButtonBase (id, type, parent)
 {
-    Q_OBJECT
-public:
-    explicit EnglishButton(QString str1, QString str2, int id = 0, KeyType type = Invalid, QWidget *parent = nullptr);
+    setText(text);
+    connect(this, &QPushButton::clicked, this, &ShiftButton::onClicked);
+}
 
-    //设置显示字母
-    void setLetter(bool isCaps);
+void ShiftButton::onClicked()
+{
+    if (mIsCapsLook) {
+        return;
+    }
+    mIsCaps = !mIsCaps;
+    emit sendShiftClicked(mIsCaps);
+}
 
-signals:
-
-public slots:
-
-    void onShiftClicked(bool isCaps);
-
-private:
-
-    QString str1, str2;  //需要显示的字符
-
-};
-
-#endif // ENGLISHBUTTON_H
+void ShiftButton::onEnglishInput(bool isEnglish)
+{
+    if (isEnglish  == mIsCaps) {
+        onClicked();
+    }
+    mIsCapsLook = !isEnglish;
+}

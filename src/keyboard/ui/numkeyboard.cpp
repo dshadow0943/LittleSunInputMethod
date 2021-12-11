@@ -9,11 +9,8 @@ NumKeyboard::NumKeyboard(SoftKeyboard *parent) : QWidget(parent)
 {
     this->parent = parent;
 
-    //创建栅格布局
-
     initKeyValue();
     initKeyboard();
-
 }
 
 void NumKeyboard::setParent(SoftKeyboard *parent){

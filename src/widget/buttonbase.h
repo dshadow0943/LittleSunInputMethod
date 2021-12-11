@@ -34,6 +34,7 @@ public:
         Invalid = 0,
         PinyinLetter,  //拼音键盘字母按键
         PinyinNum,     //拼音键盘数字按键
+        PinyinPunc,    //拼音键盘符号
         Num,           //数字键盘数字按键
         Func,          //功能按键
         Punc,          //符号按键
@@ -44,6 +45,7 @@ public:
         keyPinyin,  //拼音
         keyHand, //手写
         keyPunc, //符号
+        KeySwitch, //中英文切换键
     };
 
     explicit ButtonBase(int id = 0, KeyType type = Invalid, QWidget *parent = nullptr);

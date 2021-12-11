@@ -1,9 +1,9 @@
 /*
 * Copyright (C) 2019 ~ 2019 UnionTech Software Technology Co.,Ltd.
 *
-* Author:     leilong <leilong@uniontech.com>
+* Author:     leilong <dshadow@foxmail.com>
 *
-* Maintainer: leilong <leilong@uniontech.com>
+* Maintainer: leilong <dshadow@foxmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,30 +18,34 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "englishbutton.h"
+#include "ce_switchbutton.h"
 
-EnglishButton::EnglishButton(QString str1, QString str2, int id, KeyType type, QWidget *parent) : ButtonBase(id, type, parent)
+CE_SwitchButton::CE_SwitchButton(QString str1, QString str2, int id, KeyType type, QWidget *parent) : ButtonBase(id, type, parent)
   , str1(str1)
   , str2(str2)
 {
-    setLetter(true);
+    switchText((mIsEnglish));
+
+    connect(this, &QPushButton::clicked, this, &CE_SwitchButton::onClicked);
 }
 
-/**
- * @brief EnglishButton::setLetter
- * 设置显示字母
- * @param isCaps true: 显示大写字母， false: 显示小写字母
- */
-void EnglishButton::setLetter(bool isCaps)
+bool CE_SwitchButton::getIsEnglish()
 {
-    if (isCaps) {
+    return this->mIsEnglish;
+}
+
+void CE_SwitchButton::onClicked()
+{
+    mIsEnglish = !mIsEnglish;
+    switchText((mIsEnglish));
+    emit sendSwitchClicked(mIsEnglish);
+}
+
+void CE_SwitchButton::switchText(bool isEnglish)
+{
+    if (isEnglish) {
         setText(str1);
     } else {
         setText(str2);
     }
-}
-
-void EnglishButton::onShiftClicked(bool isCaps)
-{
-    setLetter(isCaps);
 }
