@@ -16,7 +16,6 @@ class NumKeyboard : public QWidget
     Q_OBJECT
 public:
     explicit NumKeyboard(SoftKeyboard *parent = nullptr);
-    void setParent(SoftKeyboard *parent);
 
 private:
 

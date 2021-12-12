@@ -5,7 +5,7 @@
 #include "enkeyboard.h"
 #include "punckeyboard.h"
 #include "handkeyboard.h"
-#include "htranslateview.h"
+#include "hscrollbarview.h"
 #include "customskin.h"
 #include <QLabel>
 #include <QDebug>
@@ -22,9 +22,7 @@ SoftKeyboard::SoftKeyboard(QWidget *parent) :
     ui->setupUi(this);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool | Qt::WindowDoesNotAcceptFocus);
     chineseServer.init();
-    initView();
-    initCandidate();
-    initKeyboard();
+    initUi();
 
     arrowIcon = new QImage;
 
@@ -38,10 +36,8 @@ SoftKeyboard::SoftKeyboard(QWidget *parent) :
     int with = ui->title->width();
     int height = ui->title->height();
     QPixmap fitpixmap = pixmap.scaled(with, height, Qt::IgnoreAspectRatio, Qt::SmoothTransformation); // 饱满填充
-    //QPixmap fitpixmap = pixmap.scaled(with, height, Qt::KeepAspectRatio, Qt::SmoothTransformation); // 按比例缩放
     ui->title->setPixmap(fitpixmap);
 
-//    setStyleSheet("background:#EAF7FF;");
 }
 
 SoftKeyboard::~SoftKeyboard()
@@ -51,7 +47,14 @@ SoftKeyboard::~SoftKeyboard()
 
 void SoftKeyboard::initUi()
 {
-//    mKeyboardSidebar = new KeyboardSidebar(ui->tab);
+    setStyleSheet(".SoftKeyboard{background:qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.8, fx:0.5, fy:0.5,stop:0 #EAF7FF,stop:1 #C0DEF6);}");
+
+    mVTranslateView = ScrollBarManage::getVCanditateView();
+    mHTranslateView = ScrollBarManage::getHCanditateView();
+
+    initView();
+    initCandidate();
+    initKeyboard();
 }
 
 /**
@@ -82,24 +85,15 @@ void SoftKeyboard::initView(){
  */
 void SoftKeyboard::initCandidate()
 {
-    //初始化水平候选词拖拽控件
-    translateHDragableWidget = ui->word_box;
-    translateHDragableWidget->init(hTranslateView, CustomWidget::HORIZONTAL1);
-    translateHDragableWidget->setMouseSensitivity(5);
-
-//    //初始化垂直候选词拖拽控件
-//    translateVDragableWidget = ui->page_cand;
-//    translateVDragableWidget->init(vTranslateView,CustomWidget::VERTICAL1);
-//    translateVDragableWidget->setMouseSensitivity(5);
+    ui->word_box->setWidget(ScrollBarManage::getHCanditateView(), ScrollBarContainer::Horizontal, 5);
 
     letterLabel = ui->candidate;
     QFont font = letterLabel->font();
     font.setUnderline(true);
     letterLabel->setFont(font);
 
-    connect(hTranslateView, &CustomCharView::clicked, this, &SoftKeyboard::userSelectChinese);
-    connect(vTranslateView, &CustomCharView::clicked, this, &SoftKeyboard::userSelectChinese);
-
+    connect(mVTranslateView, &ScrollBarBase::clicked, this, &SoftKeyboard::userSelectChinese);
+    connect(mHTranslateView, &ScrollBarBase::clicked, this, &SoftKeyboard::userSelectChinese);
 }
 
 /**
@@ -108,23 +102,19 @@ void SoftKeyboard::initCandidate()
  */
 void SoftKeyboard::initKeyboard()
 {
-//    ui->key_page->addWidget(new NumKeyboard(this));
-//    ui->key_page->addWidget(new EnKeyboard(this));
-//    ui->key_page->addWidget(new HandKeyboard(this));
-//    ui->key_page->addWidget(new PuncKeyboard(this));
+    ui->key_page->addWidget(new NumKeyboard(this));
+    ui->key_page->addWidget(new EnKeyboard(this));
+    ui->key_page->addWidget(new HandKeyboard(this));
+    ui->key_page->addWidget(new PuncKeyboard(this));
 
+    ScrollBarContainer *sbc = new ScrollBarContainer(this);
+    sbc->setWidget(ScrollBarManage::getVCanditateView(), ScrollBarContainer::Vertical, 5);
+    ui->key_page->addWidget(sbc);
 
     keyTypeTab[0] = ui->btn_num_key;
     keyTypeTab[1] = ui->btn_en_key;
     keyTypeTab[2] = ui->btn_hand_key;
     keyTypeTab[3] = ui->btn_punc_key;
-
-    //建立键盘布局与当前实例的连接
-    ui->page_en->setParent(this);
-    ui->page_hand->setParent(this);
-    ui->page_num->setParent(this);
-    ui->page_punc->setParent(this);
-
 }
 
 /**
@@ -147,8 +137,7 @@ void SoftKeyboard::arrowClicked()
 
 void SoftKeyboard::arrowChange()
 {
-
-    if (hTranslateView->dataStrings.isEmpty()){
+    if (mHTranslateView->dataStrings.isEmpty()){
         arrowIcon->load(":/icon/arrow_b.svg");
         arrowStatus = ARROW_CLOSE;
     } else if (ui->key_page->currentIndex() == KEYBOARD_CAND){
@@ -192,7 +181,6 @@ void SoftKeyboard::showEvent(QShowEvent* event)
  */
 void SoftKeyboard::switchPage(int type)
 {
-
     //如需要切换的键盘和当前显示的键盘是同一个则直接不做处理，放置多次重复点击
     if (ui->key_page->currentIndex() == type){
         return;
@@ -206,22 +194,16 @@ void SoftKeyboard::switchPage(int type)
         case KEYBOARD_PUNC:
             w = int(DEFAULT_WIDTH * winScale);
             h = int(DEFAULT_HEIGHT * winScale);
-
             break;
         case KEYBOARD_EN:
             w = int(EN_DEFAULT_WIDTH * winScale);
             h = int(EN_DEFAULT_HEIGHT * winScale);
         break;
         case KEYBOARD_CAND:
-            vTranslateView->dataStrings = hTranslateView->dataStrings;
-            vTranslateView->update();
             break;
         default:
             return;
     }
-
-    //切换键盘是将手写界面初始化为汉字识别
-    CustomPushButton::abc123 = false;
 
     previousKey = ui->key_page->currentIndex();
     for (int i = 0; i < 4; i++) {
@@ -238,7 +220,6 @@ void SoftKeyboard::switchPage(int type)
         clearHistory(); //重置清空候选词
         this->resize(w, h);    //更新窗口大小
     }
-
     arrowChange();
 }
 
@@ -249,9 +230,7 @@ void SoftKeyboard::switchPage(int type)
  */
 void SoftKeyboard::fillCandidateText(QStringList strList){
 
-    hTranslateView->dataStrings.clear();        //清空候选词
-    hTranslateView->dataStrings.append(strList);    //填充候选词
-    hTranslateView->update();
+    ScrollBarManage::getInstace()->setCanditeData(strList);  //填充候选词
     arrowChange();  //更改箭头状态
 }
 
@@ -274,26 +253,15 @@ void SoftKeyboard::clearHistory()
     letterLabel->clear();
     alreadyInputLetters.clear();
     alreadySelectTranslates.clear();
-    vTranslateView->dataStrings.clear();
-    vTranslateView->update();
-    hTranslateView->dataStrings.clear();
-    hTranslateView->update();
+    mVTranslateView->clearData();
+    mHTranslateView->clearData();
     XYInputSearchInterface::getInstance()->resetSearch();
 }
 
-/**
- * @brief SoftKeyboard::search_begin
- * @param lists
- * 根据候选字母映射出候选词填充到候选框(拼音)
- */
-void SoftKeyboard::searchBegin(QList<XYTranslateItem *> lists)
+void SoftKeyboard::onSearchBegin(QStringList data)
 {
-    hTranslateView->dataStrings.clear();
-    foreach (XYTranslateItem *temp, lists) {
-        hTranslateView->dataStrings.append(temp->msTranslate);
-    }
+    ScrollBarManage::getInstace()->setCanditeData(data);
     letterLabel->setText(XYInputSearchInterface::getInstance()->getCurLetters());
-    hTranslateView->update();
     arrowChange();  //更新箭头状态
 }
 
@@ -306,10 +274,10 @@ void SoftKeyboard::searchBegin(QList<XYTranslateItem *> lists)
 void SoftKeyboard::userSelectChinese(const QString &text, int index)
 {
     QString showText;
-    QList<XYTranslateItem *> lists = XYInputSearchInterface::getInstance()->completeInput(text, index, showText);
+    QStringList data = XYInputSearchInterface::getInstance()->getCandidate(text, index, showText);
     letterLabel->setText(showText);
 
-    if(lists.isEmpty()){        //点击候选词后无剩余候选字母
+    if(data.isEmpty()){        //点击候选词后无剩余候选字母
         //这里完成输入
         QString word = alreadySelectTranslates.join("").append(text);
         addCandidateCharacterText(word);  //将数据发送出去
@@ -326,39 +294,18 @@ void SoftKeyboard::userSelectChinese(const QString &text, int index)
         if (words.size() != 0) {
             fillCandidateText(words);
         }
-
     }
     else    //如果还剩候选字母则留着等着再次处理globalPos()
     {
         alreadySelectTranslates.append(text);
-        hTranslateView->dataStrings.clear();
-        foreach(XYTranslateItem *temp, lists){
-            hTranslateView->dataStrings.append(temp->msTranslate);
-        }
-        hTranslateView->move(0,0);
-        hTranslateView->update();
-        if(ui->key_page->currentIndex() == 4){
-            hTranslateView->dataStrings = hTranslateView->dataStrings;
-            hTranslateView->move(0,0);
-            hTranslateView->update();
-        }
+        ScrollBarManage::getInstace()->setCanditeData(data);
     }
 }
 
-/**
- * @brief SoftKeyboard::a2zkeyClicked
- * @param unicode
- * @param key
- * @return
- * 添加候选字母
- */
-bool SoftKeyboard::a2zkeyClicked(int unicode, int key)
+void SoftKeyboard::addCandidateLetter(QString letter)
 {
-    Q_UNUSED(key);
-    alreadyInputLetters.append(QChar(unicode).toLower());
-
-    searchBegin(XYInputSearchInterface::getInstance()->searchTranslates(alreadyInputLetters));
-    return true;
+    alreadyInputLetters.append(letter.toLower());
+    onSearchBegin(XYInputSearchInterface::getInstance()->getCandidate(alreadyInputLetters));
 }
 
 /* 重写事件 */
@@ -459,26 +406,23 @@ void SoftKeyboard::deleteSlot()
 {
     if (!alreadyInputLetters.isEmpty()){
         alreadyInputLetters = alreadyInputLetters.mid(0, alreadyInputLetters.size()-1);
-        searchBegin(XYInputSearchInterface::getInstance()->searchTranslates(alreadyInputLetters));
-    } else if (!hTranslateView->dataStrings.isEmpty()){
+        onSearchBegin(XYInputSearchInterface::getInstance()->getCandidate(alreadyInputLetters));
+    } else if (!mHTranslateView->dataStrings.isEmpty()){
         clearHistory();
         arrowChange();
-
     } else {
         emit sendDeleteCharacter();
     }
-
 }
 
 void SoftKeyboard::enterSlot()
 {
-
     if(letterLabel->text().isEmpty())
     {
         addCandidateCharacterText("\n");
         return;
     }
-    else if(hTranslateView->dataStrings.size() > 0){
+    else if(mHTranslateView->dataStrings.size() > 0){
         addCandidateCharacterText(alreadyInputLetters);
     }
     clearHistory();
@@ -492,8 +436,8 @@ void SoftKeyboard::spaceSlot()
         addCandidateCharacterText(" ");
         return;
     }
-    else if(hTranslateView->dataStrings.size() > 0){
-        userSelectChinese(hTranslateView->dataStrings.at(0),0);
+    else if(mHTranslateView->dataStrings.size() > 0){
+        userSelectChinese(mHTranslateView->dataStrings.at(0),0);
     }
 }
 

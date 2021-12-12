@@ -22,10 +22,6 @@ HandKeyboard::HandKeyboard(SoftKeyboard *parent) :
     connect(ui->handWritingWidget, &HandView::charToParent, this, &HandKeyboard::recognizeChinese);
 }
 
-void HandKeyboard::setParent(SoftKeyboard *parent){
-    this->parent = parent;
-}
-
 void HandKeyboard::setRightToolWidget()
 {
     QVBoxLayout *layout = new QVBoxLayout;
@@ -52,14 +48,19 @@ void HandKeyboard::onClicked(ButtonBase* but)
 {
     switch (but->getId()) {
     case Qt::Key_Backspace:
+        parent->deleteSlot();
         break;
     case Qt::Key_Enter:
+        parent->enterSlot();
         break;
     case ButtonBase::KeyNum:
+        parent->switchPage(KEYBOARD_NUM);
         break;
     case ButtonBase::keyPunc:
+        parent->switchPage(KEYBOARD_PUNC);
         break;
     case ButtonBase::keyPinyin:
+         parent->switchPage(KEYBOARD_EN);
         break;
     }
 }

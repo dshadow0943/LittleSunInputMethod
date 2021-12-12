@@ -15,10 +15,10 @@ public:
     bool initInputBase(const QString &path);
     void resetSearch();
     QString getCurLetters();
+    QStringList getCandidate(const QString &keyword, bool isEnglish = false);
+    QStringList getCandidate(const QString &text, int index, QString &showText);
 
-signals:
-
-public slots:
+private:
     QList<XYTranslateItem *> &searchTranslates(const QString &keyword);
     void setChinese(bool ch);
 

@@ -24,17 +24,14 @@ class HandKeyboard : public QWidget
     Q_OBJECT
 
 public:
-    explicit HandKeyboard(SoftKeyboard *parent = nullptr);
+    explicit HandKeyboard(SoftKeyboard *parent);
     ~HandKeyboard();
-
-    void setParent(SoftKeyboard *parent);
 
 signals:
     void toEN_keyBoard();
 
 public slots:
     void recognizeChinese(CharacterEntity&);
-//    void KeyClicked(int unicode, int key);
     void onClicked(ButtonBase* but);
 
 private:

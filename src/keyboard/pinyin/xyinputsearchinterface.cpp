@@ -50,6 +50,34 @@ QString XYInputSearchInterface::getCurLetters()
     return letters.replace("%", "");
 }
 
+QStringList XYInputSearchInterface::getCandidate(const QString &keyword, bool isEnglish)
+{
+    mbEnglish = isEnglish;
+    QList<XYTranslateItem *> items = searchTranslates(keyword);
+    QStringList data;
+    for (XYTranslateItem *item : items) {
+        data.append(item->msTranslate);
+    }
+    return data;
+}
+
+QStringList XYInputSearchInterface::getCandidate(const QString &text, int index, QString &showText)
+{
+    if (index < curSearchedTranslates.size())
+    {
+        completeInput(text, showText, curSearchedTranslates.at(index));
+    }
+    else
+    {
+        curSearchedTranslates.clear();
+    }
+    QStringList data;
+    for (XYTranslateItem *item : curSearchedTranslates) {
+        data.append(item->msTranslate);
+    }
+    return data;
+}
+
 QList<XYTranslateItem *> &XYInputSearchInterface::searchTranslates(const QString &keyword)
 {
     QList<XYTranslateItem *> list;

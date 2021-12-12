@@ -17,9 +17,7 @@ class EnKeyboard : public QWidget
 {
     Q_OBJECT
 public:
-    explicit EnKeyboard(SoftKeyboard *parent = nullptr);
-
-    void setParent(SoftKeyboard *parent);
+    explicit EnKeyboard(SoftKeyboard *parent);
 
 signals:
     void keyBoardToHide();

@@ -2,14 +2,15 @@
 #define SOFTKEYBOARD_H
 
 #include "keyboardsidebar.h"
-#include "customwidget.h"
-#include "customcharview.h"
-#include "htranslateview.h"
-#include "vtranslateview.h"
+#include "scrollbarcontainer.h"
+#include "scrollbarbase.h"
+#include "hscrollbarview.h"
+#include "vscrollbarview.h"
 #include "xydatabaseoperation.h"
 #include "xyinputsearchinterface.h"
 #include "xytranslateitem.h"
 #include "chinesecharacterserver.h"
+#include "scrollbarmanage.h"
 
 #include <QWidget>
 #include <QStackedWidget>
@@ -47,8 +48,7 @@ public:
 
     /* 给子布局的接口 */
     void clearHistory();           //重置候选框
-
-    void searchBegin(QList<XYTranslateItem *> lists);  //根据候选字母映射出候选词
+    void onSearchBegin(QStringList data); //根据候选字母映射出候选词
 
     QLineEdit *textShow;        //文本显示区域
 
@@ -67,7 +67,7 @@ public slots:
     void switchPreviousKey();
     void switchPage(int type = -1);      //切换键盘
     void addCandidateCharacterText(QString character);  //非中文输入时的添加字符到输入框 / 中文输入时将选中的候选框的文字添加到候选框
-    bool a2zkeyClicked(int unicode, int key);      //添加中文搜索字母
+    void addCandidateLetter(QString letter);
     void userSelectChinese(const QString&, int);    //拼音输入时点击候选词的处理方法
 
 private slots:
@@ -121,14 +121,13 @@ private:
     bool isMousePress=false;
     bool isMoveEnabled;
 
-    QString s;
     QString alreadyInputLetters; //用户输入的所有字母
     QStringList alreadySelectTranslates; //用户选择的所有中文词组
 
-    CustomWidget        *translateHDragableWidget;  //水平候选词拖拽控件
-    CustomWidget        *translateVDragableWidget;  //垂直候选词拖拽控件
+    VScrollBarView *mVTranslateView;
+    HScrollBarView *mHTranslateView;
 
-    QLabel              *letterLabel;               //输入字母显示控件，同时提供对键盘的移动操作
+    QLabel *letterLabel;               //输入字母显示控件，同时提供对键盘的移动操作
 
 private:
 

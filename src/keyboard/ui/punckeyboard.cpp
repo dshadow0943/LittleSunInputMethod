@@ -2,8 +2,10 @@
 #include <QColorDialog>
 #include <QFontDialog>
 #include <QGridLayout>
+#include <QScrollArea>
 #include <QFile>
 #include <QHBoxLayout>
+#include <QScrollArea>
 
 /**
  * @brief PuncKeyboard::PuncKeyboard
@@ -13,16 +15,32 @@
 PuncKeyboard::PuncKeyboard(SoftKeyboard *parent) : QWidget(parent)
 {
     this->parent = parent;
+    initUi();
+    initConnect();
+}
 
-    punctuations->dataStrings = loadSymbols(":/symbol.txt");
-    punctuations->setUnitMinHeight(40);
-    punctuations->setUnitMinWidth(50);
-    customViw = new CustomWidget(this);
-    customViw->init(punctuations,CustomWidget::VERTICAL1);
-    customViw->setMouseSensitivity(5);
+void PuncKeyboard::initUi()
+{
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->setMargin(0);
 
+    mButs.push_back(ButtonItem::getNumButton("删除", Qt::Key_Backspace, ButtonBase::Func, this));
+    mButs.push_back(ButtonItem::getNumButton("确认", Qt::Key_Enter, ButtonBase::Func, this));
+    mButs.push_back(ButtonItem::getNumButton("中文", ButtonBase::KeyChinese, ButtonBase::Func, this));
+    mButs.push_back(ButtonItem::getNumButton("英文", ButtonBase::KeyEnglish, ButtonBase::Func, this));
+    mButs.push_back(ButtonItem::getNumButton("数学", ButtonBase::KeyMath, ButtonBase::Func, this));
+    mButs.push_back(ButtonItem::getNumButton("返回", ButtonBase::KeyBack, ButtonBase::Func, this));
 
-    setRightToolWidget();
+    for (ButtonBase *but : mButs) {
+        layout->addWidget(but,1);
+    }
+
+    punc = ScrollBarManage::getVSrcllBarView(this);
+    ScrollBarContainer *customViw = new ScrollBarContainer(this);
+    customViw->setWidget(punc, ScrollBarContainer::Vertical, 5);
+    QStringList data = loadSymbols(":/symbol.txt");
+    punc->setData(data);
+
     QHBoxLayout *hLayout = new QHBoxLayout(this);
     hLayout->addWidget(customViw, 5);
     QWidget *w = new QWidget;
@@ -31,14 +49,14 @@ PuncKeyboard::PuncKeyboard(SoftKeyboard *parent) : QWidget(parent)
     layout->setSpacing(4);
     hLayout->setMargin(0);
     hLayout->setSpacing(0);
-
-    connect(punctuations, &VTranslateView::clicked, this, &PuncKeyboard::userSelectPunctuation);
+    this->setLayout(hLayout);
 }
 
-void PuncKeyboard::setParent(SoftKeyboard *parent){
-    this->parent = parent;
-    connect(btnBack, &CustomPushButton::clicked1, parent, &SoftKeyboard::switchPreviousKey);
-    connect(btnDel, &CustomPushButton::clicked1, parent, &SoftKeyboard::deleteSlot);
+void PuncKeyboard::initConnect(){
+    for (ButtonBase *but : mButs) {
+        connect(but, &ButtonBase::sendClicked, this, &PuncKeyboard::onClicked);
+    }
+    connect(punc, &VScrollBarView::clicked, this, &PuncKeyboard::userSelectPunctuation);
 }
 
 void PuncKeyboard::userSelectPunctuation(const QString &text, int index)
@@ -47,52 +65,25 @@ void PuncKeyboard::userSelectPunctuation(const QString &text, int index)
     parent->addCandidateCharacterText(text);
 }
 
-/**
- * @brief PunctuationsView::setRightToolWidget
- * 设置右工具栏
- */
-void PuncKeyboard::setRightToolWidget()
+void PuncKeyboard::onClicked(ButtonBase* but)
 {
-    layout = new QVBoxLayout;
-    //删除按钮
-    btnDel = new CustomPushButton("删除", Qt::Key_Backspace, this);
-
-
-    //确认按钮
-    btnSure = new CustomPushButton(" ",0,this);
-
-    //abc按钮
-    btnabc = new CustomPushButton(" ",0,this);
-
-    //123按钮
-    btn123 = new CustomPushButton(" ",0,this);
-
-    //上一页
-    btnLast = new CustomPushButton(" ",0,this);
-
-    //下一页
-    btnBack = new CustomPushButton("返回",Qt::Key_Back, this);
-
-//    设置按钮在布局中大小变化的属性，设置成随着布局的变化变化
-    btnDel->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-    btnSure->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-    btnabc->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-    btn123->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-    btnLast->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-    btnBack->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-
-    //设置右侧工具栏布局
-    layout->addWidget(btnDel,1);
-    layout->addWidget(btnSure,1);
-    layout->addWidget(btnabc,1);
-    layout->addWidget(btn123,1);
-    layout->addWidget(btnLast,1);
-    layout->addWidget(btnBack,1);
-    layout->setContentsMargins(0,0,0,0);
-    layout->setSpacing(1);
-
-    /*将布局设置给右侧工具栏部件*/
-//    ui->rightTool->setLayout(layout);
+    switch (but->getId()) {
+    case Qt::Key_Backspace:
+        parent->deleteSlot();
+        break;
+    case Qt::Key_Enter:
+        parent->enterSlot();
+        break;
+    case ButtonBase::KeyChinese:
+        break;
+    case ButtonBase::KeyEnglish:
+        break;
+    case ButtonBase::KeyMath:
+        break;
+    case ButtonBase::KeyBack:
+         parent->switchPreviousKey();
+        break;
+    }
 }
 
 QStringList PuncKeyboard::loadSymbols(const QString &file)

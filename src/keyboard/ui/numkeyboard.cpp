@@ -13,10 +13,6 @@ NumKeyboard::NumKeyboard(SoftKeyboard *parent) : QWidget(parent)
     initKeyboard();
 }
 
-void NumKeyboard::setParent(SoftKeyboard *parent){
-    this->parent = parent;
-}
-
 /**
  * @brief num_keyboard::initKeyValue
  * 初始化按键

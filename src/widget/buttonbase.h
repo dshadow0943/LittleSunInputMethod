@@ -46,6 +46,10 @@ public:
         keyHand, //手写
         keyPunc, //符号
         KeySwitch, //中英文切换键
+        KeyChinese,
+        KeyEnglish,
+        KeyMath,
+        KeyBack,
     };
 
     explicit ButtonBase(int id = 0, KeyType type = Invalid, QWidget *parent = nullptr);

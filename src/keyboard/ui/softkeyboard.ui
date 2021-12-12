@@ -363,7 +363,7 @@
              </widget>
             </item>
             <item>
-             <widget class="CustomWidget" name="word_box" native="true">
+             <widget class="ScrollBarContainer" name="word_box" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                 <horstretch>0</horstretch>
@@ -426,11 +426,6 @@
         <property name="styleSheet">
          <string notr="true"/>
         </property>
-        <widget class="NumKeyboard" name="page_num"/>
-        <widget class="EnKeyboard" name="page_en"/>
-        <widget class="HandKeyboard" name="page_hand"/>
-        <widget class="PuncKeyboard" name="page_punc"/>
-        <widget class="CustomWidget" name="page_cand"/>
        </widget>
       </item>
      </layout>
@@ -440,33 +435,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>HandKeyboard</class>
+   <class>ScrollBarContainer</class>
    <extends>QWidget</extends>
-   <header>handkeyboard.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>EnKeyboard</class>
-   <extends>QWidget</extends>
-   <header>enkeyboard.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>NumKeyboard</class>
-   <extends>QWidget</extends>
-   <header>numkeyboard.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>PuncKeyboard</class>
-   <extends>QWidget</extends>
-   <header>punckeyboard.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>CustomWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">customwidget.h</header>
+   <header location="global">scrollbarcontainer.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

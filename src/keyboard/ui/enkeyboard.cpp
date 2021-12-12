@@ -13,11 +13,7 @@ EnKeyboard::EnKeyboard(SoftKeyboard *parent) : QWidget(parent)
     //初始化键盘
     initPinyinDictionary();
     initView();
-//    caseChanged(CustomPushButton::shift);
-}
-
-void EnKeyboard::setParent(SoftKeyboard *parent){
-    this->parent = parent;
+    initConnect();
 }
 
 void EnKeyboard::initPinyinDictionary()
@@ -132,9 +128,9 @@ void EnKeyboard::initView()
 
     mButLines.push_back(ButtonItem::getNumButton("123", ButtonBase::KeyNum, ButtonBase::Func, this));
     mButLines.push_back(ButtonItem::getNumButton("符号", ButtonBase::keyPunc, ButtonBase::Func, this));
-    mButLines.push_back(ButtonItem::getEnglishButton(",", "，", Qt::Key_F, ButtonBase::PinyinPunc, this));
-    mButLines.push_back(ButtonItem::getNumButton(" ", Qt::Key_G, ButtonBase::PinyinLetter, this));
-    mButLines.push_back(ButtonItem::getEnglishButton(".", "。", Qt::Key_H, ButtonBase::PinyinPunc, this));
+    mButLines.push_back(ButtonItem::getEnglishButton(",", "，", Qt::Key_Comma, ButtonBase::PinyinPunc, this));
+    mButLines.push_back(ButtonItem::getNumButton(" ", Qt::Key_Space, ButtonBase::Func, this));
+    mButLines.push_back(ButtonItem::getEnglishButton(".", "。", Qt::Key_Camera, ButtonBase::PinyinPunc, this));
     mButLines.push_back(ButtonItem::getSwitchButton());
     mButLines.push_back(ButtonItem::getNumButton("手写", ButtonBase::keyHand, ButtonBase::Func, this));
 
@@ -155,11 +151,9 @@ void EnKeyboard::initView()
             row += 6;
         }
     }
-    initConnect();
 }
 
 void EnKeyboard::initConnect(){
-
     for (ButtonBase *but : mButLines) {
         connect(but, &ButtonBase::sendClicked, this, &EnKeyboard::onClicked);
     }
@@ -177,20 +171,32 @@ void EnKeyboard::onClicked(ButtonBase* but)
 
     } else {
         if (but->getType() == ButtonBase::PinyinLetter) {
+            parent->addCandidateLetter(but->text());
             return;
+        }
+        if (but->getType() == ButtonBase::PinyinPunc) {
+            emit sendCandidateCharacterText(but->text());
         }
     }
 
     switch (but->getId()) {
     case Qt::Key_Backspace:
+        parent->deleteSlot();
         break;
     case Qt::Key_Enter:
+        parent->enterSlot();
+        break;
+    case Qt::Key_Space:
+        parent->spaceSlot();
         break;
     case ButtonBase::KeyNum:
+        parent->switchPage(KEYBOARD_NUM);
         break;
     case ButtonBase::keyPunc:
+        parent->switchPage(KEYBOARD_PUNC);
         break;
-    case ButtonBase::keyPinyin:
+    case ButtonBase::keyHand:
+         parent->switchPage(KEYBOARD_HAND);
         break;
     }
 }
