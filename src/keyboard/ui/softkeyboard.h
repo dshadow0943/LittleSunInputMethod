@@ -3,9 +3,6 @@
 
 #include "keyboardsidebar.h"
 #include "scrollbarcontainer.h"
-#include "scrollbarbase.h"
-#include "hscrollbarview.h"
-#include "vscrollbarview.h"
 #include "xydatabaseoperation.h"
 #include "xyinputsearchinterface.h"
 #include "xytranslateitem.h"
@@ -117,17 +114,17 @@ private:
 
 
     //无边框窗口移动相关参数
-    QPoint cursorGlobalPos;
-    bool isMousePress=false;
-    bool isMoveEnabled;
+    QPoint mCursorGlobalPos;
+    bool mIsMousePress=false;
+    bool mIsMoveEnabled;
 
-    QString alreadyInputLetters; //用户输入的所有字母
-    QStringList alreadySelectTranslates; //用户选择的所有中文词组
+    QString mAlreadyInputLetters; //用户输入的所有字母
+    QStringList mAlreadySelectTranslates; //用户选择的所有中文词组
 
     VScrollBarView *mVTranslateView;
     HScrollBarView *mHTranslateView;
 
-    QLabel *letterLabel;               //输入字母显示控件，同时提供对键盘的移动操作
+    QLabel *mLetterLabel;               //输入字母显示控件，同时提供对键盘的移动操作
 
 private:
 

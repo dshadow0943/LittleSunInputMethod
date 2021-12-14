@@ -38,6 +38,7 @@ public:
         Num,           //数字键盘数字按键
         Func,          //功能按键
         Punc,          //符号按键
+        Tab,
     };
 
     enum KeyId {

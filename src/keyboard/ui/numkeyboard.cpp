@@ -36,7 +36,7 @@ void NumKeyboard::initKeyValue()
     mButLine.push_back(ButtonItem::getNumButton("7", Qt::Key_7, ButtonBase::Num, this));
     mButLine.push_back(ButtonItem::getNumButton("8", Qt::Key_8, ButtonBase::Num, this));
     mButLine.push_back(ButtonItem::getNumButton("9", Qt::Key_9, ButtonBase::Num, this));
-    mButLine.push_back(ButtonItem::getNumButton("@", Qt::Key_At, ButtonBase::Func, this));
+    mButLine.push_back(ButtonItem::getNumButton("@", Qt::Key_At, ButtonBase::Num, this));
 
     mButLine.push_back(ButtonItem::getNumButton("/", 0, ButtonBase::Punc, this));
     mButLine.push_back(ButtonItem::getNumButton("符号", ButtonBase::keyPunc, ButtonBase::Func, this));

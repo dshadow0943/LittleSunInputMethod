@@ -5,7 +5,7 @@
 #include "enkeyboard.h"
 #include "punckeyboard.h"
 #include "handkeyboard.h"
-#include "hscrollbarview.h"
+#include "settingmanage.h"
 #include "customskin.h"
 #include <QLabel>
 #include <QDebug>
@@ -87,10 +87,10 @@ void SoftKeyboard::initCandidate()
 {
     ui->word_box->setWidget(ScrollBarManage::getHCanditateView(), ScrollBarContainer::Horizontal, 5);
 
-    letterLabel = ui->candidate;
-    QFont font = letterLabel->font();
+    mLetterLabel = ui->candidate;
+    QFont font = mLetterLabel->font();
     font.setUnderline(true);
-    letterLabel->setFont(font);
+    mLetterLabel->setFont(font);
 
     connect(mVTranslateView, &ScrollBarBase::clicked, this, &SoftKeyboard::userSelectChinese);
     connect(mHTranslateView, &ScrollBarBase::clicked, this, &SoftKeyboard::userSelectChinese);
@@ -206,11 +206,54 @@ void SoftKeyboard::switchPage(int type)
     }
 
     previousKey = ui->key_page->currentIndex();
+
+    skin_color colors = SettingManage::getInstance()->getSkinColor(SkinType::Tab);
+
     for (int i = 0; i < 4; i++) {
-        keyTypeTab[i]->setStyleSheet("background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #EAF7FF,stop:1 #EAF7FF);");
+        QString button_style= QString(".QPushButton{ \
+                                          border-style:none;\
+                                          border:1px solid #C0DCF2;\
+                                          color:%1;\
+                                          padding:5px;\
+                                          min-height:15px;\
+                                          border-radius:5px;\
+                                          background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %2,stop:0.4 %3,stop:0.6 %3,stop:1 %2);\
+                                          }\
+                                          .QPushButton:hover{\
+                                          background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %2,stop:0.4 %3,stop:0.6 %3,stop:1 %2);\
+                                          }\
+                                          .QPushButton:pressed{\
+                                          background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %2,stop:0.5 %3,stop:1 %2);\
+                                          }\
+                                          ")
+                .arg("#386487")
+                .arg(colors.pressed.name())
+                .arg(colors.normal.name());
+
+        keyTypeTab[i]->setStyleSheet(button_style);
     }
     if (type < 4){
-        keyTypeTab[type]->setStyleSheet("background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #C0DEF6,stop:1 #C0DEF6);");
+        QString button_style= QString(".QPushButton{ \
+                                          border-style:none;\
+                                          border:1px solid #C0DCF2;\
+                                          color:%1;\
+                                          padding:5px;\
+                                          min-height:15px;\
+                                          border-radius:5px;\
+                                          background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %2,stop:0.5 %3,stop:1 %2);\
+                                          }\
+                                          .QPushButton:hover{\
+                                          background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %2,stop:0.5 %3,stop:1 %2);\
+                                          }\
+                                          .QPushButton:pressed{\
+                                          background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %2,stop:0.5 %3,stop:1 %2);\
+                                          }\
+                                          ")
+                .arg("#386487")
+                .arg(colors.pressed.name())
+                .arg(colors.pressed.name());
+
+        keyTypeTab[type]->setStyleSheet(button_style);
     }
     ui->key_page->setCurrentIndex(type);        //更新QStackedWidget栈布局内容
 
@@ -250,9 +293,9 @@ void SoftKeyboard::addCandidateCharacterText(QString character)
  */
 void SoftKeyboard::clearHistory()
 {
-    letterLabel->clear();
-    alreadyInputLetters.clear();
-    alreadySelectTranslates.clear();
+    mLetterLabel->clear();
+    mAlreadyInputLetters.clear();
+    mAlreadySelectTranslates.clear();
     mVTranslateView->clearData();
     mHTranslateView->clearData();
     XYInputSearchInterface::getInstance()->resetSearch();
@@ -261,7 +304,7 @@ void SoftKeyboard::clearHistory()
 void SoftKeyboard::onSearchBegin(QStringList data)
 {
     ScrollBarManage::getInstace()->setCanditeData(data);
-    letterLabel->setText(XYInputSearchInterface::getInstance()->getCurLetters());
+    mLetterLabel->setText(XYInputSearchInterface::getInstance()->getCurLetters());
     arrowChange();  //更新箭头状态
 }
 
@@ -275,11 +318,11 @@ void SoftKeyboard::userSelectChinese(const QString &text, int index)
 {
     QString showText;
     QStringList data = XYInputSearchInterface::getInstance()->getCandidate(text, index, showText);
-    letterLabel->setText(showText);
+    mLetterLabel->setText(showText);
 
     if(data.isEmpty()){        //点击候选词后无剩余候选字母
         //这里完成输入
-        QString word = alreadySelectTranslates.join("").append(text);
+        QString word = mAlreadySelectTranslates.join("").append(text);
         addCandidateCharacterText(word);  //将数据发送出去
         clearHistory();        //清空数据
 
@@ -297,15 +340,15 @@ void SoftKeyboard::userSelectChinese(const QString &text, int index)
     }
     else    //如果还剩候选字母则留着等着再次处理globalPos()
     {
-        alreadySelectTranslates.append(text);
+        mAlreadySelectTranslates.append(text);
         ScrollBarManage::getInstace()->setCanditeData(data);
     }
 }
 
 void SoftKeyboard::addCandidateLetter(QString letter)
 {
-    alreadyInputLetters.append(letter.toLower());
-    onSearchBegin(XYInputSearchInterface::getInstance()->getCandidate(alreadyInputLetters));
+    mAlreadyInputLetters.append(letter.toLower());
+    onSearchBegin(XYInputSearchInterface::getInstance()->getCandidate(mAlreadyInputLetters));
 }
 
 /* 重写事件 */
@@ -316,7 +359,7 @@ void SoftKeyboard::addCandidateLetter(QString letter)
  * 设置是否可拖动
  */
 void SoftKeyboard::setMoveEnabled(bool moveEnabled) {
-    isMoveEnabled = moveEnabled;
+    mIsMoveEnabled = moveEnabled;
 }
 
 void SoftKeyboard::getTextByHand(CharacterEntity character)
@@ -337,10 +380,10 @@ void SoftKeyboard::switchPreviousKey()
  * 重写鼠标按下键，获取鼠标左键按下时的全局位置，将窗口的可移动标志设置为true
  */
 void SoftKeyboard::mousePressEvent(QMouseEvent *event) {
-    cursorGlobalPos = event->globalPos();  //获取鼠标按下时的全局位置
+    mCursorGlobalPos = event->globalPos();  //获取鼠标按下时的全局位置
     if (event->button() == Qt::LeftButton && ui->title->geometry().contains(event->pos()))//左键按下
     {
-        isMousePress = true;
+        mIsMousePress = true;
     }
 
     arrowRect = QRect(ui->close->mapTo(this, QPoint(0, 0)), ui->close->size());
@@ -364,9 +407,9 @@ void SoftKeyboard::mousePressEvent(QMouseEvent *event) {
  */
 void SoftKeyboard::mouseMoveEvent(QMouseEvent *event) {
 
-    if (event->buttons() & Qt::LeftButton && isMousePress && isMoveEnabled) {
-        window()->move(window()->pos() +  event->globalPos() - cursorGlobalPos);
-        cursorGlobalPos = event->globalPos();
+    if (event->buttons() & Qt::LeftButton && mIsMousePress && mIsMoveEnabled) {
+        window()->move(window()->pos() +  event->globalPos() - mCursorGlobalPos);
+        mCursorGlobalPos = event->globalPos();
     }
     event->ignore();
 }
@@ -379,7 +422,7 @@ void SoftKeyboard::mouseMoveEvent(QMouseEvent *event) {
 void SoftKeyboard::mouseReleaseEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton)//左键释放
     {
-        isMousePress = false;
+        mIsMousePress = false;
         if(arrowPressed){
             if (arrowRect.contains(event->pos())){
                 arrowClicked();
@@ -404,9 +447,9 @@ void SoftKeyboard::mouseReleaseEvent(QMouseEvent *event) {
  */
 void SoftKeyboard::deleteSlot()
 {
-    if (!alreadyInputLetters.isEmpty()){
-        alreadyInputLetters = alreadyInputLetters.mid(0, alreadyInputLetters.size()-1);
-        onSearchBegin(XYInputSearchInterface::getInstance()->getCandidate(alreadyInputLetters));
+    if (!mAlreadyInputLetters.isEmpty()){
+        mAlreadyInputLetters = mAlreadyInputLetters.mid(0, mAlreadyInputLetters.size()-1);
+        onSearchBegin(XYInputSearchInterface::getInstance()->getCandidate(mAlreadyInputLetters));
     } else if (!mHTranslateView->dataStrings.isEmpty()){
         clearHistory();
         arrowChange();
@@ -417,13 +460,13 @@ void SoftKeyboard::deleteSlot()
 
 void SoftKeyboard::enterSlot()
 {
-    if(letterLabel->text().isEmpty())
+    if(mLetterLabel->text().isEmpty())
     {
         addCandidateCharacterText("\n");
         return;
     }
     else if(mHTranslateView->dataStrings.size() > 0){
-        addCandidateCharacterText(alreadyInputLetters);
+        addCandidateCharacterText(mAlreadyInputLetters);
     }
     clearHistory();
 
@@ -431,7 +474,7 @@ void SoftKeyboard::enterSlot()
 
 void SoftKeyboard::spaceSlot()
 {
-    if(letterLabel->text().isEmpty())
+    if(mLetterLabel->text().isEmpty())
     {
         addCandidateCharacterText(" ");
         return;
