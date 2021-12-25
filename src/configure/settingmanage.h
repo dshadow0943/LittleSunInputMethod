@@ -32,6 +32,7 @@ struct skin_color {
     QColor normal;
     QColor hover;
     QColor pressed;
+    QColor font;
 };
 
 struct skin {
@@ -49,7 +50,7 @@ struct config {
 
     QSize keyBoardWindowSize;   //键盘大小
 
-    int keyboardType;  //初始键盘类型
+    int defaultKeyboard;  //初始键盘类型
     int themeType = 0;     //主题类型
 };
 
@@ -66,9 +67,17 @@ class SettingManage : public QObject
     Q_OBJECT
 public:
     explicit SettingManage(QObject *parent = nullptr);
+    ~SettingManage();
 
     static SettingManage* getInstance();
     skin_color getSkinColor(SkinType type);
+
+    void setThemeType(int type);
+    int getThemeType();
+    void setDefaultKeyboard(int type);
+    int getDefaultKeyboard();
+
+    void saveConfig();
 
 signals:
     void sendThemeChange();
@@ -77,9 +86,12 @@ public slots:
 
 private:
     void initSkin();
+    void initConfig();
 
 private:
-    QSettings mSetting;
+
+    static SettingManage* obj;
+
     QList<skin> mSkins;
     config mConfig;
 };

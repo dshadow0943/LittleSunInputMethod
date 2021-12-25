@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "softkeyboard.h"
 #include "handkeyboardtrain.h"
+#include "settingwindown.h"
 
 namespace Ui {
 class CenterController;
@@ -48,6 +49,7 @@ private:
     Ui::CenterController *ui;
     SoftKeyboard* softKeyboard = nullptr;
     HandKeyboardTrain* handkeyboatd = nullptr;
+    SettingWindown *mSettingWindown = nullptr;
 
     //无边框窗口移动相关参数
     QPoint cursorGlobalPos;

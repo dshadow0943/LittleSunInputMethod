@@ -27,6 +27,17 @@ int main(int argc, char *argv[])
                             .QPushButton:pressed,.QToolButton:pressed{\
                             background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #DEF0FE,stop:1 #C0DEF6);\
                             }\
+                            .QListView{\
+                            Background-cp;pr:#EAF7FF;//背景色\
+                            Alternate-background-color:#DEF0FE;//行与行之间交替的颜色setAlternatingRowColors(true);\
+                            Show-decoration-selected:1;设置是否选中时，整行都高亮显示\
+                            }\
+                            .QListView::item:alternate{\
+                            Background:#000000;\
+                            }\
+                            .QListView::item:selected{\
+                            Border:2px solid #000000;\
+                            }\
                             ");
     //建立到session bus的连接
     QDBusConnection connection = QDBusConnection::sessionBus();

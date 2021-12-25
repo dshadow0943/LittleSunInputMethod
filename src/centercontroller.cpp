@@ -1,5 +1,6 @@
 #include "centercontroller.h"
 #include "ui_centercontroller.h"
+#include "settingmanage.h"
 
 #include <QDBusMessage>
 #include <QDBusConnection>
@@ -29,6 +30,7 @@ CenterController::CenterController(QWidget *parent) :
 
 CenterController::~CenterController()
 {
+    delete SettingManage::getInstance();
     delete ui;
 }
 
@@ -156,5 +158,8 @@ void CenterController::mouseReleaseEvent(QMouseEvent *event) {
 
 void CenterController::on_btn_site_clicked()
 {
-
+    if (!mSettingWindown) {
+        mSettingWindown = new SettingWindown();
+    }
+    mSettingWindown->show();
 }

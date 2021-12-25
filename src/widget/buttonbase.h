@@ -59,7 +59,6 @@ public:
     KeyType getType();
 
 signals:
-
     void sendClicked(ButtonBase* but);
 
 protected slots:
