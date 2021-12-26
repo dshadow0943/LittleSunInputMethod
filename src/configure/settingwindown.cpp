@@ -1,9 +1,9 @@
 /*
 * Copyright (C) 2019 ~ 2019 UnionTech Software Technology Co.,Ltd.
 *
-* Author:     leilong <leilong@uniontech.com>
+* Author:     leilong <dshadow@foxmail.com>
 *
-* Maintainer: leilong <leilong@uniontech.com>
+* Maintainer: leilong <dshadow@foxmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -69,9 +69,9 @@ void SettingWindown::addBasicCard()
 
     QWidget *keyWgt = new QWidget();
     QHBoxLayout *keyLayout = new QHBoxLayout();
-    RadioButtonBase *numKeyBoard = new RadioButtonBase("数字键盘", RadioButtonBase::DefaultKeyboardNum, RadioButtonBase::DefaultKeyboard);
-    RadioButtonBase *pinyinKeyBoard = new RadioButtonBase("拼音键盘", RadioButtonBase::DefaultKeyboardPinyin, RadioButtonBase::DefaultKeyboard);
-    RadioButtonBase *handKeyBoard = new RadioButtonBase("手写键盘", RadioButtonBase::DefaultKeyboardHand, RadioButtonBase::DefaultKeyboard);
+    RadioButtonBase *numKeyBoard = new RadioButtonBase("数字键盘", SettingManage::DefaultKeyboardNum, SettingManage::DefaultKeyboard);
+    RadioButtonBase *pinyinKeyBoard = new RadioButtonBase("拼音键盘", SettingManage::DefaultKeyboardPinyin, SettingManage::DefaultKeyboard);
+    RadioButtonBase *handKeyBoard = new RadioButtonBase("手写键盘", SettingManage::DefaultKeyboardHand, SettingManage::DefaultKeyboard);
     keyLayout->addWidget(numKeyBoard);
     keyLayout->addWidget(pinyinKeyBoard);
     keyLayout->addWidget(handKeyBoard);
@@ -81,9 +81,9 @@ void SettingWindown::addBasicCard()
     keyGroup->addButton(pinyinKeyBoard, pinyinKeyBoard->getId());
     keyGroup->addButton(handKeyBoard, handKeyBoard->getId());
 
-    bId = SettingManage::getInstance()->getDefaultKeyboard();
-    if (bId < RadioButtonBase::DefaultKeyboardBegin || bId >= RadioButtonBase::DefaultKeyboardEnd) {
-        bId = RadioButtonBase::DefaultKeyboardPinyin;
+    bId = SettingManage::getInstance()->getDefaultKeyboard() + SettingManage::DefaultKeyboardBegin;
+    if (bId < SettingManage::DefaultKeyboardBegin || bId >= SettingManage::DefaultKeyboardEnd) {
+        bId = SettingManage::DefaultKeyboardPinyin;
     }
     keyGroup->button(bId)->setChecked(true);
     keyWgt->setLayout(keyLayout);
@@ -94,9 +94,9 @@ void SettingWindown::addBasicCard()
 
     QWidget *skinWgt = new QWidget();
     QHBoxLayout *skinLayout = new QHBoxLayout();
-    RadioButtonBase *lightWhite = new RadioButtonBase("浅白色", RadioButtonBase::SkinLightWhite, RadioButtonBase::Skin);
-    RadioButtonBase *skyBlue = new RadioButtonBase("天空蓝", RadioButtonBase::SkinSkyBlue, RadioButtonBase::Skin);
-    RadioButtonBase *darkBlack = new RadioButtonBase("深黑色", RadioButtonBase::SkinDarkBlack, RadioButtonBase::Skin);
+    RadioButtonBase *lightWhite = new RadioButtonBase("浅白色", SettingManage::SkinLightWhite, SettingManage::Skin);
+    RadioButtonBase *skyBlue = new RadioButtonBase("天空蓝", SettingManage::SkinSkyBlue, SettingManage::Skin);
+    RadioButtonBase *darkBlack = new RadioButtonBase("深黑色", SettingManage::SkinDarkBlack, SettingManage::Skin);
     skinLayout->addWidget(lightWhite);
     skinLayout->addWidget(skyBlue);
     skinLayout->addWidget(darkBlack);
@@ -107,8 +107,8 @@ void SettingWindown::addBasicCard()
     skinGroup->addButton(darkBlack, darkBlack->getId());
 
     bId = SettingManage::getInstance()->getThemeType();
-    if (bId < RadioButtonBase::SkinBegin || bId >= RadioButtonBase::SkinEnd) {
-        bId = RadioButtonBase::SkinSkyBlue;
+    if (bId < SettingManage::SkinBegin || bId >= SettingManage::SkinEnd) {
+        bId = SettingManage::SkinSkyBlue;
     }
     skinGroup->button(bId)->setChecked(true);
     skinWgt->setLayout(skinLayout);
@@ -127,10 +127,10 @@ void SettingWindown::onRadioButtonClicked(RadioButtonBase* but)
     qInfo() << __FUNCTION__ << but->getId();
 
     switch (but->getType()) {
-    case RadioButtonBase::DefaultKeyboard:
-        SettingManage::getInstance()->setDefaultKeyboard(but->getId());
+    case SettingManage::DefaultKeyboard:
+        SettingManage::getInstance()->setDefaultKeyboard(but->getId()-SettingManage::DefaultKeyboardBegin);
         break;
-    case RadioButtonBase::Skin:
+    case SettingManage::Skin:
         SettingManage::getInstance()->setThemeType(but->getId());
         break;
     }

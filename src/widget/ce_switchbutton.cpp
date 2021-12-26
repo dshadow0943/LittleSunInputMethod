@@ -20,7 +20,7 @@
 */
 #include "ce_switchbutton.h"
 
-CE_SwitchButton::CE_SwitchButton(QString str1, QString str2, int id, KeyType type, QWidget *parent) : ButtonBase(id, type, parent)
+CE_SwitchButton::CE_SwitchButton(QString str1, QString str2, int id, KeyType type, QWidget *parent) : KeyButtonBase(id, type, parent)
   , str1(str1)
   , str2(str2)
 {

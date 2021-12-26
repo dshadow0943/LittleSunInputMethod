@@ -25,23 +25,23 @@ ButtonItem::ButtonItem(QObject *parent) : QObject(parent)
 
 }
 
-EnglishButton* ButtonItem::getEnglishButton(QString str1, QString str2, int id, ButtonBase::KeyType type, QWidget *parent)
+EnglishButton* ButtonItem::getEnglishButton(QString str1, QString str2, int id, KeyButtonBase::KeyType type, QWidget *parent)
 {
     EnglishButton *but = new EnglishButton(str1, str2, id, type, parent);
     but->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
 
-    if (ButtonBase::PinyinLetter == type) {
+    if (KeyButtonBase::PinyinLetter == type) {
         connect(getShiftButton(), &ShiftButton::sendShiftClicked, but, &EnglishButton::onShiftClicked);
     }
 
-    if (ButtonBase::PinyinPunc == type) {
+    if (KeyButtonBase::PinyinPunc == type) {
         connect(getSwitchButton(), &CE_SwitchButton::sendSwitchClicked, but, &EnglishButton::onShiftClicked);
     }
 
     return but;
 }
 
-NumButton* ButtonItem::getNumButton(QString num, int id, ButtonBase::KeyType type, QWidget *parent)
+NumButton* ButtonItem::getNumButton(QString num, int id, KeyButtonBase::KeyType type, QWidget *parent)
 {
     NumButton *but = new NumButton(num, id, type, parent);
     but->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);

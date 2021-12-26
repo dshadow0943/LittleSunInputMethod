@@ -21,13 +21,13 @@
 #ifndef SHIFTBUTTON_H
 #define SHIFTBUTTON_H
 
-#include <buttonbase.h>
+#include <keybuttonbase.h>
 
-class ShiftButton : public ButtonBase
+class ShiftButton : public KeyButtonBase
 {
     Q_OBJECT
 public:
-    explicit ShiftButton(QString text = "shift", int id = Qt::Key_Shift, ButtonBase::KeyType type = ButtonBase::Func, QWidget *parent = nullptr);
+    explicit ShiftButton(QString text = "shift", int id = Qt::Key_Shift, KeyButtonBase::KeyType type = KeyButtonBase::Func, QWidget *parent = nullptr);
 
 signals:
     void sendShiftClicked(bool mIsCaps);

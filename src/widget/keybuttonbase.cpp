@@ -1,9 +1,9 @@
 /*
 * Copyright (C) 2019 ~ 2019 UnionTech Software Technology Co.,Ltd.
 *
-* Author:     leilong <leilong@uniontech.com>
+* Author:     leilong <dshadow@foxmail.com>
 *
-* Maintainer: leilong <leilong@uniontech.com>
+* Maintainer: leilong <dshadow@foxmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,31 +18,31 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "buttonbase.h"
+#include "keybuttonbase.h"
 #include "settingmanage.h"
 #include <QPainter>
 
-ButtonBase::ButtonBase(int id, KeyType type, QWidget *parent) : QPushButton(parent)
-  , mId(id)
-  , mType(type)
+KeyButtonBase::KeyButtonBase(int id, KeyType type, QWidget *parent)
+  : QPushButton(parent)
+  , ButtonInterface (id, type)
 {
     skin_color font = SettingManage::getInstance()->getSkinColor(SkinType::Font);
     skin_color colors;
     switch (type) {
-    case ButtonBase::Func:
+    case KeyButtonBase::Func:
         colors = SettingManage::getInstance()->getSkinColor(SkinType::Func);
         break;
-    case ButtonBase::Tab:
+    case KeyButtonBase::Tab:
         colors = SettingManage::getInstance()->getSkinColor(SkinType::Tab);
         break;
     default:
         colors = SettingManage::getInstance()->getSkinColor(SkinType::Key);
     }
 
-    QString button_style= QString("ButtonBase{color:%1; background-color:%2;"
+    QString button_style= QString("KeyButtonBase{color:%1; background-color:%2;"
                                   "border-radius: 10px;  border: 1px groove gray; border-style: outset;} "
-                                  "QPushButton:hover{background-color:%3;} "
-                                  "QPushButton:pressed{background-color:%4; border-style: inset; }")
+                                  "KeyButtonBase:hover{background-color:%3;} "
+                                  "KeyButtonBase:pressed{background-color:%4; border-style: inset; }")
             .arg(font.normal.name())
             .arg(colors.normal.name())
             .arg(colors.hover.name())
@@ -50,36 +50,10 @@ ButtonBase::ButtonBase(int id, KeyType type, QWidget *parent) : QPushButton(pare
 
     setStyleSheet(button_style);
 
-    connect(this, &QPushButton::clicked, this, &ButtonBase::onClicked);
+    QPushButton::connect(this, &QPushButton::clicked, this, &KeyButtonBase::onClicked);
 }
 
-int ButtonBase::getId()
-{
-    return this->mId;
-}
-
-ButtonBase::KeyType ButtonBase::getType()
-{
-    return this->mType;
-}
-
-void ButtonBase::onClicked()
+void KeyButtonBase::onClicked()
 {
     emit sendClicked(this);
-}
-
-/**
- * @brief ButtonBase::paintEvent
- * 按钮同意绘制成圆角
- * @param event
- */
-void ButtonBase::paintEvent(QPaintEvent *event)
-{
-//    int radius = 10;
-//    QPainter painter(this);                                                     // 圆角大小
-//    painter.setRenderHint(QPainter::Antialiasing);                              // 抗锯齿
-//    painter.setPen(Qt::NoPen);
-//    painter.drawRoundedRect(0, 0, this->width(), this->height(), radius, radius);
-
-    QPushButton::paintEvent(event);
 }

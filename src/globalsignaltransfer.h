@@ -1,9 +1,9 @@
 /*
 * Copyright (C) 2019 ~ 2019 UnionTech Software Technology Co.,Ltd.
 *
-* Author:     leilong <leilong@uniontech.com>
+* Author:     leilong <dshadow@foxmail.com>
 *
-* Maintainer: leilong <leilong@uniontech.com>
+* Maintainer: leilong <dshadow@foxmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #ifndef GLOBALSIGNALTRANSFER_H
 #define GLOBALSIGNALTRANSFER_H
 
-#include "buttonbase.h"
+#include "keybuttonbase.h"
 #include "radiobuttonbase.h"
 
 #include <QObject>
@@ -37,11 +37,11 @@ protected:
     explicit GlobalSignalTransfer(QObject *parent = nullptr);
 
 signals:
-    void sendKeyButtonClicked(ButtonBase* but);
+    void sendKeyButtonClicked(KeyButtonBase* but);
     void sendRadioButtonClicked(RadioButtonBase* but);
 
 public slots:
-    void onKeyButtonClicked(ButtonBase* but);
+    void onKeyButtonClicked(KeyButtonBase* but);
     void onRadioButtonClicked(RadioButtonBase* but);
 };
 

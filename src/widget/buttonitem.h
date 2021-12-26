@@ -1,9 +1,9 @@
 /*
 * Copyright (C) 2019 ~ 2019 UnionTech Software Technology Co.,Ltd.
 *
-* Author:     leilong <leilong@uniontech.com>
+* Author:     leilong <dshadow@foxmail.com>
 *
-* Maintainer: leilong <leilong@uniontech.com>
+* Maintainer: leilong <dshadow@foxmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@ class ButtonItem : public QObject
 public:
     explicit ButtonItem(QObject *parent = nullptr);
 
-    static EnglishButton* getEnglishButton(QString str1, QString str2, int id = 0, ButtonBase::KeyType type = ButtonBase::Invalid, QWidget *parent = nullptr);
-    static NumButton* getNumButton(QString num, int id = 0, ButtonBase::KeyType type = ButtonBase::Invalid, QWidget *parent = nullptr);
+    static EnglishButton* getEnglishButton(QString str1, QString str2, int id = 0, KeyButtonBase::KeyType type = KeyButtonBase::Invalid, QWidget *parent = nullptr);
+    static NumButton* getNumButton(QString num, int id = 0, KeyButtonBase::KeyType type = KeyButtonBase::Invalid, QWidget *parent = nullptr);
     static ShiftButton* getShiftButton();
     static CE_SwitchButton* getSwitchButton();
 
@@ -46,7 +46,7 @@ signals:
 public slots:
 
 private:
-    QList<ButtonBase*> mButList;
+    QList<KeyButtonBase*> mButList;
 
 };
 

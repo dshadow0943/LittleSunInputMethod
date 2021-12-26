@@ -20,7 +20,7 @@
 */
 #include "shiftbutton.h"
 
-ShiftButton::ShiftButton(QString text, int id, ButtonBase::KeyType type, QWidget *parent) : ButtonBase (id, type, parent)
+ShiftButton::ShiftButton(QString text, int id, KeyButtonBase::KeyType type, QWidget *parent) : KeyButtonBase (id, type, parent)
 {
     setText(text);
     connect(this, &QPushButton::clicked, this, &ShiftButton::onClicked);

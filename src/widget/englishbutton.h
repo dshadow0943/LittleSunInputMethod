@@ -1,9 +1,9 @@
 /*
 * Copyright (C) 2019 ~ 2019 UnionTech Software Technology Co.,Ltd.
 *
-* Author:     leilong <leilong@uniontech.com>
+* Author:     leilong <dshadow@foxmail.com>
 *
-* Maintainer: leilong <leilong@uniontech.com>
+* Maintainer: leilong <dshadow@foxmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,9 +21,9 @@
 #ifndef ENGLISHBUTTON_H
 #define ENGLISHBUTTON_H
 
-#include "buttonbase.h"
+#include "keybuttonbase.h"
 
-class EnglishButton : public ButtonBase
+class EnglishButton : public KeyButtonBase
 {
     Q_OBJECT
 public:

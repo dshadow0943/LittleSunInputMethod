@@ -28,11 +28,11 @@ signals:
     void userSelectChinese(const QString&, int);    //拼音输入时点击候选词的处理方法
 
 public slots:
-    void onClicked(ButtonBase* but);
+    void onClicked(KeyButtonBase* but);
 
 private:
 
-    QList<ButtonBase*> mButLines; //按键集合
+    QList<KeyButtonBase*> mButLines; //按键集合
 
     SoftKeyboard* parent;
 

@@ -1,9 +1,9 @@
 /*
 * Copyright (C) 2019 ~ 2019 UnionTech Software Technology Co.,Ltd.
 *
-* Author:     leilong <leilong@uniontech.com>
+* Author:     leilong <dshadow@foxmail.com>
 *
-* Maintainer: leilong <leilong@uniontech.com>
+* Maintainer: leilong <dshadow@foxmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,37 +21,17 @@
 #ifndef RADIOBUTTONBASE_H
 #define RADIOBUTTONBASE_H
 
+#include "buttoninterface.h"
+
 #include <QWidget>
 #include <QRadioButton>
 
-class RadioButtonBase : public QRadioButton
+class RadioButtonBase : public QRadioButton, public ButtonInterface
 {
     Q_OBJECT
 public:
 
-    enum RadioType {
-        DefaultKeyboard = 1,
-        Skin,
-    };
-
-    enum RadioId {
-        Invalid = 0,
-        DefaultKeyboardBegin,
-        DefaultKeyboardNum = DefaultKeyboardBegin,
-        DefaultKeyboardPinyin,
-        DefaultKeyboardHand,
-        DefaultKeyboardEnd,
-        SkinBegin,
-        SkinLightWhite = SkinBegin,
-        SkinSkyBlue,
-        SkinDarkBlack,
-        SkinEnd,
-    };
-
     explicit RadioButtonBase(QString text = "", int id = 0, int type = 0, QWidget *parent = nullptr);
-
-    int getId();
-    int getType();
 
 signals:
     void sendClicked(RadioButtonBase* but);
@@ -59,9 +39,6 @@ signals:
 public slots:
     void onClicked();
 
-protected:
-    const int mId;
-    const int mType;
 };
 
 #endif // RADIOBUTTONBASE_H

@@ -1,9 +1,9 @@
 /*
 * Copyright (C) 2019 ~ 2019 UnionTech Software Technology Co.,Ltd.
 *
-* Author:     leilong <leilong@uniontech.com>
+* Author:     leilong <dshadow@foxmail.com>
 *
-* Maintainer: leilong <leilong@uniontech.com>
+* Maintainer: leilong <dshadow@foxmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,13 @@
 #ifndef BUTTONBASE_H
 #define BUTTONBASE_H
 
+#include "buttoninterface.h"
+
 #include <QObject>
 #include <QPushButton>
 #include <QPaintEvent>
 
-class ButtonBase : public QPushButton
+class KeyButtonBase : public QPushButton, public ButtonInterface
 {
     Q_OBJECT
 public:
@@ -53,24 +55,15 @@ public:
         KeyBack,
     };
 
-    explicit ButtonBase(int id = 0, KeyType type = Invalid, QWidget *parent = nullptr);
-
-    int getId();
-    KeyType getType();
+    explicit KeyButtonBase(int id = 0, KeyType type = Invalid, QWidget *parent = nullptr);
 
 signals:
-    void sendClicked(ButtonBase* but);
+    void sendClicked(KeyButtonBase* but);
 
 protected slots:
     void onClicked();
 
 protected:
-    void paintEvent(QPaintEvent *event) override;
-
-protected:
-
-    const int mId;
-    const KeyType mType;
 
 };
 

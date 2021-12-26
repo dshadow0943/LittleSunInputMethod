@@ -20,29 +20,29 @@ NumKeyboard::NumKeyboard(SoftKeyboard *parent) : QWidget(parent)
 void NumKeyboard::initKeyValue()
 {
 
-    mButLine.push_back(ButtonItem::getNumButton("-", 0, ButtonBase::Punc, this));
-    mButLine.push_back(ButtonItem::getNumButton("1", Qt::Key_1, ButtonBase::Num, this));
-    mButLine.push_back(ButtonItem::getNumButton("2", Qt::Key_2, ButtonBase::Num, this));
-    mButLine.push_back(ButtonItem::getNumButton("3", Qt::Key_3, ButtonBase::Num, this));
-    mButLine.push_back(ButtonItem::getNumButton("删除", Qt::Key_Backspace, ButtonBase::Func, this));
+    mButLine.push_back(ButtonItem::getNumButton("-", 0, KeyButtonBase::Punc, this));
+    mButLine.push_back(ButtonItem::getNumButton("1", Qt::Key_1, KeyButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("2", Qt::Key_2, KeyButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("3", Qt::Key_3, KeyButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("删除", Qt::Key_Backspace, KeyButtonBase::Func, this));
 
-    mButLine.push_back(ButtonItem::getNumButton("+", 0, ButtonBase::Punc, this));
-    mButLine.push_back(ButtonItem::getNumButton("4", Qt::Key_4, ButtonBase::Num, this));
-    mButLine.push_back(ButtonItem::getNumButton("5", Qt::Key_5, ButtonBase::Num, this));
-    mButLine.push_back(ButtonItem::getNumButton("6", Qt::Key_6, ButtonBase::Num, this));
-    mButLine.push_back(ButtonItem::getNumButton("0", Qt::Key_0, ButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("+", 0, KeyButtonBase::Punc, this));
+    mButLine.push_back(ButtonItem::getNumButton("4", Qt::Key_4, KeyButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("5", Qt::Key_5, KeyButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("6", Qt::Key_6, KeyButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("0", Qt::Key_0, KeyButtonBase::Num, this));
 
-    mButLine.push_back(ButtonItem::getNumButton("*", 0, ButtonBase::Punc, this));
-    mButLine.push_back(ButtonItem::getNumButton("7", Qt::Key_7, ButtonBase::Num, this));
-    mButLine.push_back(ButtonItem::getNumButton("8", Qt::Key_8, ButtonBase::Num, this));
-    mButLine.push_back(ButtonItem::getNumButton("9", Qt::Key_9, ButtonBase::Num, this));
-    mButLine.push_back(ButtonItem::getNumButton("@", Qt::Key_At, ButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("*", 0, KeyButtonBase::Punc, this));
+    mButLine.push_back(ButtonItem::getNumButton("7", Qt::Key_7, KeyButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("8", Qt::Key_8, KeyButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("9", Qt::Key_9, KeyButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("@", Qt::Key_At, KeyButtonBase::Num, this));
 
-    mButLine.push_back(ButtonItem::getNumButton("/", 0, ButtonBase::Punc, this));
-    mButLine.push_back(ButtonItem::getNumButton("符号", ButtonBase::keyPunc, ButtonBase::Func, this));
-    mButLine.push_back(ButtonItem::getNumButton(" ", Qt::Key_Space, ButtonBase::Num, this));
-    mButLine.push_back(ButtonItem::getNumButton("拼音", ButtonBase::keyPinyin, ButtonBase::Func, this));
-    mButLine.push_back(ButtonItem::getNumButton("手写", ButtonBase::keyHand, ButtonBase::Func, this));
+    mButLine.push_back(ButtonItem::getNumButton("/", 0, KeyButtonBase::Punc, this));
+    mButLine.push_back(ButtonItem::getNumButton("符号", KeyButtonBase::keyPunc, KeyButtonBase::Func, this));
+    mButLine.push_back(ButtonItem::getNumButton(" ", Qt::Key_Space, KeyButtonBase::Num, this));
+    mButLine.push_back(ButtonItem::getNumButton("拼音", KeyButtonBase::keyPinyin, KeyButtonBase::Func, this));
+    mButLine.push_back(ButtonItem::getNumButton("手写", KeyButtonBase::keyHand, KeyButtonBase::Func, this));
 
     initConnect();
 }
@@ -82,14 +82,14 @@ void NumKeyboard::initConnect()
     }
 }
 
-void NumKeyboard::onClicked(ButtonBase* but)
+void NumKeyboard::onClicked(KeyButtonBase* but)
 {
     if (but->getId() == Qt::Key_At) {
         parent->addCandidateCharacterText(QString("@"));
         return;
     }
 
-    if (but->getType() == ButtonBase::Num || but->getType() == ButtonBase::Punc) {
+    if (but->getType() == KeyButtonBase::Num || but->getType() == KeyButtonBase::Punc) {
         parent->addCandidateCharacterText(but->text());
         return;
     }
@@ -101,13 +101,13 @@ void NumKeyboard::onClicked(ButtonBase* but)
     case Qt::Key_Backspace:
         parent->deleteSlot();
         break;
-    case ButtonBase::keyPunc:
+    case KeyButtonBase::keyPunc:
         parent->switchPage(3);
         break;
-    case ButtonBase::keyPinyin:
+    case KeyButtonBase::keyPinyin:
         parent->switchPage(1);
         break;
-    case ButtonBase::keyHand:
+    case KeyButtonBase::keyHand:
         parent->switchPage(2);
         break;
     }

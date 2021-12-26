@@ -1,9 +1,9 @@
 /*
 * Copyright (C) 2019 ~ 2019 UnionTech Software Technology Co.,Ltd.
 *
-* Author:     leilong <leilong@uniontech.com>
+* Author:     leilong <dshadow@foxmail.com>
 *
-* Maintainer: leilong <leilong@uniontech.com>
+* Maintainer: leilong <dshadow@foxmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 */
 #include "englishbutton.h"
 
-EnglishButton::EnglishButton(QString str1, QString str2, int id, KeyType type, QWidget *parent) : ButtonBase(id, type, parent)
+EnglishButton::EnglishButton(QString str1, QString str2, int id, KeyType type, QWidget *parent) : KeyButtonBase(id, type, parent)
   , str1(str1)
   , str2(str2)
 {

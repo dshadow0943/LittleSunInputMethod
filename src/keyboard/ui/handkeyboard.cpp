@@ -26,15 +26,15 @@ void HandKeyboard::setRightToolWidget()
 {
     QVBoxLayout *layout = new QVBoxLayout;
 
-    mButs.push_back(ButtonItem::getNumButton("删除", Qt::Key_Backspace, ButtonBase::Func, this));
-    mButs.push_back(ButtonItem::getNumButton("确认", Qt::Key_Enter, ButtonBase::Func, this));
-    mButs.push_back(ButtonItem::getNumButton("数字", ButtonBase::KeyNum, ButtonBase::Func, this));
-    mButs.push_back(ButtonItem::getNumButton("符号", ButtonBase::keyPunc, ButtonBase::Func, this));
-    mButs.push_back(ButtonItem::getNumButton("拼音", ButtonBase::keyPinyin, ButtonBase::Func, this));
+    mButs.push_back(ButtonItem::getNumButton("删除", Qt::Key_Backspace, KeyButtonBase::Func, this));
+    mButs.push_back(ButtonItem::getNumButton("确认", Qt::Key_Enter, KeyButtonBase::Func, this));
+    mButs.push_back(ButtonItem::getNumButton("数字", KeyButtonBase::KeyNum, KeyButtonBase::Func, this));
+    mButs.push_back(ButtonItem::getNumButton("符号", KeyButtonBase::keyPunc, KeyButtonBase::Func, this));
+    mButs.push_back(ButtonItem::getNumButton("拼音", KeyButtonBase::keyPinyin, KeyButtonBase::Func, this));
 
-    for (ButtonBase *but : mButs) {
+    for (KeyButtonBase *but : mButs) {
         layout->addWidget(but,1);
-        connect(but, &ButtonBase::sendClicked, this, &HandKeyboard::onClicked);
+        connect(but, &KeyButtonBase::sendClicked, this, &HandKeyboard::onClicked);
     }
 
     layout->setContentsMargins(0,0,0,0);
@@ -44,7 +44,7 @@ void HandKeyboard::setRightToolWidget()
     ui->rightToolWidget->setLayout(layout);
 }
 
-void HandKeyboard::onClicked(ButtonBase* but)
+void HandKeyboard::onClicked(KeyButtonBase* but)
 {
     switch (but->getId()) {
     case Qt::Key_Backspace:
@@ -53,13 +53,13 @@ void HandKeyboard::onClicked(ButtonBase* but)
     case Qt::Key_Enter:
         parent->enterSlot();
         break;
-    case ButtonBase::KeyNum:
+    case KeyButtonBase::KeyNum:
         parent->switchPage(KEYBOARD_NUM);
         break;
-    case ButtonBase::keyPunc:
+    case KeyButtonBase::keyPunc:
         parent->switchPage(KEYBOARD_PUNC);
         break;
-    case ButtonBase::keyPinyin:
+    case KeyButtonBase::keyPinyin:
          parent->switchPage(KEYBOARD_EN);
         break;
     }

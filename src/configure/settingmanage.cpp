@@ -22,6 +22,7 @@
 #include "globalconfig.h"
 
 #include <QStandardPaths>
+#include <QDebug>
 
 SettingManage* SettingManage::obj = nullptr;
 SettingManage::SettingManage(QObject *parent) : QObject(parent)
@@ -79,24 +80,29 @@ void SettingManage::initSkin()
     skin_color tab = {QColor("#C0DEF6"), QColor("#C0DEF6"), QColor("#EAF7FF"), QColor("#000000")};
     skin_color font = {QColor("#000000"), QColor("#000000"), QColor("#000000"), QColor("#000000")};
 
-    mSkins.push_back({theme, key, func, tab, font});
-    mSkins.push_back({theme, key, func, tab, font});
-    mSkins.push_back({theme, key, func, tab, font});
+    mSkinMap.insert(SkinLightWhite , {theme, key, func, tab, font});
+    mSkinMap.insert(SkinSkyBlue , {theme, key, func, tab, font});
+    mSkinMap.insert(SkinDarkBlack , {theme, key, func, tab, font});
 }
 
 skin_color SettingManage::getSkinColor(SkinType type)
 {
+    int key = mConfig.themeType;
+    if (key < SettingManage::SkinBegin || key >= SettingManage::SkinEnd) {
+        key = SettingManage::SkinSkyBlue;
+    }
+
     switch (type) {
     case Theme:
-        return mSkins[0].theme;
+        return mSkinMap[key].theme;
     case Key:
-        return mSkins[0].key;
+        return mSkinMap[key].key;
     case Func:
-        return mSkins[0].func;
+        return mSkinMap[key].func;
     case Tab:
-        return mSkins[0].tab;
+        return mSkinMap[key].tab;
     case Font:
-        return mSkins[0].font;
+        return mSkinMap[key].font;
     }
 }
 

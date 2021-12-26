@@ -25,7 +25,7 @@ public:
 
 public slots:
     void userSelectPunctuation(const QString &text, int index);
-    void onClicked(ButtonBase* but);
+    void onClicked(KeyButtonBase* but);
 
 private:
     SoftKeyboard *parent;
@@ -40,7 +40,7 @@ private:
     int page = 1;
     QGridLayout *gridLayout;
 
-    QList<ButtonBase*> mButs;
+    QList<KeyButtonBase*> mButs;
 };
 
 #endif // PUNCKEYBOARD_H

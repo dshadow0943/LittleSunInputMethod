@@ -18,38 +18,22 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SETTINGCONTENTVIEW_H
-#define SETTINGCONTENTVIEW_H
+#ifndef BUTTONINTERFACE_H
+#define BUTTONINTERFACE_H
 
-#include "settingcontentcard.h"
-
-#include <QWidget>
-#include <QScrollArea>
-
-class SettingContentView : public QWidget
+class ButtonInterface
 {
-    Q_OBJECT
+
 public:
-    explicit SettingContentView(QWidget *parent = nullptr);
+    int getId();
+    int getType();
 
-    void appendCard(SettingContentCard* card);
+protected:
+    explicit ButtonInterface(int id = 0, int type = 0);
 
-signals:
-    void sendViewChange(int index);
-
-public slots:
-    void onScrollValueChange(int value);
-    void onItemChange(int index);
-
-private:
-    void initUi();
-
-private:
-
-    QScrollArea * mScrollArea {nullptr};
-    QVBoxLayout *mRow {nullptr};
-
-    QList<SettingContentCard*> mCardList;
+protected:
+    int mId;
+    int mType;
 };
 
-#endif // SETTINGCONTENTVIEW_H
+#endif // BUTTONINTERFACE_H

@@ -21,13 +21,13 @@
 #ifndef CE_SWITCHBUTTON_H
 #define CE_SWITCHBUTTON_H
 
-#include "buttonbase.h"
+#include "keybuttonbase.h"
 
 /**
  * @brief The CE_SwitchButton class
  * 拼音键盘中英文切换按键
  */
-class CE_SwitchButton : public ButtonBase
+class CE_SwitchButton : public KeyButtonBase
 {
     Q_OBJECT
 public:

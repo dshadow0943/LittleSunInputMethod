@@ -1,9 +1,9 @@
 /*
 * Copyright (C) 2019 ~ 2019 UnionTech Software Technology Co.,Ltd.
 *
-* Author:     leilong <leilong@uniontech.com>
+* Author:     leilong <dshadow@foxmail.com>
 *
-* Maintainer: leilong <leilong@uniontech.com>
+* Maintainer: leilong <dshadow@foxmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 */
 #include "numbutton.h"
 
-NumButton::NumButton(QString num, int id, KeyType type, QWidget *parent) : ButtonBase(id, type, parent)
+NumButton::NumButton(QString num, int id, KeyType type, QWidget *parent) : KeyButtonBase(id, type, parent)
   , mNum(num)
 {
     setText(num);

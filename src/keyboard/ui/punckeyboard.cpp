@@ -24,14 +24,14 @@ void PuncKeyboard::initUi()
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setMargin(0);
 
-    mButs.push_back(ButtonItem::getNumButton("删除", Qt::Key_Backspace, ButtonBase::Func, this));
-    mButs.push_back(ButtonItem::getNumButton("确认", Qt::Key_Enter, ButtonBase::Func, this));
-    mButs.push_back(ButtonItem::getNumButton("中文", ButtonBase::KeyChinese, ButtonBase::Func, this));
-    mButs.push_back(ButtonItem::getNumButton("英文", ButtonBase::KeyEnglish, ButtonBase::Func, this));
-    mButs.push_back(ButtonItem::getNumButton("数学", ButtonBase::KeyMath, ButtonBase::Func, this));
-    mButs.push_back(ButtonItem::getNumButton("返回", ButtonBase::KeyBack, ButtonBase::Func, this));
+    mButs.push_back(ButtonItem::getNumButton("删除", Qt::Key_Backspace, KeyButtonBase::Func, this));
+    mButs.push_back(ButtonItem::getNumButton("确认", Qt::Key_Enter, KeyButtonBase::Func, this));
+    mButs.push_back(ButtonItem::getNumButton("中文", KeyButtonBase::KeyChinese, KeyButtonBase::Func, this));
+    mButs.push_back(ButtonItem::getNumButton("英文", KeyButtonBase::KeyEnglish, KeyButtonBase::Func, this));
+    mButs.push_back(ButtonItem::getNumButton("数学", KeyButtonBase::KeyMath, KeyButtonBase::Func, this));
+    mButs.push_back(ButtonItem::getNumButton("返回", KeyButtonBase::KeyBack, KeyButtonBase::Func, this));
 
-    for (ButtonBase *but : mButs) {
+    for (KeyButtonBase *but : mButs) {
         layout->addWidget(but,1);
     }
 
@@ -53,8 +53,8 @@ void PuncKeyboard::initUi()
 }
 
 void PuncKeyboard::initConnect(){
-    for (ButtonBase *but : mButs) {
-        connect(but, &ButtonBase::sendClicked, this, &PuncKeyboard::onClicked);
+    for (KeyButtonBase *but : mButs) {
+        connect(but, &KeyButtonBase::sendClicked, this, &PuncKeyboard::onClicked);
     }
     connect(punc, &VScrollBarView::clicked, this, &PuncKeyboard::userSelectPunctuation);
 }
@@ -65,7 +65,7 @@ void PuncKeyboard::userSelectPunctuation(const QString &text, int index)
     parent->addCandidateCharacterText(text);
 }
 
-void PuncKeyboard::onClicked(ButtonBase* but)
+void PuncKeyboard::onClicked(KeyButtonBase* but)
 {
     switch (but->getId()) {
     case Qt::Key_Backspace:
@@ -74,13 +74,13 @@ void PuncKeyboard::onClicked(ButtonBase* but)
     case Qt::Key_Enter:
         parent->enterSlot();
         break;
-    case ButtonBase::KeyChinese:
+    case KeyButtonBase::KeyChinese:
         break;
-    case ButtonBase::KeyEnglish:
+    case KeyButtonBase::KeyEnglish:
         break;
-    case ButtonBase::KeyMath:
+    case KeyButtonBase::KeyMath:
         break;
-    case ButtonBase::KeyBack:
+    case KeyButtonBase::KeyBack:
          parent->switchPreviousKey();
         break;
     }

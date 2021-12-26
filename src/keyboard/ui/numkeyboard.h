@@ -34,7 +34,7 @@ private:
 signals:
 
 public slots:
-    void onClicked(ButtonBase* but);
+    void onClicked(KeyButtonBase* but);
 };
 
 #endif // NUMKEYBOARD_H

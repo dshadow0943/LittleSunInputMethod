@@ -7,6 +7,7 @@
 #include "handkeyboard.h"
 #include "settingmanage.h"
 #include "customskin.h"
+#include "settingmanage.h"
 #include <QLabel>
 #include <QDebug>
 #include <QScreen>
@@ -126,7 +127,7 @@ void SoftKeyboard::arrowClicked()
 {
     switch(arrowStatus) {
         case ARROW_CLOSE:
-             qApp->quit();   //直接退出
+             hide();
         break;
         case ARROW_CAND: switchPreviousKey();    //（当前是查看更多候选词状态）返回上一界面
         break;
@@ -167,7 +168,7 @@ void SoftKeyboard::siteClicked()
 void SoftKeyboard::showEvent(QShowEvent* event)
 {
     QWidget::showEvent(event);
-    switchPage(KEYBOARD_EN);
+    switchPage(SettingManage::getInstance()->getDefaultKeyboard());
     this->move((applicationRect.width()-width())/2, applicationRect.height()-height());       //移动窗口位置,默认出现在底端中部
 
     setMoveEnabled();

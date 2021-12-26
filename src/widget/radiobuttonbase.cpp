@@ -1,9 +1,9 @@
 /*
 * Copyright (C) 2019 ~ 2019 UnionTech Software Technology Co.,Ltd.
 *
-* Author:     leilong <leilong@uniontech.com>
+* Author:     leilong <dshadow@foxmail.com>
 *
-* Maintainer: leilong <leilong@uniontech.com>
+* Maintainer: leilong <dshadow@foxmail.com>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,24 +22,13 @@
 #include "globalsignaltransfer.h"
 
 RadioButtonBase::RadioButtonBase(QString text, int id, int type, QWidget *parent) : QRadioButton(text, parent)
-  , mId(id)
-  , mType(type)
+  , ButtonInterface (id, type)
 {
     connect(this, &QRadioButton::clicked, this, &RadioButtonBase::onClicked);
     connect(this, &RadioButtonBase::sendClicked,
             GlobalSignalTransfer::instance(), &GlobalSignalTransfer::onRadioButtonClicked);
 
     setFixedSize(QSize(100, 20));
-}
-
-int RadioButtonBase::getId()
-{
-    return this->mId;
-}
-
-int RadioButtonBase::getType()
-{
-    return this->mType;
 }
 
 void RadioButtonBase::onClicked()

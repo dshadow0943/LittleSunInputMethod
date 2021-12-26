@@ -30,7 +30,7 @@ signals:
 
 public slots:
     void recognizeChinese(CharacterEntity&);
-    void onClicked(ButtonBase* but);
+    void onClicked(KeyButtonBase* but);
 
 private:
     Ui::HandKeyboard *ui;
@@ -38,7 +38,7 @@ private:
     SoftKeyboard *parent;
     //右侧工具栏__相关
 
-    QList<ButtonBase*> mButs;
+    QList<KeyButtonBase*> mButs;
 
 private:
         void setRightToolWidget();

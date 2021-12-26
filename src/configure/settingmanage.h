@@ -69,6 +69,25 @@ public:
     explicit SettingManage(QObject *parent = nullptr);
     ~SettingManage();
 
+    enum RadioType {
+        DefaultKeyboard = 1,
+        Skin,
+    };
+
+    enum RadioId {
+        Invalid = 0,
+        DefaultKeyboardBegin,
+        DefaultKeyboardNum = DefaultKeyboardBegin,
+        DefaultKeyboardPinyin,
+        DefaultKeyboardHand,
+        DefaultKeyboardEnd,
+        SkinBegin,
+        SkinLightWhite = SkinBegin,
+        SkinSkyBlue,
+        SkinDarkBlack,
+        SkinEnd,
+    };
+
     static SettingManage* getInstance();
     skin_color getSkinColor(SkinType type);
 
@@ -89,10 +108,9 @@ private:
     void initConfig();
 
 private:
-
     static SettingManage* obj;
 
-    QList<skin> mSkins;
+    QMap<int, skin> mSkinMap;
     config mConfig;
 };
 
