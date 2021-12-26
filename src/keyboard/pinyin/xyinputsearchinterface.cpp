@@ -38,7 +38,6 @@ void XYInputSearchInterface::resetSearch()
     auto it = mmapTempItems.begin();
     while (mmapTempItems.end() != it)
     {
-        qDeleteAll(it.value());
         it++;
     }
     mmapTempItems.clear();
@@ -53,10 +52,10 @@ QString XYInputSearchInterface::getCurLetters()
 QStringList XYInputSearchInterface::getCandidate(const QString &keyword, bool isEnglish)
 {
     mbEnglish = isEnglish;
-    QList<XYTranslateItem *> items = searchTranslates(keyword);
+    QList<XYTranslateItem > items = searchTranslates(keyword);
     QStringList data;
-    for (XYTranslateItem *item : items) {
-        data.append(item->msTranslate);
+    for (XYTranslateItem item : items) {
+        data.append(item.msTranslate);
     }
     return data;
 }
@@ -72,15 +71,15 @@ QStringList XYInputSearchInterface::getCandidate(const QString &text, int index,
         curSearchedTranslates.clear();
     }
     QStringList data;
-    for (XYTranslateItem *item : curSearchedTranslates) {
-        data.append(item->msTranslate);
+    for (XYTranslateItem item : curSearchedTranslates) {
+        data.append(item.msTranslate);
     }
     return data;
 }
 
-QList<XYTranslateItem *> &XYInputSearchInterface::searchTranslates(const QString &keyword)
+QList<XYTranslateItem > &XYInputSearchInterface::searchTranslates(const QString &keyword)
 {
-    QList<XYTranslateItem *> list;
+    QList<XYTranslateItem > list;
 
     if (keyword.trimmed().isEmpty()) // 如果传入的词为空了，代表删完了，应该关闭输入窗口
     {
@@ -110,8 +109,8 @@ QList<XYTranslateItem *> &XYInputSearchInterface::searchTranslates(const QString
         splitePY.replace("\'", "%\'");
         list = findPossibleMust(splitePY);
 
-        XYTranslateItem *autoTranslate = autoCreateWords(splitePY); // 智能造句
-        if (autoTranslate)
+        XYTranslateItem autoTranslate = autoCreateWords(splitePY); // 智能造句
+        if (autoTranslate.miID == -1);
         {
             list.prepend(autoTranslate);
         }
@@ -279,36 +278,28 @@ QString XYInputSearchInterface::splitePinyin(const QString &pinyin, int &num)
     return result;
 }
 
-void XYInputSearchInterface::deDuplication(QList<XYTranslateItem *> &items, bool del)
+void XYInputSearchInterface::deDuplication(QList<XYTranslateItem > &items, bool del)
 {
-    QList<XYTranslateItem *> temp;
+    QList<XYTranslateItem > temp;
     for (int i = 0; i < items.size(); ++i)
     {
-        XYTranslateItem *item = items.at(i);
+        XYTranslateItem item = items.at(i);
         bool find = false;
         for (int j = 0; j < temp.size(); ++j)
         {
             if (mbEnglish)
             {
-                if (item->msComplete == temp.at(j)->msComplete)
+                if (item.msComplete == temp.at(j).msComplete)
                 {
                     find = true;
-                    if (del)
-                    {
-                        delete item;
-                    }
                     break;
                 }
             }
             else
             {
-                if (item->msTranslate == temp.at(j)->msTranslate)
+                if (item.msTranslate == temp.at(j).msTranslate)
                 {
                     find = true;
-                    if (del)
-                    {
-                        delete item;
-                    }
                     break;
                 }
             }
@@ -321,11 +312,11 @@ void XYInputSearchInterface::deDuplication(QList<XYTranslateItem *> &items, bool
     items = temp;
 }
 
-XYTranslateItem *XYInputSearchInterface::autoCreateWords(const QString &keyword)
+XYTranslateItem XYInputSearchInterface::autoCreateWords(const QString &keyword)
 {
     moAutoCompleteItem.clear();
     QString exists = keyword;
-    QMap<QString, QList<XYTranslateItem *> >::iterator it = mmapTempItems.find(exists);
+    QMap<QString, QList<XYTranslateItem > >::iterator it = mmapTempItems.find(exists);
     while(it == mmapTempItems.end() || it.value().isEmpty())
     {
         if (exists.contains("%\'"))
@@ -342,12 +333,12 @@ XYTranslateItem *XYInputSearchInterface::autoCreateWords(const QString &keyword)
 
     if (exists == keyword || it == mmapTempItems.end() || it.value().isEmpty())
     {
-        return nullptr;
+        return moAutoCompleteItem;
     }
 
-    XYTranslateItem *comAll = &moAutoCompleteItem;
-    comAll->msComplete = it.value().at(0)->msComplete;
-    comAll->msTranslate = it.value().at(0)->msTranslate;
+    XYTranslateItem comAll = moAutoCompleteItem;
+    comAll.msComplete = it.value().at(0).msComplete;
+    comAll.msTranslate = it.value().at(0).msTranslate;
     QString keys = keyword.mid(exists.size());
     if (keys.startsWith("%\'"))
     {
@@ -374,15 +365,15 @@ XYTranslateItem *XYInputSearchInterface::autoCreateWords(const QString &keyword)
             break;
         }
 
-        QList<XYTranslateItem *> list = findPossibleMust(keys);
+        QList<XYTranslateItem > list = findPossibleMust(keys);
         if (!list.isEmpty())
         {
-            comAll->msComplete += "\'";
-            comAll->msComplete += list.at(0)->msComplete;
+            comAll.msComplete += "\'";
+            comAll.msComplete += list.at(0).msComplete;
 
-            comAll->msTranslate += list.at(0)->msTranslate;
+            comAll.msTranslate += list.at(0).msTranslate;
 
-            f_nums = list.at(0)->msComplete.split("\'").size();
+            f_nums = list.at(0).msComplete.split("\'").size();
         }
         else
         {
@@ -390,16 +381,16 @@ XYTranslateItem *XYInputSearchInterface::autoCreateWords(const QString &keyword)
         }
     };
 
-    return &moAutoCompleteItem;
+    return moAutoCompleteItem;
 }
 
-QList<XYTranslateItem *> XYInputSearchInterface::findItemsFromTemp(const QString &keyword, bool force)
+QList<XYTranslateItem > XYInputSearchInterface::findItemsFromTemp(const QString &keyword, bool force)
 {
-    QList<XYTranslateItem *> list;
+    QList<XYTranslateItem > list;
     if (force || mmapTempItems.find(keyword) != mmapTempItems.end())
     {
         QString delsuf = keyword.mid(0, keyword.lastIndexOf("%"));
-        QMap<QString, QList<XYTranslateItem *> >::iterator it = mmapTempItems.begin();
+        QMap<QString, QList<XYTranslateItem > >::iterator it = mmapTempItems.begin();
         while (mmapTempItems.end() != it)
         {
             QString last_key = it.key();
@@ -414,10 +405,10 @@ QList<XYTranslateItem *> XYInputSearchInterface::findItemsFromTemp(const QString
     return list;
 }
 
-QList<XYTranslateItem *> XYInputSearchInterface::findPossibleMust(const QString &keyword, int max)
+QList<XYTranslateItem > XYInputSearchInterface::findPossibleMust(const QString &keyword, int max)
 {
     QStringList words = keyword.split("%\'");
-    QList<XYTranslateItem *> results;
+    QList<XYTranslateItem > results;
     QString key;
     for (int i = 0; i < words.size(); ++i)
     {
@@ -427,8 +418,8 @@ QList<XYTranslateItem *> XYInputSearchInterface::findPossibleMust(const QString 
         }
         key += words.at(i);
 
-        QList<XYTranslateItem *> list;
-        QMap<QString, QList<XYTranslateItem *> >::iterator it = mmapTempItems.find(key);
+        QList<XYTranslateItem > list;
+        QMap<QString, QList<XYTranslateItem > >::iterator it = mmapTempItems.find(key);
         bool find = false;
         if (it != mmapTempItems.end())
         {
@@ -442,22 +433,21 @@ QList<XYTranslateItem *> XYInputSearchInterface::findPossibleMust(const QString 
             list = XYDB->findData(key + "%", QString::number(i + 1), "userPinyin", &haveFind, max);
             if (i == 0)
             {
-                QList<XYTranslateItem *> single = XYDB->findData(key + "%", "", "singlePinyin", &haveFind, max);
+                QList<XYTranslateItem > single = XYDB->findData(key + "%", "", "singlePinyin", &haveFind, max);
 
                 for (int i = 0; i < single.size(); ++i)
                 {
-                    XYTranslateItem *singleItem = single.at(i);
-                    QStringList singles = singleItem->msTranslate.split(" ", QString::SkipEmptyParts);
+                    XYTranslateItem singleItem = single.at(i);
+                    QStringList singles = singleItem.msTranslate.split(" ", QString::SkipEmptyParts);
                     for (int j = 0; j < singles.size(); ++j)
                     {
                         if (list.size() > 200)
                         {
                             break;
                         }
-                        list.append(new XYTranslateItem("singlePinyin", singles.at(j), singleItem->msComplete));
+                        list.append(XYTranslateItem("singlePinyin", singles.at(j), singleItem.msComplete));
                     }
                 }
-                qDeleteAll(single);
             }
             list += XYDB->findData(key + "%", QString::number(i + 1), "basePinyin", &haveFind, max);
 
@@ -476,18 +466,18 @@ QList<XYTranslateItem *> XYInputSearchInterface::findPossibleMust(const QString 
     return results;
 }
 
-void XYInputSearchInterface::saveItem(XYTranslateItem *item)
+void XYInputSearchInterface::saveItem(XYTranslateItem item)
 {
-    if (item && !item->msComplete.isEmpty()) // 保存用户词库
+    if (!item.msComplete.isEmpty()) // 保存用户词库
     {
-        item->miTimes += 1;
-        if (item->msSource.toLower().contains("english"))
+        item.miTimes += 1;
+        if (item.msSource.toLower().contains("english"))
         {
             XYDB->insertData(item, "userEnglishTable");
         }
         else
         {
-            item->msExtra = QString::number(item->msTranslate.size());
+            item.msExtra = QString::number(item.msTranslate.size());
             XYDB->insertData(item, "userPinyin");
         }
     }
@@ -495,10 +485,9 @@ void XYInputSearchInterface::saveItem(XYTranslateItem *item)
 
 void XYInputSearchInterface::clearTemp()
 {
-    QMap<QString, QList<XYTranslateItem *> >::iterator it = mmapTempItems.begin();
+    QMap<QString, QList<XYTranslateItem > >::iterator it = mmapTempItems.begin();
     while (mmapTempItems.end() != it)
     {
-        qDeleteAll(it.value());
         it++;
     }
     mmapTempItems.clear();
@@ -566,7 +555,7 @@ QStringList XYInputSearchInterface::getYunMuByShengMu(const QChar &shenmu)
     return yunmu;
 }
 
-QList<XYTranslateItem *> &XYInputSearchInterface::completeInput(const QString &text, int index, QString &showText)
+QList<XYTranslateItem > &XYInputSearchInterface::completeInput(const QString &text, int index, QString &showText)
 {
     if (index < curSearchedTranslates.size())
     {
@@ -579,18 +568,18 @@ QList<XYTranslateItem *> &XYInputSearchInterface::completeInput(const QString &t
     return curSearchedTranslates;
 }
 
-QList<XYTranslateItem *> &XYInputSearchInterface::completeInput(const QString &text, QString &showText, XYTranslateItem *item)
+QList<XYTranslateItem > &XYInputSearchInterface::completeInput(const QString &text, QString &showText, XYTranslateItem item)
 {
     if (!text.isEmpty()) // 如果为空直接退出
     {
-        if (!mbEnglish && item)
+        if (!mbEnglish)
         {
             if (!moCompleteItem.msComplete.isEmpty())
             {
                 moCompleteItem.msComplete += "\'";
             }
-            moCompleteItem.msComplete += item->msComplete;
-            moCompleteItem.msTranslate += item->msTranslate;
+            moCompleteItem.msComplete += item.msComplete;
+            moCompleteItem.msTranslate += item.msTranslate;
             QStringList all = msCurrentKeyWords.split("%\'", QString::SkipEmptyParts);
             int com = moCompleteItem.msComplete.split("\'", QString::SkipEmptyParts).size();
             int remain = all.size() - com;
@@ -611,9 +600,9 @@ QList<XYTranslateItem *> &XYInputSearchInterface::completeInput(const QString &t
             }
             else
             {
-                if (moCompleteItem.msTranslate == item->msTranslate)
+                if (moCompleteItem.msTranslate == item.msTranslate)
                 {
-                    moCompleteItem.miTimes = item->miTimes + 1;
+                    moCompleteItem.miTimes = item.miTimes + 1;
                 }
                 else
                 {
@@ -621,19 +610,18 @@ QList<XYTranslateItem *> &XYInputSearchInterface::completeInput(const QString &t
                 }
 
                 moCompleteItem.msExtra = QString::number(moCompleteItem.msTranslate.size());
-                XYDB->insertData(&moCompleteItem, "userPinyin");
+                XYDB->insertData(moCompleteItem, "userPinyin");
                 curSearchedTranslates.clear();
             }
         }
         else
         {
             saveItem(item);
-            if (mbEnglish && item == nullptr)
+            if (mbEnglish)
             {
-                XYTranslateItem *temp = new XYTranslateItem;
-                temp->msComplete = text;
+                XYTranslateItem temp;
+                temp.msComplete = text;
                 XYDB->insertData(temp, "userEnglishTable");
-                delete temp;
             }
             curSearchedTranslates.clear();
         }

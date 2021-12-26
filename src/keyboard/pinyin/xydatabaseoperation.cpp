@@ -10,10 +10,10 @@
 //#define COUT //debug开关
 
 
-XYDatabaseOperation *XYDatabaseOperation::DB = NULL;
+XYDatabaseOperation *XYDatabaseOperation::DB = nullptr;
 XYDatabaseOperation *XYDatabaseOperation::getInstance()
 {
-    if (DB == NULL)
+    if (DB == nullptr)
     {
         DB = new XYDatabaseOperation;
     }
@@ -157,7 +157,7 @@ bool XYDatabaseOperation::createInputTable()
     return ok;
 }
 
-bool XYDatabaseOperation::insertData(XYTranslateItem *item, const QString &table)
+bool XYDatabaseOperation::insertData(XYTranslateItem item, const QString &table)
 {
     QString field1, field2;
     if (table.toLower().contains("english"))
@@ -181,9 +181,9 @@ bool XYDatabaseOperation::insertData(XYTranslateItem *item, const QString &table
 //                  .arg(field2)
 //                  .arg(table)
 //                  .arg(field1)
-//                  .arg(item->msComplete)
+//                  .arg(item.msComplete)
 //                  .arg(field2)
-//                  .arg(item->msTranslate));
+//                  .arg(item.msTranslate));
 //    ok = query.exec();
 //    if (!ok)
 //    {
@@ -208,19 +208,19 @@ bool XYDatabaseOperation::insertData(XYTranslateItem *item, const QString &table
                       .arg(field2)
                       .arg(field1)
                       .arg(field2));
-        query.bindValue(QString(":%1").arg(field1), item->msComplete);
-        query.bindValue(QString(":%1").arg(field2), item->msTranslate);
-        query.bindValue(":extra", item->msExtra);
-        query.bindValue(":times", item->miTimes);
-        query.bindValue(":stick", item->mbStick);
+        query.bindValue(QString(":%1").arg(field1), item.msComplete);
+        query.bindValue(QString(":%1").arg(field2), item.msTranslate);
+        query.bindValue(":extra", item.msExtra);
+        query.bindValue(":times", item.miTimes);
+        query.bindValue(":stick", item.mbStick);
         ok = query.exec();
     }
     else
     {
         query.prepare(QString("UPDATE %1 SET times=%2, stick=%3 WHERE ID=%4;")
                       .arg(table)
-                      .arg(item->miTimes)
-                      .arg(item->mbStick)
+                      .arg(item.miTimes)
+                      .arg(item.mbStick)
                       .arg(1));
         ok = query.exec();
     }
@@ -231,7 +231,7 @@ bool XYDatabaseOperation::insertData(XYTranslateItem *item, const QString &table
     return ok;
 }
 
-bool XYDatabaseOperation::insertData(const QList<XYTranslateItem *> &list, const QString &table)
+bool XYDatabaseOperation::insertData(const QList<XYTranslateItem > &list, const QString &table)
 {
     QString field1, field2;
     if (table.toLower().contains("english"))
@@ -256,11 +256,11 @@ bool XYDatabaseOperation::insertData(const QList<XYTranslateItem *> &list, const
                       .arg(field2)
                       .arg(field1)
                       .arg(field2));
-        query.bindValue(QString(":%1").arg(field1), list.at(i)->msComplete);
-        query.bindValue(QString(":%1").arg(field2), list.at(i)->msTranslate);
-        query.bindValue(":extra", list.at(i)->msExtra);
-        query.bindValue(":times", list.at(i)->miTimes);
-        query.bindValue(":stick", list.at(i)->mbStick);
+        query.bindValue(QString(":%1").arg(field1), list.at(i).msComplete);
+        query.bindValue(QString(":%1").arg(field2), list.at(i).msTranslate);
+        query.bindValue(":extra", list.at(i).msExtra);
+        query.bindValue(":times", list.at(i).miTimes);
+        query.bindValue(":stick", list.at(i).mbStick);
         ok = query.exec();
         if (!ok)
         {
@@ -279,17 +279,17 @@ bool XYDatabaseOperation::insertData(const QList<XYTranslateItem *> &list, const
     return ok;
 }
 
-bool XYDatabaseOperation::delItem(XYTranslateItem *item)
+bool XYDatabaseOperation::delItem(XYTranslateItem item)
 {
     QSqlQuery query(QSqlDatabase::database("XYInput"));
-    if (item->msSource == "singlePinyin") // 理论上基础的几个表内容都不能删除，这里只不准删除单字的表
+    if (item.msSource == "singlePinyin") // 理论上基础的几个表内容都不能删除，这里只不准删除单字的表
     {
         qDebug("Can't delete item in singlePinyin!");
         return false;
     }
     bool ok = query.exec(QString("DELETE FROM %1 WHERE id = %2;")
-                         .arg(item->msSource)
-                         .arg(item->miID));
+                         .arg(item.msSource)
+                         .arg(item.miID));
     if (!ok)
     {
         qDebug("error: %s", query.lastError().text().toUtf8().data());
@@ -297,10 +297,10 @@ bool XYDatabaseOperation::delItem(XYTranslateItem *item)
     return ok;
 }
 
-QList<XYTranslateItem *> XYDatabaseOperation::findData(const QString &key, const QString &number, const QString &table, bool *haveFind, int max)
+QList<XYTranslateItem > XYDatabaseOperation::findData(const QString &key, const QString &number, const QString &table, bool *haveFind, int max)
 {
     static bool comein = false;
-    QList<XYTranslateItem *> list;
+    QList<XYTranslateItem > list;
     if (haveFind)
     {
         *haveFind = false;
@@ -361,7 +361,7 @@ QList<XYTranslateItem *> XYDatabaseOperation::findData(const QString &key, const
 
     while (query.next())
     {
-        list.append(new XYTranslateItem(table_fact,
+        list.append(XYTranslateItem(table_fact,
                                         query.value(2).toString().trimmed(),
                                         query.value(1).toString().trimmed(),
                                         query.value(3).toString().trimmed(),

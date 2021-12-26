@@ -18,13 +18,13 @@ public:
     bool openDatabaseFile(const QString &filePath, const QString &passwd = "");
 
     bool createInputTable();
-    bool insertData(XYTranslateItem *item, const QString &table);
-    bool insertData(const QList<XYTranslateItem *> &list, const QString &table);
-    bool delItem(XYTranslateItem *item);
-    QList<XYTranslateItem *> findData(const QString &key,
+    bool insertData(XYTranslateItem item, const QString &table);
+    bool insertData(const QList<XYTranslateItem > &list, const QString &table);
+    bool delItem(XYTranslateItem item);
+    QList<XYTranslateItem > findData(const QString &key,
                                       const QString &number,
                                       const QString &table,
-                                      bool *haveFind = NULL, int max = 200);
+                                      bool *haveFind = nullptr, int max = 200);
 
 private:
     static XYDatabaseOperation *DB;
