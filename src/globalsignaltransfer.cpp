@@ -25,7 +25,7 @@ GlobalSignalTransfer::GlobalSignalTransfer(QObject *parent) : QObject(parent)
 
 }
 
-GlobalSignalTransfer* GlobalSignalTransfer::instance()
+GlobalSignalTransfer* GlobalSignalTransfer::getInstance()
 {
     static GlobalSignalTransfer obj;
     return &obj;
@@ -33,10 +33,15 @@ GlobalSignalTransfer* GlobalSignalTransfer::instance()
 
 void GlobalSignalTransfer::onKeyButtonClicked(KeyButtonBase* but)
 {
-    sendKeyButtonClicked(but);
+    emit sendKeyButtonClicked(but);
 }
 
 void GlobalSignalTransfer::onRadioButtonClicked(RadioButtonBase* but)
 {
-    sendRadioButtonClicked(but);
+    emit sendRadioButtonClicked(but);
+}
+
+void GlobalSignalTransfer::onWindowClosed(int id)
+{
+    emit sendWindowClosed(id);
 }

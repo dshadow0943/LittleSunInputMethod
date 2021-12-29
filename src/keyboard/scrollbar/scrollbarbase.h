@@ -20,7 +20,7 @@ public:
 
 signals:
     void stringPressed(const QString &text, const QPoint &pos);
-    void clicked(const QString &text, int index);
+    void clicked(QString text, int index);
 
 
 public slots:

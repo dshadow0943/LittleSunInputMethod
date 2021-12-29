@@ -21,17 +21,17 @@
 #ifndef GLOBALSIGNALTRANSFER_H
 #define GLOBALSIGNALTRANSFER_H
 
-#include "keybuttonbase.h"
-#include "radiobuttonbase.h"
-
 #include <QObject>
 
+class WindowBase;
+class KeyButtonBase;
+class RadioButtonBase;
 class GlobalSignalTransfer : public QObject
 {
     Q_OBJECT
 
 public:
-    static GlobalSignalTransfer* instance();
+    static GlobalSignalTransfer* getInstance();
 
 protected:
     explicit GlobalSignalTransfer(QObject *parent = nullptr);
@@ -39,10 +39,18 @@ protected:
 signals:
     void sendKeyButtonClicked(KeyButtonBase* but);
     void sendRadioButtonClicked(RadioButtonBase* but);
+    void sendWindowClosed(int id);
 
-public slots:
+//限制槽访问权限（避免全局滥用情况）
+private slots:
     void onKeyButtonClicked(KeyButtonBase* but);
     void onRadioButtonClicked(RadioButtonBase* but);
+    void onWindowClosed(int id);
+
+
+    friend WindowBase;
+    friend KeyButtonBase;
+    friend RadioButtonBase;
 };
 
 #endif // GLOBALSIGNALTRANSFER_H

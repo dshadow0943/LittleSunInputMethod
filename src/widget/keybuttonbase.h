@@ -49,10 +49,10 @@ public:
         keyHand, //手写
         keyPunc, //符号
         KeySwitch, //中英文切换键
-        KeyChinese,
-        KeyEnglish,
-        KeyMath,
-        KeyBack,
+        KeyChinese, //中文
+        KeyEnglish, //英文
+        KeyMath, //数学
+        KeyBack, //返回
     };
 
     explicit KeyButtonBase(int id = 0, KeyType type = Invalid, QWidget *parent = nullptr);
@@ -62,9 +62,10 @@ signals:
 
 protected slots:
     void onClicked();
+    void onThemeChange();
 
 protected:
-
+    void setKeyStyleSheet();
 };
 
 #endif // BUTTONBASE_H

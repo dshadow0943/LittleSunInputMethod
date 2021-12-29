@@ -9,7 +9,7 @@ class ScrollBarContainer : public QWidget
 public:
     enum DIRECTION{Horizontal, Vertical};
     ScrollBarContainer(QWidget *parent = nullptr);
-    void setWidget(QWidget *mCenterWidget, DIRECTION dire = Vertical, int mouseSensitivity = 5);
+    void setWidget(QWidget *mCenterWidget, DIRECTION dire = Vertical, int mouseSensitivity = 1);
     int getMouseSensitivity() const;
     void setMouseSensitivity(int value);
 

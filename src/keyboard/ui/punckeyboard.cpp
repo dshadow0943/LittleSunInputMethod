@@ -37,18 +37,18 @@ void PuncKeyboard::initUi()
 
     punc = ScrollBarManage::getVSrcllBarView(this);
     ScrollBarContainer *customViw = new ScrollBarContainer(this);
-    customViw->setWidget(punc, ScrollBarContainer::Vertical, 5);
+    customViw->setWidget(punc, ScrollBarContainer::Vertical, 1);
     QStringList data = loadSymbols(":/symbol.txt");
     punc->setData(data);
 
     QHBoxLayout *hLayout = new QHBoxLayout(this);
-    hLayout->addWidget(customViw, 5);
+    hLayout->addWidget(customViw, 6);
     QWidget *w = new QWidget;
     w->setLayout(layout);
     hLayout->addWidget(w, 1);
     layout->setSpacing(4);
     hLayout->setMargin(0);
-    hLayout->setSpacing(0);
+    hLayout->setSpacing(1);
     this->setLayout(hLayout);
 }
 

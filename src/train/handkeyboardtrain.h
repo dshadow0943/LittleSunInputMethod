@@ -1,3 +1,23 @@
+/*
+* Copyright (C) 2019 ~ 2019 UnionTech Software Technology Co.,Ltd.
+*
+* Author:     leilong <dshadow@foxmail.com>
+*
+* Maintainer: leilong <dshadow@foxmail.com>
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #ifndef HANDKEYBOARDTRAIN_H
 #define HANDKEYBOARDTRAIN_H
 
@@ -10,13 +30,14 @@
 #include <QPainter>
 #include "characterentity.h"
 #include "handviewtrain.h"
-#include "chinesecharacterserver.h"
+#include "thesaurusretrieval.h"
+#include "windowbase.h"
 
-class HandKeyboardTrain : public QWidget
+class HandKeyboardTrain : public WindowBase
 {
     Q_OBJECT
 public:
-    explicit HandKeyboardTrain(QWidget *parent = nullptr);
+    explicit HandKeyboardTrain(int id = 0, QWidget *parent = nullptr);
 
 private:
     void setRightToolWidget();
@@ -39,7 +60,7 @@ private:
 
 private:
 
-    ChineseCharacterServer server;
+    ThesaurusRetrieval *mThesaurusManage;
 
     void enterPoint(CharacterEntity);
 

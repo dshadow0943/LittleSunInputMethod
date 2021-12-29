@@ -1,13 +1,33 @@
+/*
+* Copyright (C) 2019 ~ 2019 UnionTech Software Technology Co.,Ltd.
+*
+* Author:     leilong <dshadow@foxmail.com>
+*
+* Maintainer: leilong <dshadow@foxmail.com>
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "handkeyboardtrain.h"
 #include <QLabel>
 #include <QInputDialog>
 #include <QMessageBox>
 
-HandKeyboardTrain::HandKeyboardTrain(QWidget *parent) : QWidget(parent)
+HandKeyboardTrain::HandKeyboardTrain(int id, QWidget *parent) : WindowBase (id, parent)
 {
     setWindowFlag(Qt::WindowFlags::enum_type::WindowDoesNotAcceptFocus);
 
-    server.init();
+    mThesaurusManage = ThesaurusRetrieval::getInstance();
     CharacterEntity c;
 
     keyboard = new HandViewTrain(this);
@@ -79,7 +99,7 @@ void HandKeyboardTrain::enterPoint(CharacterEntity character)
         {
             character.word = text;
             characters.push_back(character);
-            server.writeFile(character.toString() + "\n");
+            mThesaurusManage->writeFile(character.toString() + "\n");
         }
         if (!ok){
             break;
@@ -89,7 +109,7 @@ void HandKeyboardTrain::enterPoint(CharacterEntity character)
 
 void HandKeyboardTrain::saveSolt()
 {
-    int count = server.saveCharaters(characters);
+    int count = mThesaurusManage->saveCharaters(characters);
     QMessageBox::critical(this,"save File Success",QString("成功添加%1个到字库").arg(count));
     characters.clear();
 }
@@ -97,7 +117,7 @@ void HandKeyboardTrain::saveSolt()
 void HandKeyboardTrain::resetSolt()
 {
     if (QMessageBox::warning(nullptr, "重置", QString("确定重置字库吗？这将失去自己你训练的所有字库"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes) {
-        if (server.deleteFont()) {
+        if (mThesaurusManage->deleteFont()) {
             QMessageBox::critical(this,"重置",QString("重置成功，原文件可在~/.littlesun文件夹中寻找"));
         }
     }

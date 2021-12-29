@@ -6,7 +6,8 @@ HEADERS += \
     $$PWD/ce_switchbutton.h \
     $$PWD/radiobuttonbase.h \
     $$PWD/buttoninterface.h \
-    $$PWD/keybuttonbase.h
+    $$PWD/keybuttonbase.h \
+    $$PWD/windowbase.h
 
 SOURCES += \
     $$PWD/englishbutton.cpp \
@@ -16,4 +17,5 @@ SOURCES += \
     $$PWD/ce_switchbutton.cpp \
     $$PWD/radiobuttonbase.cpp \
     $$PWD/buttoninterface.cpp \
-    $$PWD/keybuttonbase.cpp
+    $$PWD/keybuttonbase.cpp \
+    $$PWD/windowbase.cpp

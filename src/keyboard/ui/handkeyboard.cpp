@@ -38,7 +38,7 @@ void HandKeyboard::setRightToolWidget()
     }
 
     layout->setContentsMargins(0,0,0,0);
-    layout->setSpacing(1);
+    layout->setSpacing(4);
 
     /*将布局设置给右侧工具栏部件*/
     ui->rightToolWidget->setLayout(layout);

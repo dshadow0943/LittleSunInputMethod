@@ -40,7 +40,6 @@ struct skin {
     skin_color key;
     skin_color func;
     skin_color tab;
-    skin_color font;
 };
 
 struct config {
@@ -59,7 +58,6 @@ enum SkinType {
     Key,
     Func,
     Tab,
-    Font,
 };
 
 class SettingManage : public QObject
@@ -83,7 +81,9 @@ public:
         DefaultKeyboardEnd,
         SkinBegin,
         SkinLightWhite = SkinBegin,
+        SKinKindGrey,
         SkinSkyBlue,
+        SkinMagicBlack,
         SkinDarkBlack,
         SkinEnd,
     };
@@ -96,6 +96,8 @@ public:
     void setDefaultKeyboard(int type);
     int getDefaultKeyboard();
 
+    void setThemePalette();
+
     void saveConfig();
 
 signals:
@@ -106,6 +108,11 @@ public slots:
 private:
     void initSkin();
     void initConfig();
+
+    skin getLightWhite();
+    skin getKindGrey();
+    skin getSkyBlueSkin();
+    skin getMagicBlack();
 
 private:
     static SettingManage* obj;

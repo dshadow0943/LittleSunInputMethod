@@ -26,7 +26,7 @@ RadioButtonBase::RadioButtonBase(QString text, int id, int type, QWidget *parent
 {
     connect(this, &QRadioButton::clicked, this, &RadioButtonBase::onClicked);
     connect(this, &RadioButtonBase::sendClicked,
-            GlobalSignalTransfer::instance(), &GlobalSignalTransfer::onRadioButtonClicked);
+            GlobalSignalTransfer::getInstance(), &GlobalSignalTransfer::onRadioButtonClicked);
 
     setFixedSize(QSize(100, 20));
 }

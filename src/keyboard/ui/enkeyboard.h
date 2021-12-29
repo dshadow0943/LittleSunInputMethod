@@ -37,7 +37,6 @@ private:
     SoftKeyboard* parent;
 
 private:
-    void initPinyinDictionary();
     void initConnect();
     void initView();   //初始化布局
 

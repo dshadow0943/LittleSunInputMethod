@@ -21,6 +21,6 @@
 #ifndef GLOBALCONFIG_H
 #define GLOBALCONFIG_H
 
-#define APPLOCALPATH "/.local/share/littesun/"
+#define APPLOCALPATH "/littesun/"
 
 #endif // GLOBALCONFIG_H

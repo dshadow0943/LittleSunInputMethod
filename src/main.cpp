@@ -31,34 +31,6 @@ int main(int argc, char *argv[])
 {
     GlobalApplication a(argc, argv);
 
-    qApp->setPalette(QPalette(QColor("#EAF7FF")));
-    qApp->setStyleSheet(".QPushButton,.QToolButton{ \
-                            border-style:none;\
-                            border:1px solid #C0DCF2;\
-                            color:#386487;\
-                            padding:5px;\
-                            min-height:15px;\
-                            border-radius:5px;\
-                            background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #DEF0FE,stop:1 #C0DEF6);\
-                            }\
-                            .QPushButton:hover,.QToolButton:hover{\
-                            background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #F2F9FF,stop:1 #DAEFFF);\
-                            }\
-                            .QPushButton:pressed,.QToolButton:pressed{\
-                            background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #DEF0FE,stop:1 #C0DEF6);\
-                            }\
-                            .QListView{\
-                            Background-cp;pr:#EAF7FF;//背景色\
-                            Alternate-background-color:#DEF0FE;//行与行之间交替的颜色setAlternatingRowColors(true);\
-                            Show-decoration-selected:1;设置是否选中时，整行都高亮显示\
-                            }\
-                            .QListView::item:alternate{\
-                            Background:#000000;\
-                            }\
-                            .QListView::item:selected{\
-                            Border:2px solid #000000;\
-                            }\
-                            ");
     //建立到session bus的连接
     QDBusConnection connection = QDBusConnection::sessionBus();
     //在session bus上注册名为com.fcitx.littlesun.server的服务

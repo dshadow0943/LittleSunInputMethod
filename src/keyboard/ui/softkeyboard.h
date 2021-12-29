@@ -3,11 +3,12 @@
 
 #include "keyboardsidebar.h"
 #include "scrollbarcontainer.h"
-#include "xydatabaseoperation.h"
-#include "xyinputsearchinterface.h"
-#include "xytranslateitem.h"
-#include "chinesecharacterserver.h"
+#include "dboperation.h"
+#include "pinyinretrievalmodel.h"
+#include "phraseentity.h"
+#include "thesaurusretrieval.h"
 #include "scrollbarmanage.h"
+#include "windowbase.h"
 
 #include <QWidget>
 #include <QStackedWidget>
@@ -33,12 +34,12 @@ namespace Ui {
 class SoftKeyboard;
 }
 
-class SoftKeyboard : public QWidget
+class SoftKeyboard : public WindowBase
 {
     Q_OBJECT
 
 public:
-    explicit SoftKeyboard(QWidget *parent = nullptr);
+    explicit SoftKeyboard(int id = 0, QWidget *parent = nullptr);
     ~SoftKeyboard();
 
     void setMoveEnabled(bool moveEnabled=true);//设置无边框窗口移动使能
@@ -65,7 +66,7 @@ public slots:
     void switchPage(int type = -1);      //切换键盘
     void addCandidateCharacterText(QString character);  //非中文输入时的添加字符到输入框 / 中文输入时将选中的候选框的文字添加到候选框
     void addCandidateLetter(QString letter);
-    void userSelectChinese(const QString&, int);    //拼音输入时点击候选词的处理方法
+    void userSelectChinese(QString, int);    //拼音输入时点击候选词的处理方法
 
 private slots:
     void on_btn_num_key_clicked();
@@ -81,6 +82,7 @@ private slots:
     void arrowChange();
 
     void siteClicked();
+    void onThemeChange();
 
 
 protected:
@@ -102,9 +104,9 @@ private:
     int winSizeH = 500;   //键盘顶层布局高度，默认(最大)500
     int winSizeW = 1000;   //键盘顶层布局宽度，默认(最大)1000
     double winScale = 1;    //默认缩放比例
-    int previousKey = KEYBOARD_EN;
+    int previousKey = -1;   //上一次键盘
     QRect applicationRect;      //显示屏相关数据对象
-    ChineseCharacterServer chineseServer;
+    ThesaurusRetrieval *mThesaurusManage;
     QImage *arrowIcon; //关闭按钮的图像对象
     int    arrowStatus = ARROW_CLOSE;         //记录箭头状态
     bool   arrowPressed = false;     //记录箭头按下状态
@@ -133,9 +135,11 @@ private:
     void initUi();
     void initKeyboard();    //初始化键盘
     void initCandidate();   //初始化候选框
+    void initLog();         //初始化log和设置图标
 
-    void fillCandidateText(QStringList);   //填充候选框文本
-
+    void fillCandidateText(QStringList&);   //填充候选框文本
+    void setThemeStyleSheet();
+    void setTabStyleSheet();
 };
 
 #endif // SOFTKEYBOARD_H

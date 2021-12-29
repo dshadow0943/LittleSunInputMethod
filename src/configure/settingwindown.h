@@ -23,15 +23,16 @@
 
 #include "settingcontenttab.h"
 #include "settingcontentview.h"
+#include "windowbase.h"
 
 #include <QWidget>
 
 class RadioButtonBase;
-class SettingWindown : public QWidget
+class SettingWindown : public WindowBase
 {
     Q_OBJECT
 public:
-    explicit SettingWindown(QWidget *parent = nullptr);
+    explicit SettingWindown(int id = 0, QWidget *parent = nullptr);
 
 signals:
 

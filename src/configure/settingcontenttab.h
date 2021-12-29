@@ -38,6 +38,7 @@ signals:
 public slots:
     void onTabClicked(QModelIndex index);
     void onViewChange(int index);
+    void onThemeChange();
 
 private:
     void init();

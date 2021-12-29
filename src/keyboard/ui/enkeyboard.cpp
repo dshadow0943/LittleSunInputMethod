@@ -11,40 +11,8 @@ EnKeyboard::EnKeyboard(SoftKeyboard *parent) : QWidget(parent)
 {
     this->parent = parent;
     //初始化键盘
-    initPinyinDictionary();
     initView();
     initConnect();
-}
-
-void EnKeyboard::initPinyinDictionary()
-{
-    bool ret = XYInputSearchInterface::getInstance()->initInputBase(qApp->applicationDirPath()
-                                                                    + "/chineseBase/chinese.db");
-    if(!ret)
-    {
-#ifdef Q_OS_LINUX
-        ret = XYInputSearchInterface::getInstance()->initInputBase(qApp->applicationDirPath()
-                                                                   + "/../../chineseBase/chinese.db");
-
-        if (!ret) {
-            ret = XYInputSearchInterface::getInstance()->initInputBase(qApp->applicationDirPath()
-                                                                       + "/usr/local/littlesun/chineseBase/chinese.db");
-        }
-
-#endif
-
-#ifdef Q_OS_WIN
-        ret = XYInputSearchInterface::getInstance()->initInputBase(qApp->applicationDirPath()
-                                                                   + "/../../LittleSunInputMethod/chineseBase/chinese.db");
-#endif
-
-    }
-
-    //如果最终还是加载失败，警告
-    if (!ret) {
-        QMessageBox::warning(nullptr, "warning", "Load lexicon failed!", QMessageBox::Ok);
-
-    }
 }
 
 void EnKeyboard::initView()

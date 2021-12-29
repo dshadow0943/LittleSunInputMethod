@@ -27,7 +27,7 @@
 #include <QLabel>
 #include <QButtonGroup>
 
-SettingWindown::SettingWindown(QWidget *parent) : QWidget(parent)
+SettingWindown::SettingWindown(int id, QWidget *parent) : WindowBase (id, parent)
 {
     initUi();
 
@@ -36,7 +36,7 @@ SettingWindown::SettingWindown(QWidget *parent) : QWidget(parent)
     connect(mContentView, &SettingContentView::sendViewChange,
             mContentTab, &SettingContentTab::onViewChange);
 
-    connect(GlobalSignalTransfer::instance(), &GlobalSignalTransfer::sendRadioButtonClicked,
+    connect(GlobalSignalTransfer::getInstance(), &GlobalSignalTransfer::sendRadioButtonClicked,
             this, &SettingWindown::onRadioButtonClicked);
 }
 
@@ -63,6 +63,40 @@ void SettingWindown::addBasicCard()
     QString title = "基础设置";
     SettingContentCard *card = new SettingContentCard(title);
     int bId;
+    QAbstractButton* but = nullptr;
+
+    /*********************系统主题*************************/
+
+    QLabel *skinLabel = new QLabel("系统主题");
+    card->appendWidget(skinLabel);
+
+    QWidget *skinWgt = new QWidget();
+    QHBoxLayout *skinLayout = new QHBoxLayout();
+    RadioButtonBase *lightWhite = new RadioButtonBase("纯净白", SettingManage::SkinLightWhite, SettingManage::Skin);
+    RadioButtonBase *kindGrey = new RadioButtonBase("和蔼灰", SettingManage::SKinKindGrey, SettingManage::Skin);
+    RadioButtonBase *skyBlue = new RadioButtonBase("天空蓝", SettingManage::SkinSkyBlue, SettingManage::Skin);
+    RadioButtonBase *darkBlack = new RadioButtonBase("魔幻黑", SettingManage::SkinMagicBlack, SettingManage::Skin);
+    skinLayout->addWidget(lightWhite);
+    skinLayout->addWidget(kindGrey);
+    skinLayout->addWidget(skyBlue);
+    skinLayout->addWidget(darkBlack);
+
+    QButtonGroup *skinGroup = new QButtonGroup();
+    skinGroup->addButton(lightWhite, lightWhite->getId());
+    skinGroup->addButton(kindGrey, kindGrey->getId());
+    skinGroup->addButton(skyBlue, skyBlue->getId());
+    skinGroup->addButton(darkBlack, darkBlack->getId());
+
+    bId = SettingManage::getInstance()->getThemeType();
+    but = skinGroup->button(bId);
+    if (nullptr == but) {
+        but = skyBlue;
+    }
+    but->setChecked(true);
+    skinWgt->setLayout(skinLayout);
+    card->appendWidget(skinWgt);
+
+    /*********************默认键盘*************************/
 
     QLabel *defaultKeyboard = new QLabel("默认键盘");
     card->appendWidget(defaultKeyboard);
@@ -82,37 +116,15 @@ void SettingWindown::addBasicCard()
     keyGroup->addButton(handKeyBoard, handKeyBoard->getId());
 
     bId = SettingManage::getInstance()->getDefaultKeyboard() + SettingManage::DefaultKeyboardBegin;
-    if (bId < SettingManage::DefaultKeyboardBegin || bId >= SettingManage::DefaultKeyboardEnd) {
-        bId = SettingManage::DefaultKeyboardPinyin;
+    but = keyGroup->button(bId);
+    if (nullptr == but) {
+        but = pinyinKeyBoard;
     }
-    keyGroup->button(bId)->setChecked(true);
+    but->setChecked(true);
     keyWgt->setLayout(keyLayout);
     card->appendWidget(keyWgt);
 
-    QLabel *skinLabel = new QLabel("皮肤设置");
-    card->appendWidget(skinLabel);
-
-    QWidget *skinWgt = new QWidget();
-    QHBoxLayout *skinLayout = new QHBoxLayout();
-    RadioButtonBase *lightWhite = new RadioButtonBase("浅白色", SettingManage::SkinLightWhite, SettingManage::Skin);
-    RadioButtonBase *skyBlue = new RadioButtonBase("天空蓝", SettingManage::SkinSkyBlue, SettingManage::Skin);
-    RadioButtonBase *darkBlack = new RadioButtonBase("深黑色", SettingManage::SkinDarkBlack, SettingManage::Skin);
-    skinLayout->addWidget(lightWhite);
-    skinLayout->addWidget(skyBlue);
-    skinLayout->addWidget(darkBlack);
-
-    QButtonGroup *skinGroup = new QButtonGroup();
-    skinGroup->addButton(lightWhite, lightWhite->getId());
-    skinGroup->addButton(skyBlue, skyBlue->getId());
-    skinGroup->addButton(darkBlack, darkBlack->getId());
-
-    bId = SettingManage::getInstance()->getThemeType();
-    if (bId < SettingManage::SkinBegin || bId >= SettingManage::SkinEnd) {
-        bId = SettingManage::SkinSkyBlue;
-    }
-    skinGroup->button(bId)->setChecked(true);
-    skinWgt->setLayout(skinLayout);
-    card->appendWidget(skinWgt);
+    /*********************end*************************/
 
     mContentTab->appendTab(title);
     mContentView->appendCard(card);
@@ -124,8 +136,6 @@ void SettingWindown::addSkinCard()
 
 void SettingWindown::onRadioButtonClicked(RadioButtonBase* but)
 {
-    qInfo() << __FUNCTION__ << but->getId();
-
     switch (but->getType()) {
     case SettingManage::DefaultKeyboard:
         SettingManage::getInstance()->setDefaultKeyboard(but->getId()-SettingManage::DefaultKeyboardBegin);

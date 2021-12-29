@@ -23,12 +23,15 @@
 
 #include <QStandardPaths>
 #include <QDebug>
+#include <QApplication>
+#include <QPalette>
 
 SettingManage* SettingManage::obj = nullptr;
 SettingManage::SettingManage(QObject *parent) : QObject(parent)
 {
     initConfig();
     initSkin();
+    setThemePalette();
 }
 
 SettingManage::~SettingManage()
@@ -47,23 +50,22 @@ SettingManage* SettingManage::getInstance()
 
 void SettingManage::initConfig()
 {
-    QString path = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + APPLOCALPATH + "/config.ini";
+    QString path = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation) + APPLOCALPATH + "/config.ini";
     QSettings settings(path, QSettings::IniFormat);
-    settings.beginGroup("基础设置");
+    settings.beginGroup("Basic");
 
-    mConfig.themeType = settings.value("themeType", 1).toInt();
-    mConfig.defaultKeyboard = settings.value("defaultKeyboard", 1).toInt();
+    mConfig.themeType = settings.value("themeType", SettingManage::SkinSkyBlue).toInt();
+    mConfig.defaultKeyboard = settings.value("defaultKeyboard", SettingManage::DefaultKeyboardPinyin).toInt();
     mConfig.navigationWindowPos = settings.value("navigationWindowPos", QPoint(0, 0)).toPoint();
 
     settings.endGroup();
-
 }
 
 void SettingManage::saveConfig()
 {
-    QString path = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + APPLOCALPATH + "/config.ini";
+    QString path = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation) + APPLOCALPATH + "/config.ini";
     QSettings settings(path, QSettings::IniFormat);
-    settings.beginGroup("基础设置");
+    settings.beginGroup("Basic");
 
     settings.setValue("themeType", mConfig.themeType);
     settings.setValue("defaultKeyboard", mConfig.defaultKeyboard);
@@ -74,21 +76,83 @@ void SettingManage::saveConfig()
 
 void SettingManage::initSkin()
 {
-    skin_color theme = {QColor("#EAF7FF"), QColor("#EAF7FF"), QColor("#C0DEF6"), QColor("#000000")};
-    skin_color key = {QColor("#EAF7FF"), QColor("#EAF7FF"), QColor("#EAF7FF"), QColor("#000000")};
-    skin_color func = {QColor("#C0DEF6"), QColor("#C0DEF6"), QColor("#C0DEF6"), QColor("#000000")};
-    skin_color tab = {QColor("#C0DEF6"), QColor("#C0DEF6"), QColor("#EAF7FF"), QColor("#000000")};
-    skin_color font = {QColor("#000000"), QColor("#000000"), QColor("#000000"), QColor("#000000")};
+    mSkinMap.insert(SkinLightWhite, getLightWhite());
+    mSkinMap.insert(SKinKindGrey, getKindGrey());
+    mSkinMap.insert(SkinSkyBlue, getSkyBlueSkin());
+    mSkinMap.insert(SkinMagicBlack, getMagicBlack());
+}
 
-    mSkinMap.insert(SkinLightWhite , {theme, key, func, tab, font});
-    mSkinMap.insert(SkinSkyBlue , {theme, key, func, tab, font});
-    mSkinMap.insert(SkinDarkBlack , {theme, key, func, tab, font});
+
+skin SettingManage::getLightWhite()
+{
+    skin_color theme = {QColor("#FFFFFF"), QColor("#FFFFFF"), QColor("#F5F5F5"), QColor("#000000")};
+    skin_color key = {QColor("#FFFFFF"), QColor("#FFFFFF"), QColor("#FFFFFF"), QColor("#000000")};
+    skin_color func = {QColor("#FFFFFF"), QColor("#FFFFFF"), QColor("#FFFFFF"), QColor("#000000")};
+    skin_color tab = {QColor("#FFFFFF"), QColor("#F0F0F0"), QColor("#FFFFFF"), QColor("#000000")};
+    return {theme, key, func, tab};
+}
+
+skin SettingManage::getKindGrey()
+{
+    skin_color theme = {QColor("#F6F6F6"), QColor("#F6F6F6"), QColor("#E4E4E4"), QColor("#57595B")};
+    skin_color key = {QColor("#F6F6F6"), QColor("#F6F6F6"), QColor("#F6F6F6"), QColor("#57595B")};
+    skin_color func = {QColor("#E4E4E4"), QColor("#E4E4E4"), QColor("#E4E4E4"), QColor("#57595B")};
+    skin_color tab = {QColor("#F6F6F6"), QColor("#E4E4E4"), QColor("#F6F6F6"), QColor("#57595B")};
+    return {theme, key, func, tab};
+}
+
+skin SettingManage::getSkyBlueSkin()
+{
+    skin_color theme = {QColor("#EAF7FF"), QColor("#DEF0FE"), QColor("#C0DEF6"), QColor("#386487")};
+    skin_color key = {QColor("#DEF0FE"), QColor("#DEF0FE"), QColor("#DEF0FE"), QColor("#386487")};
+    skin_color func = {QColor("#C0DEF6"), QColor("#C0DEF6"), QColor("#C0DEF6"), QColor("#386487")};
+    skin_color tab = {QColor("#DEF0FE"), QColor("#C0DEF6"), QColor("#DEF0FE"), QColor("#386487")};
+    return {theme, key, func, tab};
+}
+
+skin SettingManage::getMagicBlack()
+{
+    skin_color theme = {QColor("#363636"), QColor("#363636"), QColor("#242424"), QColor("#DCDCDC")};
+    skin_color key = {QColor("#363636"), QColor("#363636"), QColor("#363636"), QColor("#DCDCDC")};
+    skin_color func = {QColor("#242424"), QColor("#242424"), QColor("#242424"), QColor("#DCDCDC")};
+    skin_color tab = {QColor("#363636"), QColor("#202020"), QColor("#363636"), QColor("#DCDCDC")};
+    return {theme, key, func, tab};
+}
+
+void SettingManage::setThemePalette()
+{
+    skin_color tClolr = getSkinColor(Theme);
+    skin_color bClolr = getSkinColor(Tab);
+    qApp->setPalette(QPalette(tClolr.normal.name()));
+
+    qApp->setStyleSheet(QString(".QPushButton,.QToolButton{ \
+                                border-style:none;\
+                                border:1px solid %1;\
+                                color:%2;\
+                                padding:5px;\
+                                min-height:15px;\
+                                border-radius:5px;\
+                                background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %3,stop:1 %4);\
+                                }\
+                                .QPushButton:hover,.QToolButton:hover{\
+                                background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %4,stop:1 %5);\
+                                }\
+                                .QPushButton:pressed,.QToolButton:pressed{\
+                                background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %3,stop:1 %4);\
+                                }\
+                                ")
+                        .arg(tClolr.hover.name())
+                        .arg(tClolr.font.name())
+                        .arg(bClolr.normal.name())
+                        .arg(bClolr.hover.name())
+                        .arg(bClolr.pressed.name()));
 }
 
 skin_color SettingManage::getSkinColor(SkinType type)
 {
     int key = mConfig.themeType;
-    if (key < SettingManage::SkinBegin || key >= SettingManage::SkinEnd) {
+
+    if (mSkinMap.end() == mSkinMap.find(key)) {
         key = SettingManage::SkinSkyBlue;
     }
 
@@ -101,14 +165,14 @@ skin_color SettingManage::getSkinColor(SkinType type)
         return mSkinMap[key].func;
     case Tab:
         return mSkinMap[key].tab;
-    case Font:
-        return mSkinMap[key].font;
     }
 }
 
 void SettingManage::setThemeType(int type)
 {
     mConfig.themeType = type;
+    setThemePalette();
+    emit sendThemeChange();
 }
 
 int SettingManage::getThemeType()

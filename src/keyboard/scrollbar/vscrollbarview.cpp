@@ -1,6 +1,7 @@
 #include "vscrollbarview.h"
 #include "scrollbarcontainer.h"
 #include "customskin.h"
+#include "settingmanage.h"
 #include <QPainter>
 #include <QPaintEvent>
 
@@ -10,15 +11,19 @@
  */
 VScrollBarView::VScrollBarView(QWidget *parent) : ScrollBarBase(parent)
 {
-
+    setUnitMinWidth(50);
 }
 
 void VScrollBarView::paintEvent(QPaintEvent *event)
 {
-    //qDebug() << "绘画事件触发";
+    skin_color skin = SettingManage::getInstance()->getSkinColor(SkinType::Theme);
+
+    QFont font;
+    font.setPixelSize(24);
+
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.setFont(CUSTOMSKIN->candidateTextFont);
+    painter.setFont(font);
 
     QFontMetrics metrics(painter.font());
     int cur_x = 5;
@@ -30,13 +35,13 @@ void VScrollBarView::paintEvent(QPaintEvent *event)
     // 先绘制按下的矩形
     if (!pressRect.isEmpty())
     {
-        painter.setPen(CUSTOMSKIN->candidateTextPressBKColor);
-        painter.setBrush(CUSTOMSKIN->candidateTextPressBKColor);
+        painter.setPen(skin.pressed);
+        painter.setBrush(skin.pressed);
         painter.drawRect(pressRect);
     }
 
     // 绘制所有的文字
-    painter.setPen(CUSTOMSKIN->candidateTextPen);
+    painter.setPen(skin.font);
     int cur_y = 0;
     for (int i = 0; i < dataStrings.size(); i++)
     {

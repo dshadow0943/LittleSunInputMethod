@@ -20,15 +20,24 @@
 */
 #include "keybuttonbase.h"
 #include "settingmanage.h"
+#include "globalsignaltransfer.h"
 #include <QPainter>
 
 KeyButtonBase::KeyButtonBase(int id, KeyType type, QWidget *parent)
   : QPushButton(parent)
   , ButtonInterface (id, type)
 {
-    skin_color font = SettingManage::getInstance()->getSkinColor(SkinType::Font);
+    setKeyStyleSheet();
+
+    QPushButton::connect(this, &QPushButton::clicked, this, &KeyButtonBase::onClicked);
+    QPushButton::connect(this, &KeyButtonBase::sendClicked, GlobalSignalTransfer::getInstance(), &GlobalSignalTransfer::onKeyButtonClicked);
+    QPushButton::connect(SettingManage::getInstance(), &SettingManage::sendThemeChange, this, &KeyButtonBase::onThemeChange);
+}
+
+void KeyButtonBase::setKeyStyleSheet()
+{
     skin_color colors;
-    switch (type) {
+    switch (mType) {
     case KeyButtonBase::Func:
         colors = SettingManage::getInstance()->getSkinColor(SkinType::Func);
         break;
@@ -39,21 +48,24 @@ KeyButtonBase::KeyButtonBase(int id, KeyType type, QWidget *parent)
         colors = SettingManage::getInstance()->getSkinColor(SkinType::Key);
     }
 
-    QString button_style= QString("KeyButtonBase{color:%1; background-color:%2;"
+    QString button_style = QString("KeyButtonBase{color:%1; background-color:%2;"
                                   "border-radius: 10px;  border: 1px groove gray; border-style: outset;} "
                                   "KeyButtonBase:hover{background-color:%3;} "
                                   "KeyButtonBase:pressed{background-color:%4; border-style: inset; }")
-            .arg(font.normal.name())
+            .arg(colors.font.name())
             .arg(colors.normal.name())
             .arg(colors.hover.name())
             .arg(colors.pressed.name());
 
     setStyleSheet(button_style);
-
-    QPushButton::connect(this, &QPushButton::clicked, this, &KeyButtonBase::onClicked);
 }
 
 void KeyButtonBase::onClicked()
 {
     emit sendClicked(this);
+}
+
+void KeyButtonBase::onThemeChange()
+{
+    setKeyStyleSheet();
 }

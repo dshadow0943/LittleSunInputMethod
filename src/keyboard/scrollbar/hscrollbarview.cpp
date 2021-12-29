@@ -1,6 +1,7 @@
 #include "hscrollbarview.h"
 #include "scrollbarcontainer.h"
 #include "customskin.h"
+#include "settingmanage.h"
 #include <QPainter>
 #include <QPaintEvent>
 #include <QDebug>
@@ -11,14 +12,19 @@
  */
 HScrollBarView::HScrollBarView(QWidget *parent) : ScrollBarBase(parent)
 {
-
+    setUnitMinWidth(30);
 }
 
 void HScrollBarView::paintEvent(QPaintEvent *event)
 {
+    skin_color skin = SettingManage::getInstance()->getSkinColor(SkinType::Theme);
+
+    QFont font;
+    font.setPixelSize(24);
+
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.setFont(CUSTOMSKIN->candidateTextFont);
+    painter.setFont(font);
 
     QFontMetrics metrics(painter.font());
     int cur_x = 10;
@@ -29,16 +35,15 @@ void HScrollBarView::paintEvent(QPaintEvent *event)
 
     if(!pressRect.isEmpty())
     {
-        painter.setPen(CUSTOMSKIN->candidateTextPressBKColor);
-        painter.setBrush(CUSTOMSKIN->candidateTextPressBKColor);
+        painter.setPen(skin.pressed);
+        painter.setBrush(skin.pressed);
         painter.drawRect(pressRect);
     }
 
     //绘制所有文字
-    painter.setPen(CUSTOMSKIN->candidateTextPen);
+    painter.setPen(skin.font);
     for(int i = 0; i < dataStrings.size(); i++)
     {
-        //qDebug() << dataStrings.at(i);
         text = dataStrings.at(i);
         text_w = metrics.width(text)+15;
         if(unitMinWidth != -1)
