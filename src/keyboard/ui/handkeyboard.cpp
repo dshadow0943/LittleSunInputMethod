@@ -16,26 +16,21 @@ HandKeyboard::HandKeyboard(SoftKeyboard *parent) :
 {
     ui->setupUi(this);
 
-    this->parent = parent;
     //设置右侧工具栏
     setRightToolWidget();
-    connect(ui->handWritingWidget, &HandView::charToParent, this, &HandKeyboard::recognizeChinese);
+
+    connect(ui->handWritingWidget, &HandView::sendPonit, this, &HandKeyboard::onPointToCharacter);
 }
 
 void HandKeyboard::setRightToolWidget()
 {
     QVBoxLayout *layout = new QVBoxLayout;
 
-    mButs.push_back(ButtonItem::getNumButton("删除", Qt::Key_Backspace, KeyButtonBase::Func, this));
-    mButs.push_back(ButtonItem::getNumButton("确认", Qt::Key_Enter, KeyButtonBase::Func, this));
-    mButs.push_back(ButtonItem::getNumButton("数字", KeyButtonBase::KeyNum, KeyButtonBase::Func, this));
-    mButs.push_back(ButtonItem::getNumButton("符号", KeyButtonBase::keyPunc, KeyButtonBase::Func, this));
-    mButs.push_back(ButtonItem::getNumButton("拼音", KeyButtonBase::keyPinyin, KeyButtonBase::Func, this));
-
-    for (KeyButtonBase *but : mButs) {
-        layout->addWidget(but,1);
-        connect(but, &KeyButtonBase::sendClicked, this, &HandKeyboard::onClicked);
-    }
+    layout->addWidget(ButtonItem::getNumButton("删除", Qt::Key_Backspace, KeyButtonBase::Func, this));
+    layout->addWidget(ButtonItem::getNumButton("确认", Qt::Key_Enter, KeyButtonBase::Func, this));
+    layout->addWidget(ButtonItem::getNumButton("数字", KeyButtonBase::KeyNum, KeyButtonBase::Func, this));
+    layout->addWidget(ButtonItem::getNumButton("符号", KeyButtonBase::keyPunc, KeyButtonBase::Func, this));
+    layout->addWidget(ButtonItem::getNumButton("拼音", KeyButtonBase::keyPinyin, KeyButtonBase::Func, this));
 
     layout->setContentsMargins(0,0,0,0);
     layout->setSpacing(4);
@@ -44,39 +39,13 @@ void HandKeyboard::setRightToolWidget()
     ui->rightToolWidget->setLayout(layout);
 }
 
-void HandKeyboard::onClicked(KeyButtonBase* but)
+void HandKeyboard::onPointToCharacter(CharacterEntity& character)
 {
-    switch (but->getId()) {
-    case Qt::Key_Backspace:
-        parent->deleteSlot();
-        break;
-    case Qt::Key_Enter:
-        parent->enterSlot();
-        break;
-    case KeyButtonBase::KeyNum:
-        parent->switchPage(KEYBOARD_NUM);
-        break;
-    case KeyButtonBase::keyPunc:
-        parent->switchPage(KEYBOARD_PUNC);
-        break;
-    case KeyButtonBase::keyPinyin:
-         parent->switchPage(KEYBOARD_EN);
-        break;
-    }
-}
-
-void HandKeyboard::recognizeChinese(CharacterEntity& character)
-{
-    if (parent == nullptr){
-        qDebug() << "null";
-        return;
-    }
-    parent->getTextByHand(character);
+    emit sendPointToCharacter(character);
 }
 
 HandKeyboard::~HandKeyboard()
 {
-    delete parent;
     delete ui;
 }
 

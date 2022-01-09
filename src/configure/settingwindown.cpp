@@ -20,6 +20,7 @@
 */
 #include "settingwindown.h"
 #include "radiobuttonbase.h"
+#include "checkboxbase.h"
 #include "globalsignaltransfer.h"
 #include "settingmanage.h"
 #include <QPushButton>
@@ -31,6 +32,9 @@ SettingWindown::SettingWindown(int id, QWidget *parent) : WindowBase (id, parent
 {
     initUi();
 
+    QPoint point = SettingManage::getInstance()->getConfigWindowPos();
+    move(point.x(), point.y());
+
     connect(mContentTab, &SettingContentTab::sendClicked,
             mContentView, &SettingContentView::onItemChange);
     connect(mContentView, &SettingContentView::sendViewChange,
@@ -38,6 +42,13 @@ SettingWindown::SettingWindown(int id, QWidget *parent) : WindowBase (id, parent
 
     connect(GlobalSignalTransfer::getInstance(), &GlobalSignalTransfer::sendRadioButtonClicked,
             this, &SettingWindown::onRadioButtonClicked);
+    connect(GlobalSignalTransfer::getInstance(), &GlobalSignalTransfer::sendCheckBoxClicked,
+            this, &SettingWindown::onCheBoxClicked);
+}
+
+SettingWindown::~SettingWindown()
+{
+    SettingManage::getInstance()->setConfigWindowPos(pos());
 }
 
 void SettingWindown::initUi()
@@ -56,6 +67,9 @@ void SettingWindown::initUi()
     this->setLayout(layout);
 
     addBasicCard();
+    addKeyboardCard();
+
+    addHelpCard();
 }
 
 void SettingWindown::addBasicCard()
@@ -124,7 +138,38 @@ void SettingWindown::addBasicCard()
     keyWgt->setLayout(keyLayout);
     card->appendWidget(keyWgt);
 
+
     /*********************end*************************/
+
+    mContentTab->appendTab(title);
+    mContentView->appendCard(card);
+}
+
+void SettingWindown::addKeyboardCard()
+{
+    QString title = "键盘调节";
+    SettingContentCard *card = new SettingContentCard(title);
+
+    /*********************键盘侧边栏*************************/
+    CheckBoxBase* keyBut = new CheckBoxBase("显示键盘侧边栏", SettingManage::KeyTab);
+    keyBut->setChecked(SettingManage::getInstance()->getKeyTabDisplay());
+    card->appendWidget(keyBut);
+
+    mContentTab->appendTab(title);
+    mContentView->appendCard(card);
+}
+
+void SettingWindown::addHelpCard()
+{
+    QString title = "帮助";
+    SettingContentCard *card = new SettingContentCard(title);
+
+    QLabel *lable = new QLabel("感谢使用小太阳输入法\nThanks for using the littlesun input method\n\n"
+                               "如在使用过程中遇到问题或者建议请发送邮件至\nIf you encounter problems or suggestions during use,\nplease send an email to"
+                               "\n\ndshadow@foxmail.com");
+    lable->setAlignment(Qt::AlignCenter);
+    lable->setFixedSize(500, 240);
+    card->appendWidget(lable);
 
     mContentTab->appendTab(title);
     mContentView->appendCard(card);
@@ -142,6 +187,15 @@ void SettingWindown::onRadioButtonClicked(RadioButtonBase* but)
         break;
     case SettingManage::Skin:
         SettingManage::getInstance()->setThemeType(but->getId());
+        break;
+    }
+}
+
+void SettingWindown::onCheBoxClicked(CheckBoxBase* but)
+{
+    switch (but->getId()) {
+    case SettingManage::KeyTab:
+        SettingManage::getInstance()->setKeyTabDisplay(but->isChecked());
         break;
     }
 }

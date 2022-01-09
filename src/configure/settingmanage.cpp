@@ -57,8 +57,12 @@ void SettingManage::initConfig()
     mConfig.themeType = settings.value("themeType", SettingManage::SkinSkyBlue).toInt();
     mConfig.defaultKeyboard = settings.value("defaultKeyboard", SettingManage::DefaultKeyboardPinyin).toInt();
     mConfig.navigationWindowPos = settings.value("navigationWindowPos", QPoint(0, 0)).toPoint();
+    mConfig.configWindowPos = settings.value("configWindowPos", QPoint(0, 0)).toPoint();
+    mConfig.trainWindowPos = settings.value("trainWindowPos", QPoint(0, 0)).toPoint();
+    mConfig.keyTabDisplay = settings.value("keyTabDisplay", true).toBool();
 
     settings.endGroup();
+
 }
 
 void SettingManage::saveConfig()
@@ -70,6 +74,9 @@ void SettingManage::saveConfig()
     settings.setValue("themeType", mConfig.themeType);
     settings.setValue("defaultKeyboard", mConfig.defaultKeyboard);
     settings.setValue("navigationWindowPos", mConfig.navigationWindowPos);
+    settings.setValue("configWindowPos", mConfig.configWindowPos);
+    settings.setValue("trainWindowPos", mConfig.trainWindowPos);
+    settings.setValue("keyTabDisplay", mConfig.keyTabDisplay);
 
     settings.endGroup();
 }
@@ -168,6 +175,36 @@ skin_color SettingManage::getSkinColor(SkinType type)
     }
 }
 
+void SettingManage::setNavigationWindowPos(QPoint point)
+{
+    mConfig.navigationWindowPos = point;
+}
+
+QPoint SettingManage::getNavigationWindowPos()
+{
+    return mConfig.navigationWindowPos;
+}
+
+void SettingManage::setConfigWindowPos(QPoint point)
+{
+    mConfig.configWindowPos = point;
+}
+
+QPoint SettingManage::getConfigWindowPos()
+{
+    return mConfig.configWindowPos;
+}
+
+void SettingManage::setTrainWindowPos(QPoint point)
+{
+    mConfig.trainWindowPos = point;
+}
+
+QPoint SettingManage::getTrainWindowPos()
+{
+    return mConfig.trainWindowPos;
+}
+
 void SettingManage::setThemeType(int type)
 {
     mConfig.themeType = type;
@@ -189,3 +226,15 @@ int SettingManage::getDefaultKeyboard()
 {
     return mConfig.defaultKeyboard;
 }
+
+void SettingManage::setKeyTabDisplay(bool isDisplay)
+{
+    mConfig.keyTabDisplay = isDisplay;
+    emit sendKetTabCheBoxClicked();
+}
+
+bool SettingManage::getKeyTabDisplay()
+{
+    return mConfig.keyTabDisplay;
+}
+

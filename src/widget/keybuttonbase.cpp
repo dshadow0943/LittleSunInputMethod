@@ -26,10 +26,10 @@
 KeyButtonBase::KeyButtonBase(int id, KeyType type, QWidget *parent)
   : QPushButton(parent)
   , ButtonInterface (id, type)
+
 {
     setKeyStyleSheet();
 
-    QPushButton::connect(this, &QPushButton::clicked, this, &KeyButtonBase::onClicked);
     QPushButton::connect(this, &KeyButtonBase::sendClicked, GlobalSignalTransfer::getInstance(), &GlobalSignalTransfer::onKeyButtonClicked);
     QPushButton::connect(SettingManage::getInstance(), &SettingManage::sendThemeChange, this, &KeyButtonBase::onThemeChange);
 }
@@ -68,4 +68,34 @@ void KeyButtonBase::onClicked()
 void KeyButtonBase::onThemeChange()
 {
     setKeyStyleSheet();
+}
+
+void KeyButtonBase::mousePressEvent(QMouseEvent *event)
+{
+    mPressed = true;
+    if (mType != Func || mId == Qt::Key_Enter || mId == Qt::Key_Backspace) {
+        mCount = 0;
+        mTimerId = this->startTimer(100);
+    }
+    QPushButton::mousePressEvent(event);
+}
+
+void KeyButtonBase::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (mPressed) {
+        mPressed = false;
+        killTimer(mTimerId);
+        onClicked();
+    }
+    QPushButton::mouseReleaseEvent(event);
+}
+
+void KeyButtonBase::timerEvent(QTimerEvent *event)
+{
+    Q_UNUSED(event)
+    if (mCount < 5) {
+        mCount++;
+        return;
+    }
+    onClicked();
 }

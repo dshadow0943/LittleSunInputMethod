@@ -37,7 +37,7 @@ private:
     QTimer *mouseReleaseTimer;
 
 public: signals:
-    void charToParent(CharacterEntity&);
+    void sendPonit(CharacterEntity&);
 };
 
 #endif // HANDWRITING_H

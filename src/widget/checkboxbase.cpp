@@ -1,9 +1,9 @@
 /*
 * Copyright (C) 2019 ~ 2019 UnionTech Software Technology Co.,Ltd.
 *
-* Author:     leilong <dshadow@foxmail.com>
+* Author:     leilong <leilong@uniontech.com>
 *
-* Maintainer: leilong <dshadow@foxmail.com>
+* Maintainer: leilong <leilong@uniontech.com>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,27 +18,19 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "shiftbutton.h"
+#include "checkboxbase.h"
+#include "globalsignaltransfer.h"
 
-ShiftButton::ShiftButton(QString text, int id, KeyButtonBase::KeyType type, QWidget *parent) : KeyButtonBase (id, type, parent)
+CheckBoxBase::CheckBoxBase(QString text, int id, int type, QWidget *parent) : QCheckBox(text, parent)
+  , ButtonInterface (id, type)
 {
-    setText(text);
-    QPushButton::connect(this, &QPushButton::clicked, this, &ShiftButton::onClicked);
+    connect(this, &QCheckBox::clicked, this, &CheckBoxBase::onClicked);
+    connect(this, &CheckBoxBase::sendClicked,
+            GlobalSignalTransfer::getInstance(), &GlobalSignalTransfer::onCheckBoxClicked);
+
 }
 
-void ShiftButton::onClicked()
+void CheckBoxBase::onClicked()
 {
-    if (mIsCapsLook) {
-        return;
-    }
-    mIsCaps = !mIsCaps;
-    emit sendShiftClicked(mIsCaps);
-}
-
-void ShiftButton::onEnglishInput(bool isEnglish)
-{
-    if (isEnglish  == mIsCaps) {
-        onClicked();
-    }
-    mIsCapsLook = !isEnglish;
+    emit sendClicked(this);
 }

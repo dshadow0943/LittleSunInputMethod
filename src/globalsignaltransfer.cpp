@@ -45,3 +45,13 @@ void GlobalSignalTransfer::onWindowClosed(int id)
 {
     emit sendWindowClosed(id);
 }
+
+void GlobalSignalTransfer::onScrollBarclicked(QString text, int index)
+{
+    emit sendScrollBarClosed(text, index);
+}
+
+void GlobalSignalTransfer::onCheckBoxClicked(CheckBoxBase *but)
+{
+    emit sendCheckBoxClicked(but);
+}

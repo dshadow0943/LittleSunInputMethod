@@ -14,9 +14,7 @@
  */
 PuncKeyboard::PuncKeyboard(SoftKeyboard *parent) : QWidget(parent)
 {
-    this->parent = parent;
     initUi();
-    initConnect();
 }
 
 void PuncKeyboard::initUi()
@@ -24,16 +22,12 @@ void PuncKeyboard::initUi()
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setMargin(0);
 
-    mButs.push_back(ButtonItem::getNumButton("删除", Qt::Key_Backspace, KeyButtonBase::Func, this));
-    mButs.push_back(ButtonItem::getNumButton("确认", Qt::Key_Enter, KeyButtonBase::Func, this));
-    mButs.push_back(ButtonItem::getNumButton("中文", KeyButtonBase::KeyChinese, KeyButtonBase::Func, this));
-    mButs.push_back(ButtonItem::getNumButton("英文", KeyButtonBase::KeyEnglish, KeyButtonBase::Func, this));
-    mButs.push_back(ButtonItem::getNumButton("数学", KeyButtonBase::KeyMath, KeyButtonBase::Func, this));
-    mButs.push_back(ButtonItem::getNumButton("返回", KeyButtonBase::KeyBack, KeyButtonBase::Func, this));
-
-    for (KeyButtonBase *but : mButs) {
-        layout->addWidget(but,1);
-    }
+    layout->addWidget(ButtonItem::getNumButton("删除", Qt::Key_Backspace, KeyButtonBase::Func, this));
+    layout->addWidget(ButtonItem::getNumButton("确认", Qt::Key_Enter, KeyButtonBase::Func, this));
+    layout->addWidget(ButtonItem::getNumButton("中文", KeyButtonBase::KeyChinese, KeyButtonBase::Func, this));
+    layout->addWidget(ButtonItem::getNumButton("英文", KeyButtonBase::KeyEnglish, KeyButtonBase::Func, this));
+    layout->addWidget(ButtonItem::getNumButton("数学", KeyButtonBase::KeyMath, KeyButtonBase::Func, this));
+    layout->addWidget(ButtonItem::getNumButton("返回", KeyButtonBase::KeyBack, KeyButtonBase::Func, this));
 
     punc = ScrollBarManage::getVSrcllBarView(this);
     ScrollBarContainer *customViw = new ScrollBarContainer(this);
@@ -50,40 +44,6 @@ void PuncKeyboard::initUi()
     hLayout->setMargin(0);
     hLayout->setSpacing(1);
     this->setLayout(hLayout);
-}
-
-void PuncKeyboard::initConnect(){
-    for (KeyButtonBase *but : mButs) {
-        connect(but, &KeyButtonBase::sendClicked, this, &PuncKeyboard::onClicked);
-    }
-    connect(punc, &VScrollBarView::clicked, this, &PuncKeyboard::userSelectPunctuation);
-}
-
-void PuncKeyboard::userSelectPunctuation(const QString &text, int index)
-{
-    Q_UNUSED(index);
-    parent->addCandidateCharacterText(text);
-}
-
-void PuncKeyboard::onClicked(KeyButtonBase* but)
-{
-    switch (but->getId()) {
-    case Qt::Key_Backspace:
-        parent->deleteSlot();
-        break;
-    case Qt::Key_Enter:
-        parent->enterSlot();
-        break;
-    case KeyButtonBase::KeyChinese:
-        break;
-    case KeyButtonBase::KeyEnglish:
-        break;
-    case KeyButtonBase::KeyMath:
-        break;
-    case KeyButtonBase::KeyBack:
-         parent->switchPreviousKey();
-        break;
-    }
 }
 
 QStringList PuncKeyboard::loadSymbols(const QString &file)

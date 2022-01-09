@@ -1,4 +1,5 @@
 #include "scrollbarbase.h"
+#include "globalsignaltransfer.h"
 #include <QEvent>
 #include <QMouseEvent>
 
@@ -6,6 +7,8 @@ ScrollBarBase::ScrollBarBase(QWidget *parent) : QWidget(parent)
 {
     unitMinHeight = -1;
     unitMinWidth = -1;
+
+    connect(this, &ScrollBarBase::clicked, GlobalSignalTransfer::getInstance(), &GlobalSignalTransfer::onScrollBarclicked);
 }
 int ScrollBarBase::getUnitMinWidth() const
 {
@@ -36,6 +39,15 @@ void ScrollBarBase::clearData()
 {
     dataStrings.clear();
     update();
+}
+
+bool ScrollBarBase::selectPhrase(int index)
+{
+    if (dataStrings.size() > index) {
+        emit clicked(dataStrings.at(index), index);
+        return true;
+    }
+    return false;
 }
 
 void ScrollBarBase::onDataChange(QStringList data)

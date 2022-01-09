@@ -7,7 +7,8 @@ HEADERS += \
     $$PWD/radiobuttonbase.h \
     $$PWD/buttoninterface.h \
     $$PWD/keybuttonbase.h \
-    $$PWD/windowbase.h
+    $$PWD/windowbase.h \
+    $$PWD/checkboxbase.h
 
 SOURCES += \
     $$PWD/englishbutton.cpp \
@@ -18,4 +19,5 @@ SOURCES += \
     $$PWD/radiobuttonbase.cpp \
     $$PWD/buttoninterface.cpp \
     $$PWD/keybuttonbase.cpp \
-    $$PWD/windowbase.cpp
+    $$PWD/windowbase.cpp \
+    $$PWD/checkboxbase.cpp

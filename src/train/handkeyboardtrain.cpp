@@ -19,6 +19,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "handkeyboardtrain.h"
+#include "settingmanage.h"
 #include <QLabel>
 #include <QInputDialog>
 #include <QMessageBox>
@@ -27,9 +28,10 @@ HandKeyboardTrain::HandKeyboardTrain(int id, QWidget *parent) : WindowBase (id, 
 {
     setWindowFlag(Qt::WindowFlags::enum_type::WindowDoesNotAcceptFocus);
 
-    mThesaurusManage = ThesaurusRetrieval::getInstance();
-    CharacterEntity c;
+    QPoint point = SettingManage::getInstance()->getTrainWindowPos();
+    move(point.x(), point.y());
 
+    mThesaurusManage = ThesaurusRetrieval::getInstance();
     keyboard = new HandViewTrain(this);
     keyboard->setStyleSheet("background-color:white;");
     connect(keyboard, &HandViewTrain::charToParent, this, &HandKeyboardTrain::recognizeChinese);

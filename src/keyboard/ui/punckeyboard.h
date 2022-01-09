@@ -24,20 +24,13 @@ public:
     explicit PuncKeyboard(SoftKeyboard *parent = nullptr);
 
 public slots:
-    void userSelectPunctuation(const QString &text, int index);
-    void onClicked(KeyButtonBase* but);
 
 private:
-    SoftKeyboard *parent;
     VScrollBarView *punc;
-
     QStringList loadSymbols(const QString &file);
     void initUi();
-    //链接所有按钮的槽函数
-    void initConnect();
 
 private:
-    int page = 1;
     QGridLayout *gridLayout;
 
     QList<KeyButtonBase*> mButs;

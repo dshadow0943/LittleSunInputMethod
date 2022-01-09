@@ -51,6 +51,7 @@ public slots:
     int hideView();
     void candidateCharacterSlots(QString character);
     void deleteCharacterSlots();
+    void onWindowClosed(int id);
 
 signals:
     //发送字符
@@ -58,17 +59,17 @@ signals:
 
 private slots:
     void on_btn_key_clicked();
-
     void on_btn_hand_clicked();
-
     void on_btn_close_clicked();
-
     void on_btn_site_clicked();
 
 private:
+    void showSoftKeyboard();
+
+private:
     Ui::CenterController *ui;
-    SoftKeyboard* softKeyboard = nullptr;
-    HandKeyboardTrain* handkeyboatd = nullptr;
+    SoftKeyboard* mSoftKeyboard = nullptr;
+    HandKeyboardTrain* mHandkeyboatd = nullptr;
     SettingWindown *mSettingWindown = nullptr;
 
     //无边框窗口移动相关参数

@@ -28,20 +28,24 @@
 #include <QWidget>
 
 class RadioButtonBase;
+class CheckBoxBase;
 class SettingWindown : public WindowBase
 {
     Q_OBJECT
 public:
     explicit SettingWindown(int id = 0, QWidget *parent = nullptr);
-
+    ~SettingWindown();
 signals:
 
 public slots:
     void onRadioButtonClicked(RadioButtonBase* but);
+    void onCheBoxClicked(CheckBoxBase* but);
 
 private:
     void initUi();
     void addBasicCard();
+    void addKeyboardCard();
+    void addHelpCard();
     void addSkinCard();
 
 private:

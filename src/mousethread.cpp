@@ -34,23 +34,27 @@ MouseThread::MouseThread()
  */
 void MouseThread::run()
 {
-    while (!isInterruptionRequested()) {
+    static int count  = 0;
+    qInfo() << __FUNCTION__ << count++;
+    QDBusMessage message = QDBusMessage::createMethodCall("org.fcitx.Fcitx",
+                                "/inputmethod",
+                                "org.fcitx.Fcitx.InputMethod",
+                                "GetCurrentState");
+    //发送消息
+    QDBusMessage response = QDBusConnection::sessionBus().call(message);
+    if (!response.arguments().first().value<bool>()) {
         QDBusMessage message = QDBusMessage::createMethodCall("org.fcitx.Fcitx",
                                     "/inputmethod",
                                     "org.fcitx.Fcitx.InputMethod",
-                                    "GetCurrentState");
+                                    "GetCurrentIM");
         //发送消息
         QDBusMessage response = QDBusConnection::sessionBus().call(message);
-        if (!response.arguments().first().value<bool>()) {
-            QDBusMessage message = QDBusMessage::createMethodCall("org.fcitx.Fcitx",
-                                        "/inputmethod",
-                                        "org.fcitx.Fcitx.InputMethod",
-                                        "GetCurrentIM");
-            //发送消息
-            QDBusMessage response = QDBusConnection::sessionBus().call(message);
-            if (response.arguments().first().value<QString>() == "keyboard-littlesun") {
-                qApp->quit();
-            }
+        if (response.arguments().first().value<QString>() == "keyboard-littlesun") {
+//            qApp->quit();
         }
     }
+
+//    while (!isInterruptionRequested()) {
+
+//    }
 }

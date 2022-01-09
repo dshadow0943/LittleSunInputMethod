@@ -34,12 +34,11 @@ void SettingContentCard::initUi()
 {
     mRow = new QVBoxLayout();
     QLabel *title = new QLabel(mTitle);
-    QFont font("Microsoft YaHei", 12);
+    QFont font("Microsoft YaHei", 14, 70);
+
     title->setFont(font);
     mRow->addWidget(title);
     this->setLayout(mRow);
-
-//    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 }
 
 void SettingContentCard::appendWidget(QWidget* widget)

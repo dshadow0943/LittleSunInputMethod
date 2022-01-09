@@ -1,9 +1,9 @@
 /*
 * Copyright (C) 2019 ~ 2019 UnionTech Software Technology Co.,Ltd.
 *
-* Author:     leilong <dshadow@foxmail.com>
+* Author:     leilong <leilong@uniontech.com>
 *
-* Maintainer: leilong <dshadow@foxmail.com>
+* Maintainer: leilong <leilong@uniontech.com>
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,27 +18,25 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "shiftbutton.h"
+#ifndef CHECKBOXBASE_H
+#define CHECKBOXBASE_H
 
-ShiftButton::ShiftButton(QString text, int id, KeyButtonBase::KeyType type, QWidget *parent) : KeyButtonBase (id, type, parent)
-{
-    setText(text);
-    QPushButton::connect(this, &QPushButton::clicked, this, &ShiftButton::onClicked);
-}
+#include "buttoninterface.h"
 
-void ShiftButton::onClicked()
-{
-    if (mIsCapsLook) {
-        return;
-    }
-    mIsCaps = !mIsCaps;
-    emit sendShiftClicked(mIsCaps);
-}
+#include <QCheckBox>
 
-void ShiftButton::onEnglishInput(bool isEnglish)
+
+class CheckBoxBase : public QCheckBox , public ButtonInterface
 {
-    if (isEnglish  == mIsCaps) {
-        onClicked();
-    }
-    mIsCapsLook = !isEnglish;
-}
+    Q_OBJECT
+public:
+    explicit CheckBoxBase(QString text = "", int id = 0, int type = 0, QWidget *parent = nullptr);
+
+signals:
+    void sendClicked(CheckBoxBase* but);
+
+public slots:
+    void onClicked();
+};
+
+#endif // CHECKBOXBASE_H

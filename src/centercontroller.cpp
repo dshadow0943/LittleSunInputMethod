@@ -21,6 +21,7 @@
 #include "centercontroller.h"
 #include "ui_centercontroller.h"
 #include "settingmanage.h"
+#include "globalsignaltransfer.h"
 
 #include <QDBusMessage>
 #include <QDBusConnection>
@@ -34,9 +35,11 @@ CenterController::CenterController(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool | Qt::WindowDoesNotAcceptFocus);
-    softKeyboard = new SoftKeyboard();
-    connect(softKeyboard, &SoftKeyboard::sendCandidateCharacter, this, &CenterController::candidateCharacterSlots);
-    connect(softKeyboard, &SoftKeyboard::sendDeleteCharacter, this, &CenterController::deleteCharacterSlots);
+
+    this->move(SettingManage::getInstance()->getNavigationWindowPos());
+    connect(GlobalSignalTransfer::getInstance(), &GlobalSignalTransfer::sendWindowClosed,
+            this, &CenterController::onWindowClosed);
+
     //填充log
     QImage Image;
     Image.load(":/icon/littlesun.png");
@@ -53,17 +56,29 @@ CenterController::~CenterController()
     delete ui;
 }
 
+void CenterController::showSoftKeyboard()
+{
+    if (nullptr == mSoftKeyboard) {
+        mSoftKeyboard = new SoftKeyboard(SettingManage::WindowKeyboard);
+        connect(mSoftKeyboard, &SoftKeyboard::sendCandidateCharacter, this, &CenterController::candidateCharacterSlots);
+        connect(mSoftKeyboard, &SoftKeyboard::sendDeleteCharacter, this, &CenterController::deleteCharacterSlots);
+        connect(mSoftKeyboard, &SoftKeyboard::sendSiteClicked, this, &CenterController::on_btn_site_clicked);
+    }
+
+    mSoftKeyboard->show();
+}
+
 void CenterController::on_btn_key_clicked()
 {
-    softKeyboard->show();
+    showSoftKeyboard();
 }
 
 void CenterController::on_btn_hand_clicked()
 {
-    if (handkeyboatd == nullptr){
-        handkeyboatd = new HandKeyboardTrain();
+    if (mHandkeyboatd == nullptr){
+        mHandkeyboatd = new HandKeyboardTrain(SettingManage::WindowTrain);
     }
-    handkeyboatd->show();
+    mHandkeyboatd->show();
 }
 
 void CenterController::on_btn_close_clicked()
@@ -115,21 +130,23 @@ int CenterController::showView()
                                 "GetCurrentIM");
     //发送消息
     QDBusMessage response = QDBusConnection::sessionBus().call(message);
-    if (response.arguments().first().value<QString>() == "keyboard-littlesun") {
-        this->show();
-        softKeyboard->show();
-    } else {
-        qDebug() << response.arguments().first().value<QString>();
-        qApp->quit();
-    }
+    this->show();
+    showSoftKeyboard();
+//    if (response.arguments().first().value<QString>() == "keyboard-littlesun") {
+//        this->show();
+//        showSoftKeyboard();
+//    } else {
+//        qDebug() << response.arguments().first().value<QString>();
+//        qApp->quit();
+//    }
     return 0;
 }
 
 int CenterController::hideView()
 {
-    this->hide();
-    softKeyboard->hide();
-    qApp->quit();
+//    this->hide();
+    mSoftKeyboard->hide();
+//    qApp->quit();
     return 0;
 }
 
@@ -158,6 +175,7 @@ void CenterController::mouseMoveEvent(QMouseEvent *event) {
     if (event->buttons() & Qt::LeftButton && isMousePress) {
         window()->move(window()->pos() +  event->globalPos() - cursorGlobalPos);
         cursorGlobalPos = event->globalPos();
+        SettingManage::getInstance()->setNavigationWindowPos(cursorGlobalPos);
     }
     return QWidget::mousePressEvent(event);
 }
@@ -178,7 +196,21 @@ void CenterController::mouseReleaseEvent(QMouseEvent *event) {
 void CenterController::on_btn_site_clicked()
 {
     if (!mSettingWindown) {
-        mSettingWindown = new SettingWindown();
+        mSettingWindown = new SettingWindown(SettingManage::WindowConfig);
     }
     mSettingWindown->show();
+}
+
+void CenterController::onWindowClosed(int id)
+{
+    switch (id) {
+    case SettingManage::WindowKeyboard:
+        break;
+    case SettingManage::WindowConfig:
+        SettingManage::getInstance()->setConfigWindowPos(mSettingWindown->pos());
+        break;
+    case SettingManage::WindowTrain:
+        SettingManage::getInstance()->setTrainWindowPos(mHandkeyboatd->pos());
+        break;
+    }
 }

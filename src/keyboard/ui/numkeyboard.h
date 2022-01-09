@@ -18,8 +18,6 @@ public:
     explicit NumKeyboard(SoftKeyboard *parent = nullptr);
 
 private:
-
-    SoftKeyboard *parent;
     QList<NumButton*> mButLine; //按键集合
 
 private:
@@ -28,13 +26,11 @@ private:
     void initKeyValue();
     //初始化数字键盘布局
     void initKeyboard();
-    //链接所有按钮的槽函数
-    void initConnect();
 
 signals:
 
 public slots:
-    void onClicked(KeyButtonBase* but);
+
 };
 
 #endif // NUMKEYBOARD_H

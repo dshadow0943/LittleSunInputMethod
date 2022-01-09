@@ -46,10 +46,12 @@ struct config {
     QPoint keyboardWindowPos;   //键盘界面位置
     QPoint navigationWindowPos; //导航栏界面位置
     QPoint configWindowPos;     //设置界面位置
+    QPoint trainWindowPos;      //训练界面位置
 
     QSize keyBoardWindowSize;   //键盘大小
 
-    int defaultKeyboard;  //初始键盘类型
+    bool keyTabDisplay = true;
+    int defaultKeyboard = 0;  //初始键盘类型
     int themeType = 0;     //主题类型
 };
 
@@ -86,6 +88,11 @@ public:
         SkinMagicBlack,
         SkinDarkBlack,
         SkinEnd,
+        KeyTab,
+
+        WindowKeyboard,
+        WindowConfig,
+        WindowTrain,
     };
 
     static SettingManage* getInstance();
@@ -95,13 +102,22 @@ public:
     int getThemeType();
     void setDefaultKeyboard(int type);
     int getDefaultKeyboard();
+    void setKeyTabDisplay(bool);
+    bool getKeyTabDisplay();
+
+    void setNavigationWindowPos(QPoint);
+    QPoint getNavigationWindowPos();
+    void setConfigWindowPos(QPoint);
+    QPoint getConfigWindowPos();
+    void setTrainWindowPos(QPoint);
+    QPoint getTrainWindowPos();
 
     void setThemePalette();
-
     void saveConfig();
 
 signals:
     void sendThemeChange();
+    void sendKetTabCheBoxClicked();
 
 public slots:
 

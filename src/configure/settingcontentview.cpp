@@ -53,12 +53,19 @@ void SettingContentView::appendCard(SettingContentCard* cardWgt)
 void SettingContentView::onScrollValueChange(int value)
 {
     static int pValue = -1;
-    for (int i = 0; i < mCardList.size(); ++i) {
-        if ((mCardList[i]->getTopPos() > pValue && mCardList[i]->getTopPos() <= value)
-                || (mCardList[i]->getTopPos() < pValue && mCardList[i]->getTopPos() >= value)) {
-            sendViewChange(i);
+
+    if (value == mScrollArea->verticalScrollBar()->maximum()) {
+        sendViewChange(mCardList.size()-1);
+    } else {
+        for (int i = 0; i < mCardList.size(); ++i) {
+            if ((mCardList[i]->getTopPos() > pValue && mCardList[i]->getTopPos() <= value)
+                    || (mCardList[i]->getTopPos() < pValue && mCardList[i]->getTopPos() >= value)) {
+                sendViewChange(i);
+                break;
+            }
         }
     }
+    pValue = value;
 }
 
 void SettingContentView::onItemChange(int index)

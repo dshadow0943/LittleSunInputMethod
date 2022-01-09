@@ -34,6 +34,7 @@ namespace Ui {
 class SoftKeyboard;
 }
 
+class KeyButtonBase;
 class SoftKeyboard : public WindowBase
 {
     Q_OBJECT
@@ -44,24 +45,23 @@ public:
 
     void setMoveEnabled(bool moveEnabled=true);//设置无边框窗口移动使能
 
-    /* 给子布局的接口 */
     void clearHistory();           //重置候选框
     void onSearchBegin(QStringList data); //根据候选字母映射出候选词
 
-    QLineEdit *textShow;        //文本显示区域
+
 
 signals:
     //发送字符
     void sendCandidateCharacter(QString character);
     void sendDeleteCharacter();
+    void sendSiteClicked();
 
-public slots:
+private:
     /* 特殊按键响应槽 */
     void deleteSlot();//删除输入的响应槽
     void enterSlot();//回车被按下的响应槽
     void spaceSlot(); //空格被按下的响应槽
-//    void finishSlot();  //完成输入键被点击的响应槽
-    void getTextByHand(CharacterEntity character);
+
     void switchPreviousKey();
     void switchPage(int type = -1);      //切换键盘
     void addCandidateCharacterText(QString character);  //非中文输入时的添加字符到输入框 / 中文输入时将选中的候选框的文字添加到候选框
@@ -70,24 +70,20 @@ public slots:
 
 private slots:
     void on_btn_num_key_clicked();
-
     void on_btn_en_key_clicked();
-
     void on_btn_hand_key_clicked();
-
     void on_btn_punc_key_clicked();
-
-    void arrowClicked();
-
-    void arrowChange();
-
-    void siteClicked();
+    void onArrowClicked();
+    void onArrowChange();
+    void onSiteClicked();
     void onThemeChange();
-
+    void onKeyButtonClicked(KeyButtonBase* but);    //键盘点击事件响应
+    void onPointToChaeracter(CharacterEntity character);
+    void onKeyTabDisplayChange();
 
 protected:
     /* 重写的相关函数 */
-    void showEvent(QShowEvent *event) override;         //重写窗口绘制函数
+    void showEvent(QShowEvent *event) override;
 
     //通过这三个事件处理函数实现无边框窗口的移动
     void mousePressEvent(QMouseEvent *event) override;
@@ -125,7 +121,7 @@ private:
 
     VScrollBarView *mVTranslateView;
     HScrollBarView *mHTranslateView;
-
+    QLineEdit *textShow;        //文本显示区域
     QLabel *mLetterLabel;               //输入字母显示控件，同时提供对键盘的移动操作
 
 private:

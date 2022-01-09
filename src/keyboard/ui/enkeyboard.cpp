@@ -9,10 +9,8 @@
  */
 EnKeyboard::EnKeyboard(SoftKeyboard *parent) : QWidget(parent)
 {
-    this->parent = parent;
     //初始化键盘
     initView();
-    initConnect();
 }
 
 void EnKeyboard::initView()
@@ -118,53 +116,5 @@ void EnKeyboard::initView()
             gridLayout->addWidget(mButLines[i+39],5,row,1,6);
             row += 6;
         }
-    }
-}
-
-void EnKeyboard::initConnect(){
-    for (KeyButtonBase *but : mButLines) {
-        connect(but, &KeyButtonBase::sendClicked, this, &EnKeyboard::onClicked);
-    }
-}
-
-void EnKeyboard::onClicked(KeyButtonBase* but)
-{
-    if (ButtonItem::getSwitchButton()->getIsEnglish()) {
-        if (but->getType() == KeyButtonBase::PinyinLetter
-                || but->getType() == KeyButtonBase::PinyinNum
-                || but->getType() == KeyButtonBase::PinyinPunc) {
-            emit sendCandidateCharacterText(but->text());
-            return;
-        }
-
-    } else {
-        if (but->getType() == KeyButtonBase::PinyinLetter) {
-            parent->addCandidateLetter(but->text());
-            return;
-        }
-        if (but->getType() == KeyButtonBase::PinyinPunc) {
-            emit sendCandidateCharacterText(but->text());
-        }
-    }
-
-    switch (but->getId()) {
-    case Qt::Key_Backspace:
-        parent->deleteSlot();
-        break;
-    case Qt::Key_Enter:
-        parent->enterSlot();
-        break;
-    case Qt::Key_Space:
-        parent->spaceSlot();
-        break;
-    case KeyButtonBase::KeyNum:
-        parent->switchPage(KEYBOARD_NUM);
-        break;
-    case KeyButtonBase::keyPunc:
-        parent->switchPage(KEYBOARD_PUNC);
-        break;
-    case KeyButtonBase::keyHand:
-         parent->switchPage(KEYBOARD_HAND);
-        break;
     }
 }

@@ -52,6 +52,7 @@ ShiftButton* ButtonItem::getShiftButton()
 {
     static ShiftButton but;
     but.setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
+    connect(getSwitchButton(), &CE_SwitchButton::sendSwitchClicked, &but, &ShiftButton::onEnglishInput);
     return &but;
 }
 
@@ -59,6 +60,5 @@ CE_SwitchButton* ButtonItem::getSwitchButton()
 {
     static CE_SwitchButton but;
     but.setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-    connect(&but, &CE_SwitchButton::sendSwitchClicked, getShiftButton(), &ShiftButton::onEnglishInput);
     return &but;
 }

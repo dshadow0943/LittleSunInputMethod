@@ -66,6 +66,13 @@ protected slots:
 
 protected:
     void setKeyStyleSheet();
-};
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void timerEvent( QTimerEvent *event) override;
 
+protected:
+    bool mPressed = false;
+    int mCount = 0;
+    int mTimerId;
+};
 #endif // BUTTONBASE_H

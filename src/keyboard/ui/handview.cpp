@@ -60,7 +60,7 @@ void HandView::mouseReleaseEvent(QMouseEvent* e)
             mouseReleaseTimer->start(inputInterval);
         }
         //发送数据
-        emit charToParent(character);
+        emit sendPonit(character);
     }
     return QWidget::mouseReleaseEvent(e);
 }

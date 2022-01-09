@@ -18,10 +18,11 @@ public:
     void setData(QStringList& data);
     void clearData();
 
+    bool selectPhrase(int index);
+
 signals:
     void stringPressed(const QString &text, const QPoint &pos);
     void clicked(QString text, int index);
-
 
 public slots:
     void onDataChange(QStringList data);

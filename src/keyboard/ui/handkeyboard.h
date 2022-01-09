@@ -26,22 +26,16 @@ public:
     ~HandKeyboard();
 
 signals:
-    void toEN_keyBoard();
+    void sendPointToCharacter(CharacterEntity);
 
 public slots:
-    void recognizeChinese(CharacterEntity&);
-    void onClicked(KeyButtonBase* but);
+    void onPointToCharacter(CharacterEntity&);
 
 private:
     Ui::HandKeyboard *ui;
 
-    SoftKeyboard *parent;
-    //右侧工具栏__相关
-
-    QList<KeyButtonBase*> mButs;
-
 private:
-        void setRightToolWidget();
+    void setRightToolWidget();
 
 };
 

@@ -7,8 +7,6 @@
  */
 NumKeyboard::NumKeyboard(SoftKeyboard *parent) : QWidget(parent)
 {
-    this->parent = parent;
-
     initKeyValue();
     initKeyboard();
 }
@@ -43,8 +41,6 @@ void NumKeyboard::initKeyValue()
     mButLine.push_back(ButtonItem::getNumButton(" ", Qt::Key_Space, KeyButtonBase::Num, this));
     mButLine.push_back(ButtonItem::getNumButton("拼音", KeyButtonBase::keyPinyin, KeyButtonBase::Func, this));
     mButLine.push_back(ButtonItem::getNumButton("手写", KeyButtonBase::keyHand, KeyButtonBase::Func, this));
-
-    initConnect();
 }
 
 /**
@@ -72,43 +68,5 @@ void NumKeyboard::initKeyboard()
             gridLayout->addWidget(mButLine[i], i/5, count, 1, 3);
             count+=3;
         }
-    }
-}
-
-void NumKeyboard::initConnect()
-{
-    for (NumButton *but : mButLine) {
-        connect(but, &NumButton::sendClicked, this, &NumKeyboard::onClicked);
-    }
-}
-
-void NumKeyboard::onClicked(KeyButtonBase* but)
-{
-    if (but->getId() == Qt::Key_At) {
-        parent->addCandidateCharacterText(QString("@"));
-        return;
-    }
-
-    if (but->getType() == KeyButtonBase::Num || but->getType() == KeyButtonBase::Punc) {
-        parent->addCandidateCharacterText(but->text());
-        return;
-    }
-
-    switch (but->getId()) {
-    case Qt::Key_Space:
-        parent->spaceSlot();
-        break;
-    case Qt::Key_Backspace:
-        parent->deleteSlot();
-        break;
-    case KeyButtonBase::keyPunc:
-        parent->switchPage(3);
-        break;
-    case KeyButtonBase::keyPinyin:
-        parent->switchPage(1);
-        break;
-    case KeyButtonBase::keyHand:
-        parent->switchPage(2);
-        break;
     }
 }
