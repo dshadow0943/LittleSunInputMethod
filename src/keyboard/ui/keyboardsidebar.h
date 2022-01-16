@@ -28,27 +28,26 @@ class KeyboardSidebar : public QWidget
 {
     Q_OBJECT
 public:
-    explicit KeyboardSidebar(QWidget *parent = nullptr);
+    explicit KeyboardSidebar(QStringList tabs = QStringList(), QWidget *parent = nullptr);
 
     void setCurrentIndex(int index);
+    void setCurrentIndex();
+    void setFontSize(int);
 
 signals:
     void sendCurrentIndex(int index);
 
 public slots:
+    void onButtonClicked(int);
 
 private:
     void initUi();
-    void initConnection();
 
 private:
     QList<QPushButton*> mButList;
-    QPushButton *mNumKey;   //数据键盘Tab
-    QPushButton *mEnKey;    //拼音键盘Tab
-    QPushButton *mHandKey;  //手写键盘Tab
-    QPushButton *mPuncKey;  //符号键盘Tab
+    QStringList mTabs;
 
-    int mCurrentIndex = 0;
+    int mCurrentIndex = -1;
 
 };
 

@@ -1,4 +1,6 @@
 #include "punckeyboard.h"
+#include "keyboardsidebar.h"
+#include "thesaurusretrieval.h"
 #include <QColorDialog>
 #include <QFontDialog>
 #include <QGridLayout>
@@ -6,6 +8,7 @@
 #include <QFile>
 #include <QHBoxLayout>
 #include <QScrollArea>
+
 
 /**
  * @brief PuncKeyboard::PuncKeyboard
@@ -19,52 +22,54 @@ PuncKeyboard::PuncKeyboard(SoftKeyboard *parent) : QWidget(parent)
 
 void PuncKeyboard::initUi()
 {
-    QVBoxLayout *layout = new QVBoxLayout(this);
+    QVBoxLayout *layout = new QVBoxLayout();
     layout->setMargin(0);
+    layout->setSpacing(4);
 
-    layout->addWidget(ButtonItem::getNumButton("删除", Qt::Key_Backspace, KeyButtonBase::Func, this));
-    layout->addWidget(ButtonItem::getNumButton("确认", Qt::Key_Enter, KeyButtonBase::Func, this));
-    layout->addWidget(ButtonItem::getNumButton("中文", KeyButtonBase::KeyChinese, KeyButtonBase::Func, this));
-    layout->addWidget(ButtonItem::getNumButton("英文", KeyButtonBase::KeyEnglish, KeyButtonBase::Func, this));
-    layout->addWidget(ButtonItem::getNumButton("数学", KeyButtonBase::KeyMath, KeyButtonBase::Func, this));
-    layout->addWidget(ButtonItem::getNumButton("返回", KeyButtonBase::KeyBack, KeyButtonBase::Func, this));
+    layout->addWidget(ButtonItem::getNumButton("返回", KeyButtonBase::KeyBack, KeyButtonBase::Func, this), 1);
+    layout->addWidget(ButtonItem::getNumButton("←", Qt::Key_Backspace, KeyButtonBase::Func, this), 1);
+    KeyboardSidebar *tabSider = new KeyboardSidebar({"常用", "中文", "英文", "数学"}, this);
+    connect(tabSider, &KeyboardSidebar::sendCurrentIndex, this, &PuncKeyboard::onTabClicked);
+    layout->addWidget(tabSider, 4);
 
-    punc = ScrollBarManage::getVSrcllBarView(this);
+    mPunc = ScrollBarManage::getVSrcllBarView(this);
     ScrollBarContainer *customViw = new ScrollBarContainer(this);
-    customViw->setWidget(punc, ScrollBarContainer::Vertical, 1);
-    QStringList data = loadSymbols(":/symbol.txt");
-    punc->setData(data);
+    customViw->setWidget(mPunc, ScrollBarContainer::Vertical, 2);
 
     QHBoxLayout *hLayout = new QHBoxLayout(this);
     hLayout->addWidget(customViw, 6);
     QWidget *w = new QWidget;
     w->setLayout(layout);
     hLayout->addWidget(w, 1);
-    layout->setSpacing(4);
     hLayout->setMargin(0);
     hLayout->setSpacing(1);
     this->setLayout(hLayout);
+    tabSider->setCurrentIndex(0);
 }
 
-QStringList PuncKeyboard::loadSymbols(const QString &file)
+void PuncKeyboard::onTabClicked(int index)
 {
-    QFile symbol_file(file);
-    QStringList symbols;
-    if (symbol_file.open(QIODevice::ReadOnly))
-    {
-        QString lineSymbols;
-        while (!symbol_file.atEnd())
-        {
-            lineSymbols = QString::fromUtf8(symbol_file.readLine());
-            lineSymbols = lineSymbols.trimmed();
-            for (int i = 0; i < lineSymbols.size(); ++i)
-            {
-                symbols.append(lineSymbols.at(i));
-            }
-        }
-        symbol_file.close();
+    switch (index) {
+    case 0:
+        setPuncData(ThesaurusRetrieval::getInstance()->getPunc(DBOperation::User));
+        break;
+    case 1:
+        setPuncData(ThesaurusRetrieval::getInstance()->getPunc(DBOperation::Chinese));
+        break;
+    case 2:
+        setPuncData(ThesaurusRetrieval::getInstance()->getPunc(DBOperation::English));
+        break;
+    case 3:
+        setPuncData(ThesaurusRetrieval::getInstance()->getPunc(DBOperation::Math));
+        break;
     }
+}
 
-    return symbols;
+void PuncKeyboard::setPuncData(QStringList data)
+{
+    if (nullptr == mPunc) {
+        return;
+    }
+    mPunc->setData(data);
 }
 

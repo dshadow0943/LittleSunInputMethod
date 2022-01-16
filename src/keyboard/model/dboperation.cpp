@@ -424,3 +424,30 @@ QList<PhraseEntity> DBOperation::findAssociational(const QString& table, const Q
     return list;
 }
 
+QString DBOperation::findPunc(PuncType type)
+{
+    QSqlQuery query(QSqlDatabase::database(CONNECTIONNAME));
+    QString pType = "";
+    switch (type) {
+    case User: pType = "user";
+        break;
+    case Chinese: pType = "chinese";
+        break;
+    case English: pType = "english";
+        break;
+    case Math: pType = "math";
+        break;
+    }
+    bool ok = query.exec(QString("SELECT punc FROM basePunc "
+                       "WHERE type = \'%1\';")
+               .arg(pType));
+    if (!ok)
+    {
+        qCritical("error: %s", query.lastError().text().toUtf8().data());
+    }
+    if (query.next()) {
+        return query.value(0).toString().trimmed();
+    }
+    return "";
+}
+

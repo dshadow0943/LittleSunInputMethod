@@ -1,7 +1,5 @@
 #include "thesaurusretrieval.h"
-#include "model/fileutil.h"
-#include <QString>
-#include <QThread>
+#include "fileutil.h"
 #include <QFile>
 #include <QDebug>
 #include <QDir>
@@ -76,6 +74,11 @@ QStringList ThesaurusRetrieval::getAssociateWords(QString word)
 {
     return mPinyin->getAssociationalWords(word);
 
+}
+
+QStringList ThesaurusRetrieval::getPunc(DBOperation::PuncType type)
+{
+    return mPinyin->getPunc(type);
 }
 
 QStringList ThesaurusRetrieval::getPhraseByPinyin(const QString &keyword, bool isEnglish)

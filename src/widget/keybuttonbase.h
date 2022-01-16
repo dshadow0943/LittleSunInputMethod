@@ -22,7 +22,7 @@
 #define BUTTONBASE_H
 
 #include "buttoninterface.h"
-
+#include "settingmanage.h"
 #include <QObject>
 #include <QPushButton>
 #include <QPaintEvent>
@@ -73,6 +73,7 @@ protected:
 protected:
     bool mPressed = false;
     int mCount = 0;
-    int mTimerId;
+    int mTimerId = -1;
+    skin_color colors;
 };
 #endif // BUTTONBASE_H

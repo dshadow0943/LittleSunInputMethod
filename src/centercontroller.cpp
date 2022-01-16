@@ -54,6 +54,21 @@ CenterController::~CenterController()
 {
     delete SettingManage::getInstance();
     delete ui;
+
+
+
+    if (nullptr != mHandkeyboatd) {
+        delete mHandkeyboatd;
+    }
+
+    if (nullptr != mSettingWindown) {
+        delete mSettingWindown;
+    }
+
+    if (nullptr != mSoftKeyboard) {
+//        delete mSoftKeyboard;
+        mSoftKeyboard->hide();
+    }
 }
 
 void CenterController::showSoftKeyboard()
@@ -203,8 +218,10 @@ void CenterController::on_btn_site_clicked()
 
 void CenterController::onWindowClosed(int id)
 {
+//    qInfo() << __FUNCTION__ << id;
     switch (id) {
     case SettingManage::WindowKeyboard:
+//        delete mSoftKeyboard;
         break;
     case SettingManage::WindowConfig:
         SettingManage::getInstance()->setConfigWindowPos(mSettingWindown->pos());

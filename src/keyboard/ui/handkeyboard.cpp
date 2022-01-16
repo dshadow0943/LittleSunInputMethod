@@ -26,11 +26,11 @@ void HandKeyboard::setRightToolWidget()
 {
     QVBoxLayout *layout = new QVBoxLayout;
 
-    layout->addWidget(ButtonItem::getNumButton("删除", Qt::Key_Backspace, KeyButtonBase::Func, this));
-    layout->addWidget(ButtonItem::getNumButton("确认", Qt::Key_Enter, KeyButtonBase::Func, this));
-    layout->addWidget(ButtonItem::getNumButton("数字", KeyButtonBase::KeyNum, KeyButtonBase::Func, this));
-    layout->addWidget(ButtonItem::getNumButton("符号", KeyButtonBase::keyPunc, KeyButtonBase::Func, this));
-    layout->addWidget(ButtonItem::getNumButton("拼音", KeyButtonBase::keyPinyin, KeyButtonBase::Func, this));
+    layout->addWidget(ButtonItem::getNumButton("←", Qt::Key_Backspace, KeyButtonBase::Func, this));
+    layout->addWidget(ButtonItem::getNumButton("↵", Qt::Key_Enter, KeyButtonBase::Func, this));
+    layout->addWidget(ButtonItem::getNumButton("123", KeyButtonBase::KeyNum, KeyButtonBase::Func, this));
+    layout->addWidget(ButtonItem::getNumButton("?符", KeyButtonBase::keyPunc, KeyButtonBase::Func, this));
+    layout->addWidget(ButtonItem::getNumButton("abc", KeyButtonBase::keyPinyin, KeyButtonBase::Func, this));
 
     layout->setContentsMargins(0,0,0,0);
     layout->setSpacing(4);

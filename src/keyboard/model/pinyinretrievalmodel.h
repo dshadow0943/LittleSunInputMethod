@@ -21,6 +21,7 @@
 #ifndef XYINPUTSEARCHINTERFACE_H
 #define XYINPUTSEARCHINTERFACE_H
 
+#include "dboperation.h"
 #include <QObject>
 #include <QStringList>
 #include <QMap>
@@ -38,6 +39,7 @@ public:
     QStringList getCandidate(const QString &keyword, bool isEnglish = false);   //获取候选词组
     QStringList getCandidate(const QString &text, int index, QString &showText);    //获取后续词组
     QStringList getAssociationalWords(const QString &text);   //获取联想词
+    QStringList getPunc(DBOperation::PuncType);
 
 private:
     explicit PinyinRetrievalModel(QObject *parent = nullptr);

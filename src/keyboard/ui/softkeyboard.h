@@ -41,15 +41,9 @@ class SoftKeyboard : public WindowBase
 
 public:
     explicit SoftKeyboard(int id = 0, QWidget *parent = nullptr);
-    ~SoftKeyboard();
+    ~SoftKeyboard() override;
 
     void setMoveEnabled(bool moveEnabled=true);//设置无边框窗口移动使能
-
-    void clearHistory();           //重置候选框
-    void onSearchBegin(QStringList data); //根据候选字母映射出候选词
-
-
-
 signals:
     //发送字符
     void sendCandidateCharacter(QString character);
@@ -57,29 +51,28 @@ signals:
     void sendSiteClicked();
 
 private:
-    /* 特殊按键响应槽 */
-    void deleteSlot();//删除输入的响应槽
-    void enterSlot();//回车被按下的响应槽
-    void spaceSlot(); //空格被按下的响应槽
-
+    void deleteClicked();   //删除输入的响应槽
+    void enterClicked();    //回车被按下的响应槽
+    void spaceClicked();    //空格被按下的响应槽
+    void clearHistory();    //重置候选框
+    void refreshCandidatePhrases(QStringList data); //刷新候选词组
     void switchPreviousKey();
-    void switchPage(int type = -1);      //切换键盘
+
     void addCandidateCharacterText(QString character);  //非中文输入时的添加字符到输入框 / 中文输入时将选中的候选框的文字添加到候选框
     void addCandidateLetter(QString letter);
-    void userSelectChinese(QString, int);    //拼音输入时点击候选词的处理方法
+
 
 private slots:
-    void on_btn_num_key_clicked();
-    void on_btn_en_key_clicked();
-    void on_btn_hand_key_clicked();
-    void on_btn_punc_key_clicked();
     void onArrowClicked();
     void onArrowChange();
     void onSiteClicked();
     void onThemeChange();
+    void onKeyTabDisplayChange();
+    void onKeyboardScaleChange();
+    void onSelectPhrase(QString, int);    //选择候选词组的处理方法
     void onKeyButtonClicked(KeyButtonBase* but);    //键盘点击事件响应
     void onPointToChaeracter(CharacterEntity character);
-    void onKeyTabDisplayChange();
+    void onSwitchKeyBoard(int type);      //切换键盘
 
 protected:
     /* 重写的相关函数 */
@@ -93,17 +86,14 @@ protected:
 private:
     Ui::SoftKeyboard *ui;
 
-    QPushButton *keyTypeTab[4];          //更改键盘的控件
-//    KeyboardSidebar *mKeyboardSidebar;    //侧边栏
+    KeyboardSidebar *mTabSidebar = nullptr;
+    bool mTabLock = true;    //侧边栏锁 true: 可以显示， false: 不可显示
 
     /* 相关配置参数  */
-    int winSizeH = 500;   //键盘顶层布局高度，默认(最大)500
-    int winSizeW = 1000;   //键盘顶层布局宽度，默认(最大)1000
     double winScale = 1;    //默认缩放比例
-    int previousKey = -1;   //上一次键盘
-    QRect applicationRect;      //显示屏相关数据对象
-    ThesaurusRetrieval *mThesaurusManage;
-    QImage *arrowIcon; //关闭按钮的图像对象
+    int mPreviousKey = -1;   //上一次键盘
+    ThesaurusRetrieval *mThesaurusManage = nullptr;
+    QImage *arrowIcon = nullptr; //关闭按钮的图像对象
     int    arrowStatus = ARROW_CLOSE;         //记录箭头状态
     bool   arrowPressed = false;     //记录箭头按下状态
     QRect  arrowRect;            //记录箭头按钮的矩形框
@@ -121,8 +111,10 @@ private:
 
     VScrollBarView *mVTranslateView;
     HScrollBarView *mHTranslateView;
-    QLineEdit *textShow;        //文本显示区域
-    QLabel *mLetterLabel;               //输入字母显示控件，同时提供对键盘的移动操作
+    QLabel *mLetterLabel = nullptr;               //输入字母显示控件，同时提供对键盘的移动操作
+    QLabel *mArrow = nullptr;
+    QLabel *mSite = nullptr;
+    QLabel *mLog = nullptr;
 
 private:
 
@@ -131,11 +123,10 @@ private:
     void initUi();
     void initKeyboard();    //初始化键盘
     void initCandidate();   //初始化候选框
-    void initLog();         //初始化log和设置图标
+    void initTab();         //初始化log和设置图标
 
     void fillCandidateText(QStringList&);   //填充候选框文本
     void setThemeStyleSheet();
-    void setTabStyleSheet();
 };
 
 #endif // SOFTKEYBOARD_H

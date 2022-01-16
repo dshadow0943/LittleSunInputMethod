@@ -21,6 +21,7 @@
 #include "settingwindown.h"
 #include "radiobuttonbase.h"
 #include "checkboxbase.h"
+#include "sliderbase.h"
 #include "globalsignaltransfer.h"
 #include "settingmanage.h"
 #include <QPushButton>
@@ -44,6 +45,8 @@ SettingWindown::SettingWindown(int id, QWidget *parent) : WindowBase (id, parent
             this, &SettingWindown::onRadioButtonClicked);
     connect(GlobalSignalTransfer::getInstance(), &GlobalSignalTransfer::sendCheckBoxClicked,
             this, &SettingWindown::onCheBoxClicked);
+    connect(GlobalSignalTransfer::getInstance(), &GlobalSignalTransfer::sendSliderValueChange,
+            this, &SettingWindown::onSliderValueChange);
 }
 
 SettingWindown::~SettingWindown()
@@ -155,6 +158,13 @@ void SettingWindown::addKeyboardCard()
     keyBut->setChecked(SettingManage::getInstance()->getKeyTabDisplay());
     card->appendWidget(keyBut);
 
+    QLabel *sLabel = new QLabel("键盘大小");
+    card->appendWidget(sLabel);
+    SliderBase *kSlidr = new SliderBase(SettingManage::KeySizeSlider);
+    double scale = SettingManage::getInstance()->getKeyboardSizeScale();
+    kSlidr->setValue(int(scale*20));
+    card->appendWidget(kSlidr);
+
     mContentTab->appendTab(title);
     mContentView->appendCard(card);
 }
@@ -164,11 +174,11 @@ void SettingWindown::addHelpCard()
     QString title = "帮助";
     SettingContentCard *card = new SettingContentCard(title);
 
-    QLabel *lable = new QLabel("感谢使用小太阳输入法\nThanks for using the littlesun input method\n\n"
+    QLabel *lable = new QLabel("感谢使用小太阳输入法\nThanks for using the little sun input method\n\n"
                                "如在使用过程中遇到问题或者建议请发送邮件至\nIf you encounter problems or suggestions during use,\nplease send an email to"
                                "\n\ndshadow@foxmail.com");
     lable->setAlignment(Qt::AlignCenter);
-    lable->setFixedSize(500, 240);
+    lable->setFixedSize(500, 230);
     card->appendWidget(lable);
 
     mContentTab->appendTab(title);
@@ -196,6 +206,15 @@ void SettingWindown::onCheBoxClicked(CheckBoxBase* but)
     switch (but->getId()) {
     case SettingManage::KeyTab:
         SettingManage::getInstance()->setKeyTabDisplay(but->isChecked());
+        break;
+    }
+}
+
+void SettingWindown::onSliderValueChange(SliderBase* but)
+{
+    switch (but->getId()) {
+    case SettingManage::KeySizeSlider:
+        SettingManage::getInstance()->setKeyboardSizeScale(but->getValue()*1.0/20);
         break;
     }
 }

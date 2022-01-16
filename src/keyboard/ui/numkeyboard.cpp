@@ -18,13 +18,13 @@ NumKeyboard::NumKeyboard(SoftKeyboard *parent) : QWidget(parent)
 void NumKeyboard::initKeyValue()
 {
 
-    mButLine.push_back(ButtonItem::getNumButton("-", 0, KeyButtonBase::Punc, this));
+    mButLine.push_back(ButtonItem::getNumButton("+", 0, KeyButtonBase::Punc, this));
     mButLine.push_back(ButtonItem::getNumButton("1", Qt::Key_1, KeyButtonBase::Num, this));
     mButLine.push_back(ButtonItem::getNumButton("2", Qt::Key_2, KeyButtonBase::Num, this));
     mButLine.push_back(ButtonItem::getNumButton("3", Qt::Key_3, KeyButtonBase::Num, this));
-    mButLine.push_back(ButtonItem::getNumButton("删除", Qt::Key_Backspace, KeyButtonBase::Func, this));
+    mButLine.push_back(ButtonItem::getNumButton("←", Qt::Key_Backspace, KeyButtonBase::Func, this));
 
-    mButLine.push_back(ButtonItem::getNumButton("+", 0, KeyButtonBase::Punc, this));
+    mButLine.push_back(ButtonItem::getNumButton("-", 0, KeyButtonBase::Punc, this));
     mButLine.push_back(ButtonItem::getNumButton("4", Qt::Key_4, KeyButtonBase::Num, this));
     mButLine.push_back(ButtonItem::getNumButton("5", Qt::Key_5, KeyButtonBase::Num, this));
     mButLine.push_back(ButtonItem::getNumButton("6", Qt::Key_6, KeyButtonBase::Num, this));
@@ -37,10 +37,10 @@ void NumKeyboard::initKeyValue()
     mButLine.push_back(ButtonItem::getNumButton("@", Qt::Key_At, KeyButtonBase::Num, this));
 
     mButLine.push_back(ButtonItem::getNumButton("/", 0, KeyButtonBase::Punc, this));
-    mButLine.push_back(ButtonItem::getNumButton("符号", KeyButtonBase::keyPunc, KeyButtonBase::Func, this));
+    mButLine.push_back(ButtonItem::getNumButton("?符", KeyButtonBase::keyPunc, KeyButtonBase::Func, this));
     mButLine.push_back(ButtonItem::getNumButton(" ", Qt::Key_Space, KeyButtonBase::Num, this));
-    mButLine.push_back(ButtonItem::getNumButton("拼音", KeyButtonBase::keyPinyin, KeyButtonBase::Func, this));
-    mButLine.push_back(ButtonItem::getNumButton("手写", KeyButtonBase::keyHand, KeyButtonBase::Func, this));
+    mButLine.push_back(ButtonItem::getNumButton("abc", KeyButtonBase::keyPinyin, KeyButtonBase::Func, this));
+    mButLine.push_back(ButtonItem::getNumButton("写", KeyButtonBase::keyHand, KeyButtonBase::Func, this));
 }
 
 /**
@@ -51,7 +51,7 @@ void NumKeyboard::initKeyboard()
 {
     QGridLayout *gridLayout = new QGridLayout(this);
     //设置控件之间的间距
-    gridLayout->setSpacing(1);
+    gridLayout->setSpacing(3);
     gridLayout->setContentsMargins(0,0,0,0);
     this->setLayout(gridLayout);
 

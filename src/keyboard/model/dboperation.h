@@ -33,8 +33,15 @@ class DBOperation : public QObject
     Q_OBJECT
 public:
     static DBOperation *getInstance();
-    explicit DBOperation(QObject *parent = 0);
+    explicit DBOperation(QObject *parent = nullptr);
     ~DBOperation();
+
+    enum PuncType {
+        User = 1,
+        Chinese,
+        English,
+        Math,
+    };
 
     bool createDatabaseFile(const QString &filePath, const QString &passwd = "", bool fource = false);
     bool openDatabaseFile(const QString &filePath, const QString &passwd = "");
@@ -50,6 +57,7 @@ public:
 
     bool findPinyinByChinese(const QString& chinese, QString& pinyin);
     QList<PhraseEntity> findAssociational(const QString& table, const QString& head);
+    QString findPunc(PuncType type);
 
 private:
     static DBOperation *DB;

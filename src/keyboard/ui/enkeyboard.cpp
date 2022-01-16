@@ -19,9 +19,9 @@ void EnKeyboard::initView()
     QGridLayout *gridLayout = new QGridLayout;
 
     //设置控件之间的间距
-    gridLayout->setSpacing(1);
+    gridLayout->setSpacing(3);
     //设置栅格布局控件与窗体之间的间距
-    gridLayout->setContentsMargins(0,0,0,0);
+    gridLayout->setMargin(0);
     this->setLayout(gridLayout);
 
     mButLines.push_back(ButtonItem::getNumButton("0", Qt::Key_0, KeyButtonBase::PinyinNum, this));
@@ -69,11 +69,6 @@ void EnKeyboard::initView()
     for(int i = 0; i < 9; i++){
         //将按钮添加到布局中
         gridLayout->addWidget(mButLines[i+20],2,1+i*2,1,2);
-        //设置控件之间的间距
-        gridLayout->setSpacing(1);
-        //设置栅格布局控件与窗体之间的间距
-        gridLayout->setContentsMargins(0,0,0,0);
-        this->setLayout(gridLayout);
     }
 
     mButLines.push_back(ButtonItem::getShiftButton());
@@ -84,8 +79,8 @@ void EnKeyboard::initView()
     mButLines.push_back(ButtonItem::getEnglishButton("B", "b", Qt::Key_H, KeyButtonBase::PinyinLetter, this));
     mButLines.push_back(ButtonItem::getEnglishButton("N", "n", Qt::Key_J, KeyButtonBase::PinyinLetter, this));
     mButLines.push_back(ButtonItem::getEnglishButton("M", "m", Qt::Key_K, KeyButtonBase::PinyinLetter, this));
-    mButLines.push_back(ButtonItem::getNumButton("删除",Qt::Key_Backspace, KeyButtonBase::Func, this));
-    mButLines.push_back(ButtonItem::getNumButton("确认",Qt::Key_Enter, KeyButtonBase::Func, this));
+    mButLines.push_back(ButtonItem::getNumButton("←",Qt::Key_Backspace, KeyButtonBase::Func, this));
+    mButLines.push_back(ButtonItem::getNumButton("↵",Qt::Key_Enter, KeyButtonBase::Func, this));
 
     //初始化字母按键第三行
     for(int i = 0; i < 10; i++){
@@ -93,12 +88,12 @@ void EnKeyboard::initView()
     }
 
     mButLines.push_back(ButtonItem::getNumButton("123", KeyButtonBase::KeyNum, KeyButtonBase::Func, this));
-    mButLines.push_back(ButtonItem::getNumButton("符号", KeyButtonBase::keyPunc, KeyButtonBase::Func, this));
+    mButLines.push_back(ButtonItem::getNumButton("?符", KeyButtonBase::keyPunc, KeyButtonBase::Func, this));
     mButLines.push_back(ButtonItem::getEnglishButton(",", "，", Qt::Key_Comma, KeyButtonBase::PinyinPunc, this));
     mButLines.push_back(ButtonItem::getNumButton(" ", Qt::Key_Space, KeyButtonBase::Func, this));
     mButLines.push_back(ButtonItem::getEnglishButton(".", "。", Qt::Key_Camera, KeyButtonBase::PinyinPunc, this));
     mButLines.push_back(ButtonItem::getSwitchButton());
-    mButLines.push_back(ButtonItem::getNumButton("手写", KeyButtonBase::keyHand, KeyButtonBase::Func, this));
+    mButLines.push_back(ButtonItem::getNumButton("写", KeyButtonBase::keyHand, KeyButtonBase::Func, this));
 
     //初始化第五行
     int row = 0;

@@ -29,6 +29,7 @@
 
 class RadioButtonBase;
 class CheckBoxBase;
+class SliderBase;
 class SettingWindown : public WindowBase
 {
     Q_OBJECT
@@ -40,6 +41,7 @@ signals:
 public slots:
     void onRadioButtonClicked(RadioButtonBase* but);
     void onCheBoxClicked(CheckBoxBase* but);
+    void onSliderValueChange(SliderBase* but);
 
 private:
     void initUi();

@@ -32,6 +32,12 @@ void ShiftButton::onClicked()
         return;
     }
     mIsCaps = !mIsCaps;
+//    if (mIsCaps) {
+//        setStyleSheet(QString("QPushButton{color: #FF0000;}"));
+//    } else {
+//        setStyleSheet(QString("QPushButton{color: %1;}").arg(colors.font.name()));
+
+//    }
     emit sendShiftClicked(mIsCaps);
 }
 

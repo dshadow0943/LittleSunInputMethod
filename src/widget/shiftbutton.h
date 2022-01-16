@@ -27,7 +27,7 @@ class ShiftButton : public KeyButtonBase
 {
     Q_OBJECT
 public:
-    explicit ShiftButton(QString text = "shift", int id = Qt::Key_Shift, KeyButtonBase::KeyType type = KeyButtonBase::Func, QWidget *parent = nullptr);
+    explicit ShiftButton(QString text = "⇧", int id = Qt::Key_Shift, KeyButtonBase::KeyType type = KeyButtonBase::Func, QWidget *parent = nullptr);
 
 signals:
     void sendShiftClicked(bool mIsCaps);
@@ -37,7 +37,7 @@ public slots:
     void onEnglishInput(bool isEnglish);
 
 private:
-    bool mIsCaps = true;
+    bool mIsCaps = false;
     bool mIsCapsLook = false;
 };
 

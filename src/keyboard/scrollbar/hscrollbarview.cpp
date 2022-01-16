@@ -1,6 +1,5 @@
 #include "hscrollbarview.h"
 #include "scrollbarcontainer.h"
-#include "customskin.h"
 #include "settingmanage.h"
 #include <QPainter>
 #include <QPaintEvent>
@@ -20,7 +19,7 @@ void HScrollBarView::paintEvent(QPaintEvent *event)
     skin_color skin = SettingManage::getInstance()->getSkinColor(SkinType::Theme);
 
     QFont font;
-    font.setPixelSize(24);
+    font.setPixelSize(unitFontSize);
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);

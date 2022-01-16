@@ -34,8 +34,8 @@ MouseThread::MouseThread()
  */
 void MouseThread::run()
 {
-    static int count  = 0;
-    qInfo() << __FUNCTION__ << count++;
+//    static int count  = 0;
+//    qInfo() << __FUNCTION__ << count++;
     QDBusMessage message = QDBusMessage::createMethodCall("org.fcitx.Fcitx",
                                 "/inputmethod",
                                 "org.fcitx.Fcitx.InputMethod",
@@ -50,11 +50,7 @@ void MouseThread::run()
         //发送消息
         QDBusMessage response = QDBusConnection::sessionBus().call(message);
         if (response.arguments().first().value<QString>() == "keyboard-littlesun") {
-//            qApp->quit();
+            qApp->quit();
         }
     }
-
-//    while (!isInterruptionRequested()) {
-
-//    }
 }

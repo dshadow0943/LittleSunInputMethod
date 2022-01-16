@@ -55,3 +55,8 @@ void GlobalSignalTransfer::onCheckBoxClicked(CheckBoxBase *but)
 {
     emit sendCheckBoxClicked(but);
 }
+
+void GlobalSignalTransfer::onSliderValueChange(SliderBase *but)
+{
+    emit sendSliderValueChange(but);
+}

@@ -28,8 +28,6 @@ ButtonItem::ButtonItem(QObject *parent) : QObject(parent)
 EnglishButton* ButtonItem::getEnglishButton(QString str1, QString str2, int id, KeyButtonBase::KeyType type, QWidget *parent)
 {
     EnglishButton *but = new EnglishButton(str1, str2, id, type, parent);
-    but->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-
     if (KeyButtonBase::PinyinLetter == type) {
         connect(getShiftButton(), &ShiftButton::sendShiftClicked, but, &EnglishButton::onShiftClicked);
     }
@@ -44,14 +42,12 @@ EnglishButton* ButtonItem::getEnglishButton(QString str1, QString str2, int id, 
 NumButton* ButtonItem::getNumButton(QString num, int id, KeyButtonBase::KeyType type, QWidget *parent)
 {
     NumButton *but = new NumButton(num, id, type, parent);
-    but->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
     return but;
 }
 
 ShiftButton* ButtonItem::getShiftButton()
 {
     static ShiftButton but;
-    but.setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
     connect(getSwitchButton(), &CE_SwitchButton::sendSwitchClicked, &but, &ShiftButton::onEnglishInput);
     return &but;
 }
@@ -59,6 +55,5 @@ ShiftButton* ButtonItem::getShiftButton()
 CE_SwitchButton* ButtonItem::getSwitchButton()
 {
     static CE_SwitchButton but;
-    but.setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
     return &but;
 }

@@ -19,7 +19,6 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "pinyinretrievalmodel.h"
-#include "dboperation.h"
 #include <QDebug>
 #include <QFile>
 
@@ -42,7 +41,6 @@ PinyinRetrievalModel::~PinyinRetrievalModel()
 
 bool PinyinRetrievalModel::initInputBase(const QString &path)
 {
-    qInfo() << path;
     return XYDB->openDatabaseFile(path);
 }
 
@@ -119,6 +117,16 @@ QStringList PinyinRetrievalModel::getAssociationalWords(const QString &text)
         if (!data.isEmpty()) {
             datas.append(data);
         }
+    }
+    return datas;
+}
+
+QStringList PinyinRetrievalModel::getPunc(DBOperation::PuncType type)
+{
+    QStringList datas;
+    datas = XYDB->getInstance()->findPunc(type).split(" ");
+    if (datas.isEmpty()) {
+        return QStringList();
     }
     return datas;
 }

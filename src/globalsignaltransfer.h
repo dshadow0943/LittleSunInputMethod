@@ -28,6 +28,7 @@ class KeyButtonBase;
 class RadioButtonBase;
 class ScrollBarBase;
 class CheckBoxBase;
+class SliderBase;
 class GlobalSignalTransfer : public QObject
 {
     Q_OBJECT
@@ -44,6 +45,7 @@ signals:
     void sendWindowClosed(int id);
     void sendScrollBarClosed(QString text, int index);
     void sendCheckBoxClicked(CheckBoxBase *but);
+    void sendSliderValueChange(SliderBase *but);
 
 //限制槽访问权限（避免全局滥用情况）
 private slots:
@@ -52,12 +54,14 @@ private slots:
     void onWindowClosed(int id);
     void onScrollBarclicked(QString text, int index);
     void onCheckBoxClicked(CheckBoxBase *but);
+    void onSliderValueChange(SliderBase *but);
 
     friend WindowBase;
     friend KeyButtonBase;
     friend RadioButtonBase;
     friend ScrollBarBase;
     friend CheckBoxBase;
+    friend SliderBase;
 };
 
 #endif // GLOBALSIGNALTRANSFER_H

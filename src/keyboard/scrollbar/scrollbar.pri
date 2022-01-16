@@ -1,5 +1,4 @@
 HEADERS += \
-    $$PWD/customskin.h \
     $$PWD/scrollbarmanage.h \
     $$PWD/scrollbarcontainer.h \
     $$PWD/hscrollbarview.h \
@@ -7,7 +6,6 @@ HEADERS += \
     $$PWD/scrollbarbase.h
 
 SOURCES += \
-    $$PWD/customskin.cpp \
     $$PWD/scrollbarmanage.cpp \
     $$PWD/scrollbarcontainer.cpp \
     $$PWD/hscrollbarview.cpp \

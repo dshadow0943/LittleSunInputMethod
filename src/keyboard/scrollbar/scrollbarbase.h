@@ -15,6 +15,9 @@ public:
     int getUnitMinHeight() const;
     void setUnitMinHeight(int value);
 
+    int getUnitFontSize();
+    void setUnitFontSize(int size);
+
     void setData(QStringList& data);
     void clearData();
 
@@ -37,8 +40,9 @@ protected:
     QList<QRect> dataRects;
     QStringList dataStrings;
 
-    int unitMinWidth;
-    int unitMinHeight;
+    int unitMinWidth = -1;
+    int unitMinHeight = -1;
+    int unitFontSize = 20;
     QRect pressRect;
 
 

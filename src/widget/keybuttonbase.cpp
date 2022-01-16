@@ -19,7 +19,6 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "keybuttonbase.h"
-#include "settingmanage.h"
 #include "globalsignaltransfer.h"
 #include <QPainter>
 
@@ -29,6 +28,7 @@ KeyButtonBase::KeyButtonBase(int id, KeyType type, QWidget *parent)
 
 {
     setKeyStyleSheet();
+    setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
 
     QPushButton::connect(this, &KeyButtonBase::sendClicked, GlobalSignalTransfer::getInstance(), &GlobalSignalTransfer::onKeyButtonClicked);
     QPushButton::connect(SettingManage::getInstance(), &SettingManage::sendThemeChange, this, &KeyButtonBase::onThemeChange);
@@ -36,7 +36,6 @@ KeyButtonBase::KeyButtonBase(int id, KeyType type, QWidget *parent)
 
 void KeyButtonBase::setKeyStyleSheet()
 {
-    skin_color colors;
     switch (mType) {
     case KeyButtonBase::Func:
         colors = SettingManage::getInstance()->getSkinColor(SkinType::Func);
@@ -48,7 +47,7 @@ void KeyButtonBase::setKeyStyleSheet()
         colors = SettingManage::getInstance()->getSkinColor(SkinType::Key);
     }
 
-    QString button_style = QString("KeyButtonBase{color:%1; background-color:%2;"
+    QString button_style = QString("QPushButton{color:%1; background-color:%2;"
                                   "border-radius: 10px;  border: 1px groove gray; border-style: outset;} "
                                   "KeyButtonBase:hover{background-color:%3;} "
                                   "KeyButtonBase:pressed{background-color:%4; border-style: inset; }")
@@ -84,7 +83,9 @@ void KeyButtonBase::mouseReleaseEvent(QMouseEvent *event)
 {
     if (mPressed) {
         mPressed = false;
-        killTimer(mTimerId);
+        if (mTimerId != -1) {
+            killTimer(mTimerId);
+        }
         onClicked();
     }
     QPushButton::mouseReleaseEvent(event);

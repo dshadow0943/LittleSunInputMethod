@@ -60,6 +60,7 @@ void SettingManage::initConfig()
     mConfig.configWindowPos = settings.value("configWindowPos", QPoint(0, 0)).toPoint();
     mConfig.trainWindowPos = settings.value("trainWindowPos", QPoint(0, 0)).toPoint();
     mConfig.keyTabDisplay = settings.value("keyTabDisplay", true).toBool();
+    mConfig.keyboardSizeScale = settings.value("keyboardSizeScale", -1).toDouble();
 
     settings.endGroup();
 
@@ -77,6 +78,7 @@ void SettingManage::saveConfig()
     settings.setValue("configWindowPos", mConfig.configWindowPos);
     settings.setValue("trainWindowPos", mConfig.trainWindowPos);
     settings.setValue("keyTabDisplay", mConfig.keyTabDisplay);
+    settings.setValue("keyboardSizeScale", mConfig.keyboardSizeScale);
 
     settings.endGroup();
 }
@@ -173,6 +175,7 @@ skin_color SettingManage::getSkinColor(SkinType type)
     case Tab:
         return mSkinMap[key].tab;
     }
+    return mSkinMap[key].theme;
 }
 
 void SettingManage::setNavigationWindowPos(QPoint point)
@@ -238,3 +241,13 @@ bool SettingManage::getKeyTabDisplay()
     return mConfig.keyTabDisplay;
 }
 
+void SettingManage::setKeyboardSizeScale(double scale)
+{
+    mConfig.keyboardSizeScale = scale;
+    emit sendKeyboardScaleChange();
+}
+
+double  SettingManage::getKeyboardSizeScale()
+{
+    return mConfig.keyboardSizeScale;
+}

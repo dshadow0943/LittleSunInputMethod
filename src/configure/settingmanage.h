@@ -53,6 +53,7 @@ struct config {
     bool keyTabDisplay = true;
     int defaultKeyboard = 0;  //初始键盘类型
     int themeType = 0;     //主题类型
+    double keyboardSizeScale = -1;
 };
 
 enum SkinType {
@@ -89,6 +90,7 @@ public:
         SkinDarkBlack,
         SkinEnd,
         KeyTab,
+        KeySizeSlider,
 
         WindowKeyboard,
         WindowConfig,
@@ -98,13 +100,6 @@ public:
     static SettingManage* getInstance();
     skin_color getSkinColor(SkinType type);
 
-    void setThemeType(int type);
-    int getThemeType();
-    void setDefaultKeyboard(int type);
-    int getDefaultKeyboard();
-    void setKeyTabDisplay(bool);
-    bool getKeyTabDisplay();
-
     void setNavigationWindowPos(QPoint);
     QPoint getNavigationWindowPos();
     void setConfigWindowPos(QPoint);
@@ -112,12 +107,22 @@ public:
     void setTrainWindowPos(QPoint);
     QPoint getTrainWindowPos();
 
+    void setThemeType(int type);
+    int getThemeType();
+    void setDefaultKeyboard(int type);
+    int getDefaultKeyboard();
+    void setKeyTabDisplay(bool);
+    bool getKeyTabDisplay();
+    void setKeyboardSizeScale(double scale);
+    double  getKeyboardSizeScale();
+
     void setThemePalette();
     void saveConfig();
 
 signals:
     void sendThemeChange();
     void sendKetTabCheBoxClicked();
+    void sendKeyboardScaleChange();
 
 public slots:
 

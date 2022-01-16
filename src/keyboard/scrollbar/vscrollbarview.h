@@ -2,6 +2,7 @@
 #define VTRANSLATEVIEW_H
 
 #include "scrollbarbase.h"
+#include <QDebug>
 
 class VScrollBarView : public ScrollBarBase
 {

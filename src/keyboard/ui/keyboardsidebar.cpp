@@ -19,60 +19,114 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "keyboardsidebar.h"
-
+#include "buttonitem.h"
+#include "settingmanage.h"
 #include <QVBoxLayout>
+#include <QButtonGroup>
 
-KeyboardSidebar::KeyboardSidebar(QWidget *parent) : QWidget(parent)
+KeyboardSidebar::KeyboardSidebar(QStringList tabs, QWidget *parent) : QWidget(parent)
 {
+    this->mTabs = tabs;
     initUi();
-    initConnection();
 }
 
 void KeyboardSidebar::initUi()
 {
     QVBoxLayout *layout = new QVBoxLayout(this);
-    mNumKey = new QPushButton("数字");
-    mEnKey = new QPushButton("拼音");
-    mHandKey = new QPushButton("手写");
-    mPuncKey = new QPushButton("符号");
+    layout->setMargin(0);
+    layout->setSpacing(0);
 
-    layout->addWidget(mNumKey);
-    layout->addWidget(mEnKey);
-    layout->addWidget(mHandKey);
-    layout->addWidget(mPuncKey);
+    mButList.clear();
+
+    QButtonGroup *group = new QButtonGroup(this);
+    connect(group, SIGNAL(buttonClicked(int)), this, SLOT(onButtonClicked(int)));
+
+    for (int i = 0; i < mTabs.size(); ++i) {
+        QPushButton *but = new QPushButton(mTabs[i]);
+        mButList.push_back(but);
+        but->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
+        group->addButton(but, i);
+        layout->addWidget(but, 1);
+    }
     this->setLayout(layout);
 }
 
-void KeyboardSidebar::initConnection()
+void KeyboardSidebar::onButtonClicked(int id)
 {
-    mButList.push_back(mNumKey);
-    mButList.push_back(mEnKey);
-    mButList.push_back(mHandKey);
-    mButList.push_back(mPuncKey);
+    setCurrentIndex(id);
+}
 
-    connect(mNumKey, &QPushButton::clicked, this, [=](){
-        setCurrentIndex(0);
-    });
-    connect(mEnKey, &QPushButton::clicked, this, [=](){
-        setCurrentIndex(1);
-    });
-    connect(mHandKey, &QPushButton::clicked, this, [=](){
-        setCurrentIndex(2);
-    });
-    connect(mPuncKey, &QPushButton::clicked, this, [=](){
-        setCurrentIndex(3);
-    });
+void KeyboardSidebar::setFontSize(int size)
+{
+    for (QPushButton *but : mButList) {
+        QFont font = but->font();
+        font.setPixelSize(size);
+        but->setFont(font);
+    }
 }
 
 void KeyboardSidebar::setCurrentIndex(int index)
 {
-    mCurrentIndex = index;
-    emit sendCurrentIndex(index);
+    skin_color colors = SettingManage::getInstance()->getSkinColor(SkinType::Tab);
+    QString button_style= QString("QPushButton{ \
+                                      border-style:none;\
+                                      border:1px solid %4;\
+                                      color:%1;\
+                                      padding:5px;\
+                                      min-height:15px;\
+                                      border-radius:5px;\
+                                      background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %2,stop:0.4 %3,stop:0.6 %3,stop:1 %2);\
+                                      }\
+                                      QPushButton:hover{\
+                                      background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %2,stop:0.4 %3,stop:0.6 %3,stop:1 %2);\
+                                      }\
+                                      QPushButton:pressed{\
+                                      background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %2,stop:0.5 %3,stop:1 %2);\
+                                      }\
+                                      ")
+            .arg(colors.font.name())
+            .arg(colors.normal.name())
+            .arg(colors.hover.name())
+            .arg(colors.hover.name());
 
-    for (int i = 0; i < 4; i++) {
-        mButList[i]->setStyleSheet("background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #EAF7FF,stop:1 #EAF7FF);");
+    for (QPushButton *but : mButList)
+    {
+        but->setStyleSheet(button_style);
     }
-    if (index < 4){
-        mButList[index]->setStyleSheet("background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #C0DEF6,stop:1 #C0DEF6);");
-    }
+
+    if (index < mButList.size()){
+        QString button_style = QString("QPushButton{ \
+                                          border-style:none;\
+                                          border:1px solid %4;\
+                                          color:%1;\
+                                          padding:5px;\
+                                          min-height:15px;\
+                                          border-radius:5px;\
+                                          background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %2,stop:0.5 %3,stop:1 %2);\
+                                          }\
+                                          QPushButton:hover{\
+                                          background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %2,stop:0.5 %3,stop:1 %2);\
+                                          }\
+                                          QPushButton:pressed{\
+                                          background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %2,stop:0.5 %3,stop:1 %2);\
+                                          }\
+                                          ")
+        .arg(colors.font.name())
+        .arg(colors.normal.name())
+        .arg(colors.pressed.name())
+        .arg(colors.hover.name());
+
+        mButList[index]->setStyleSheet(button_style);
+   }
+
+   if (index != mCurrentIndex) {
+       emit sendCurrentIndex(index);
+   }
+
+   mCurrentIndex = index;
+}
+
+void KeyboardSidebar::setCurrentIndex()
+{
+    setCurrentIndex(mCurrentIndex);
 }

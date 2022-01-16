@@ -5,9 +5,6 @@
 
 ScrollBarBase::ScrollBarBase(QWidget *parent) : QWidget(parent)
 {
-    unitMinHeight = -1;
-    unitMinWidth = -1;
-
     connect(this, &ScrollBarBase::clicked, GlobalSignalTransfer::getInstance(), &GlobalSignalTransfer::onScrollBarclicked);
 }
 int ScrollBarBase::getUnitMinWidth() const
@@ -27,6 +24,20 @@ int ScrollBarBase::getUnitMinHeight() const
 void ScrollBarBase::setUnitMinHeight(int value)
 {
     unitMinHeight = value;
+}
+
+int ScrollBarBase::getUnitFontSize()
+{
+    return unitFontSize;
+}
+
+void ScrollBarBase::setUnitFontSize(int size)
+{
+    if (size < 10) {
+        size = 8;
+    }
+    unitFontSize = size;
+    setUnitMinWidth(size/2);
 }
 
 void ScrollBarBase::setData(QStringList& data)

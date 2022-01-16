@@ -24,11 +24,12 @@ public:
     explicit PuncKeyboard(SoftKeyboard *parent = nullptr);
 
 public slots:
+    void onTabClicked(int);
 
 private:
-    VScrollBarView *punc;
-    QStringList loadSymbols(const QString &file);
+    VScrollBarView *mPunc;
     void initUi();
+    void setPuncData(QStringList);
 
 private:
     QGridLayout *gridLayout;

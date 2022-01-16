@@ -19,6 +19,7 @@ public:
     QStringList getPhraseByPinyin(const QString &text, int index, QString &showText);
     QStringList getChineseByHand(CharacterEntity& Character, int count = 20);
     QStringList getAssociateWords(QString word);
+    QStringList getPunc(DBOperation::PuncType);
 
     bool writeFile(QString text);
     int saveCharaters(QList<CharacterEntity>&);
