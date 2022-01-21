@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
 
     //建立到session bus的连接
     QDBusConnection connection = QDBusConnection::sessionBus();
+    connection.interface();
     //在session bus上注册名为com.fcitx.littlesun.server的服务
     if(!connection.registerService("com.fcitx.littlesun.server"))
     {
@@ -43,6 +44,6 @@ int main(int argc, char *argv[])
     //注册名为/keyboard的对象，把类Object所有槽函数和信号导出
     connection.registerObject("/keyboard", &w);
     ServerAdaptor server(&w);
-    w.show();
+//    w.show();
     return a.exec();
 }

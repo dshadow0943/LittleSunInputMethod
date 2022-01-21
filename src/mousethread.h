@@ -27,9 +27,8 @@ class MouseThread : public QThread
 {
 public:
     MouseThread();
-    ~MouseThread(){
+    ~MouseThread() override {
         // 请求终止
-        requestInterruption();
         quit();
         wait();
     }

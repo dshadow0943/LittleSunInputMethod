@@ -47,7 +47,7 @@ bool HandWriteModel::loadModelFile(const QString filePath, int charType)
     QFile ifs(filePath);
 
     if(!ifs.open(QIODevice::ReadOnly)){
-//        perror("open");s
+//        perror("open");
         return false;
     }
 

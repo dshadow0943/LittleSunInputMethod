@@ -33,6 +33,7 @@ public:
     explicit SettingContentView(QWidget *parent = nullptr);
 
     void appendCard(SettingContentCard* card);
+    void setSize(QSize);
 
 signals:
     void sendViewChange(int index);
@@ -45,11 +46,10 @@ private:
     void initUi();
 
 private:
-
     QScrollArea * mScrollArea {nullptr};
     QVBoxLayout *mRow {nullptr};
-
     QList<SettingContentCard*> mCardList;
+    QSize mSize = QSize(500, 300);
 };
 
 #endif // SETTINGCONTENTVIEW_H

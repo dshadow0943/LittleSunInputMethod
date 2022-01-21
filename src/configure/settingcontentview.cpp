@@ -35,9 +35,10 @@ void SettingContentView::initUi()
     mScrollArea = new QScrollArea(this);
     QWidget* pWgt = new QWidget;
     mRow = new QVBoxLayout(pWgt);
+    mRow->setMargin(0);
     pWgt->setLayout(mRow);
     mScrollArea->setWidget(pWgt);
-    mScrollArea->setFixedSize(QSize(500, 300));
+    mScrollArea->setFixedSize(mSize);
 }
 
 void SettingContentView::appendCard(SettingContentCard* cardWgt)
@@ -47,7 +48,13 @@ void SettingContentView::appendCard(SettingContentCard* cardWgt)
     mRow->addWidget(cardWgt);
     QWidget* pWgt = new QWidget;
     pWgt->setLayout(mRow);
+    pWgt->setMaximumWidth(mSize.width()-5);
     mScrollArea->setWidget(pWgt);
+}
+
+void SettingContentView::setSize(QSize size)
+{
+    mSize = size;
 }
 
 void SettingContentView::onScrollValueChange(int value)

@@ -35,7 +35,6 @@ EnglishButton* ButtonItem::getEnglishButton(QString str1, QString str2, int id, 
     if (KeyButtonBase::PinyinPunc == type) {
         connect(getSwitchButton(), &CE_SwitchButton::sendSwitchClicked, but, &EnglishButton::onShiftClicked);
     }
-
     return but;
 }
 

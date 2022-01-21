@@ -56,21 +56,25 @@ public:
     };
 
     explicit KeyButtonBase(int id = 0, KeyType type = Invalid, QWidget *parent = nullptr);
+    void setText(const QString &str);
+    QString getText();
 
 signals:
     void sendClicked(KeyButtonBase* but);
 
 protected slots:
-    void onClicked();
     void onThemeChange();
 
 protected:
-    void setKeyStyleSheet();
+    virtual void setKeyStyleSheet();
+    virtual void onClicked();
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
     void timerEvent( QTimerEvent *event) override;
 
 protected:
+    QString mText;
     bool mPressed = false;
     int mCount = 0;
     int mTimerId = -1;

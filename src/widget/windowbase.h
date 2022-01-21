@@ -22,6 +22,7 @@
 #define WINDOWBASE_H
 
 #include <QWidget>
+#include <QMainWindow>
 
 class WindowBase : public QWidget
 {
@@ -36,7 +37,6 @@ public slots:
 
 protected:
     void closeEvent(QCloseEvent *event);
-
     void closeWindow();
 
 private:

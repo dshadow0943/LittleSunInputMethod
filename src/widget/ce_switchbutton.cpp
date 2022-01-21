@@ -25,8 +25,6 @@ CE_SwitchButton::CE_SwitchButton(QString str1, QString str2, int id, KeyType typ
   , str2(str2)
 {
     switchText((mIsEnglish));
-
-    QPushButton::connect(this, &QPushButton::clicked, this, &CE_SwitchButton::onClicked);
 }
 
 bool CE_SwitchButton::getIsEnglish()
@@ -36,6 +34,7 @@ bool CE_SwitchButton::getIsEnglish()
 
 void CE_SwitchButton::onClicked()
 {
+    KeyButtonBase::onClicked();
     mIsEnglish = !mIsEnglish;
     switchText((mIsEnglish));
     emit sendSwitchClicked(mIsEnglish);

@@ -3,7 +3,6 @@
 #include "thesaurusretrieval.h"
 #include <QColorDialog>
 #include <QFontDialog>
-#include <QGridLayout>
 #include <QScrollArea>
 #include <QFile>
 #include <QHBoxLayout>
@@ -28,9 +27,9 @@ void PuncKeyboard::initUi()
 
     layout->addWidget(ButtonItem::getNumButton("返回", KeyButtonBase::KeyBack, KeyButtonBase::Func, this), 1);
     layout->addWidget(ButtonItem::getNumButton("←", Qt::Key_Backspace, KeyButtonBase::Func, this), 1);
-    KeyboardSidebar *tabSider = new KeyboardSidebar({"常用", "中文", "英文", "数学"}, this);
-    connect(tabSider, &KeyboardSidebar::sendCurrentIndex, this, &PuncKeyboard::onTabClicked);
-    layout->addWidget(tabSider, 4);
+    mTabSider = new KeyboardSidebar({"常用", "中文", "英文", "数学"}, this);
+    connect(mTabSider, &KeyboardSidebar::sendCurrentIndex, this, &PuncKeyboard::onTabClicked);
+    layout->addWidget(mTabSider, 4);
 
     mPunc = ScrollBarManage::getVSrcllBarView(this);
     ScrollBarContainer *customViw = new ScrollBarContainer(this);
@@ -44,7 +43,18 @@ void PuncKeyboard::initUi()
     hLayout->setMargin(0);
     hLayout->setSpacing(1);
     this->setLayout(hLayout);
-    tabSider->setCurrentIndex(0);
+}
+
+void PuncKeyboard::showEvent(QShowEvent *event)
+{
+    QWidget::showEvent(event);
+    mTabSider->setCurrentIndex(0);
+}
+
+void PuncKeyboard::paintEvent(QPaintEvent *event)
+{
+    QWidget::paintEvent(event);
+    mTabSider->setFontSize(height()/6/3);
 }
 
 void PuncKeyboard::onTabClicked(int index)

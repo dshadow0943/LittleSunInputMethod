@@ -51,6 +51,8 @@ struct config {
     QSize keyBoardWindowSize;   //键盘大小
 
     bool keyTabDisplay = true;
+    bool navigationResident = false;
+    bool smartKeyboard = false;
     int defaultKeyboard = 0;  //初始键盘类型
     int themeType = 0;     //主题类型
     double keyboardSizeScale = -1;
@@ -89,7 +91,9 @@ public:
         SkinMagicBlack,
         SkinDarkBlack,
         SkinEnd,
-        KeyTab,
+        CheckKeyTab,
+        CheckSmartKeyboard,
+        CheckNavigationResident,
         KeySizeSlider,
 
         WindowKeyboard,
@@ -113,6 +117,10 @@ public:
     int getDefaultKeyboard();
     void setKeyTabDisplay(bool);
     bool getKeyTabDisplay();
+    void setNavigationResident(bool);
+    bool getNavigationResident();
+    void setSmartKeyboard(bool);
+    bool getSmartKeyboard();
     void setKeyboardSizeScale(double scale);
     double  getKeyboardSizeScale();
 

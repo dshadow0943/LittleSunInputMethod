@@ -31,6 +31,7 @@ public:
     explicit SettingContentCard(QString& title, QWidget *parent = nullptr);
 
     void appendWidget(QWidget* widget);
+    void appendLayout(QLayout* layout);
     void setTopPos(int pos);
     int getTopPos();
 

@@ -21,6 +21,7 @@
 #include "keybuttonbase.h"
 #include "globalsignaltransfer.h"
 #include <QPainter>
+#include <QDebug>
 
 KeyButtonBase::KeyButtonBase(int id, KeyType type, QWidget *parent)
   : QPushButton(parent)
@@ -32,6 +33,17 @@ KeyButtonBase::KeyButtonBase(int id, KeyType type, QWidget *parent)
 
     QPushButton::connect(this, &KeyButtonBase::sendClicked, GlobalSignalTransfer::getInstance(), &GlobalSignalTransfer::onKeyButtonClicked);
     QPushButton::connect(SettingManage::getInstance(), &SettingManage::sendThemeChange, this, &KeyButtonBase::onThemeChange);
+}
+
+void KeyButtonBase::setText(const QString &str)
+{
+    mText = str;
+    update();
+}
+
+QString KeyButtonBase::getText()
+{
+    return mText;
 }
 
 void KeyButtonBase::setKeyStyleSheet()
@@ -48,9 +60,9 @@ void KeyButtonBase::setKeyStyleSheet()
     }
 
     QString button_style = QString("QPushButton{color:%1; background-color:%2;"
-                                  "border-radius: 10px;  border: 1px groove gray; border-style: outset;} "
-                                  "KeyButtonBase:hover{background-color:%3;} "
-                                  "KeyButtonBase:pressed{background-color:%4; border-style: inset; }")
+                                  "border-radius: 10px;  border: 1px groove gray; border-style: outset;}"
+                                  "QPushButton:hover{background-color:%3;} "
+                                  "QPushButton:pressed{background-color:%4; border-style: inset;}")
             .arg(colors.font.name())
             .arg(colors.normal.name())
             .arg(colors.hover.name())
@@ -71,21 +83,25 @@ void KeyButtonBase::onThemeChange()
 
 void KeyButtonBase::mousePressEvent(QMouseEvent *event)
 {
-    mPressed = true;
-    if (mType != Func || mId == Qt::Key_Enter || mId == Qt::Key_Backspace) {
-        mCount = 0;
-        mTimerId = this->startTimer(100);
+    mTimerId = -1;
+    if (event->button() == Qt::LeftButton) {
+        mPressed = true;
+        if (mType != Func || mId == Qt::Key_Enter || mId == Qt::Key_Backspace || mId == Qt::Key_Space) {
+            mCount = 0;
+            mTimerId = this->startTimer(100);
+        }
     }
+
     QPushButton::mousePressEvent(event);
 }
 
 void KeyButtonBase::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (mPressed) {
+    if (mTimerId != -1) {
+        killTimer(mTimerId);
+    }
+    if (mPressed && event->button() == Qt::LeftButton && rect().contains(event->pos())) {
         mPressed = false;
-        if (mTimerId != -1) {
-            killTimer(mTimerId);
-        }
         onClicked();
     }
     QPushButton::mouseReleaseEvent(event);
@@ -99,4 +115,26 @@ void KeyButtonBase::timerEvent(QTimerEvent *event)
         return;
     }
     onClicked();
+}
+
+void KeyButtonBase::paintEvent(QPaintEvent *event)
+{
+    QPushButton::paintEvent(event);
+
+    if(mText.isEmpty()) {
+        return;
+    }
+    QTextOption o;
+    o.setWrapMode(QTextOption::WrapAnywhere);
+    o.setAlignment(Qt::AlignCenter);
+
+    QPainter painter(this);
+    QFont font = painter.font();
+//    font.setFamily("楷体"); //字体
+
+    int size = width() < height()? width() : height();
+    size /= 3;
+    font.setPixelSize(size);
+    painter.setFont(font);
+    painter.drawText(this->rect(), mText, o);
 }

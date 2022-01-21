@@ -47,6 +47,14 @@ void SettingContentCard::appendWidget(QWidget* widget)
     this->setLayout(mRow);
 }
 
+void SettingContentCard::appendLayout(QLayout* layout)
+{
+    QWidget *w = new QWidget();
+    w->setLayout(layout);
+    mRow->addWidget(w);
+    this->setLayout(mRow);
+}
+
 void SettingContentCard::setTopPos(int pos)
 {
     this->mTopPos = pos;

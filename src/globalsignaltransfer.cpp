@@ -60,3 +60,8 @@ void GlobalSignalTransfer::onSliderValueChange(SliderBase *but)
 {
     emit sendSliderValueChange(but);
 }
+
+void GlobalSignalTransfer::onAppQuit()
+{
+    emit sendAppQuit();
+}

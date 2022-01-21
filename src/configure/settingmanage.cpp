@@ -55,12 +55,14 @@ void SettingManage::initConfig()
     settings.beginGroup("Basic");
 
     mConfig.themeType = settings.value("themeType", SettingManage::SkinSkyBlue).toInt();
-    mConfig.defaultKeyboard = settings.value("defaultKeyboard", SettingManage::DefaultKeyboardPinyin).toInt();
+    mConfig.defaultKeyboard = settings.value("defaultKeyboard", SettingManage::DefaultKeyboardPinyin-SettingManage::DefaultKeyboardBegin).toInt();
     mConfig.navigationWindowPos = settings.value("navigationWindowPos", QPoint(0, 0)).toPoint();
     mConfig.configWindowPos = settings.value("configWindowPos", QPoint(0, 0)).toPoint();
     mConfig.trainWindowPos = settings.value("trainWindowPos", QPoint(0, 0)).toPoint();
     mConfig.keyTabDisplay = settings.value("keyTabDisplay", true).toBool();
     mConfig.keyboardSizeScale = settings.value("keyboardSizeScale", -1).toDouble();
+    mConfig.navigationResident = settings.value("navigationResident", false).toBool();
+    mConfig.smartKeyboard = settings.value("smartKeyboard", false).toBool();
 
     settings.endGroup();
 
@@ -79,6 +81,8 @@ void SettingManage::saveConfig()
     settings.setValue("trainWindowPos", mConfig.trainWindowPos);
     settings.setValue("keyTabDisplay", mConfig.keyTabDisplay);
     settings.setValue("keyboardSizeScale", mConfig.keyboardSizeScale);
+    settings.setValue("navigationResident", mConfig.navigationResident);
+    settings.setValue("smartKeyboard", mConfig.smartKeyboard);
 
     settings.endGroup();
 }
@@ -104,27 +108,27 @@ skin SettingManage::getLightWhite()
 skin SettingManage::getKindGrey()
 {
     skin_color theme = {QColor("#F6F6F6"), QColor("#F6F6F6"), QColor("#E4E4E4"), QColor("#57595B")};
-    skin_color key = {QColor("#F6F6F6"), QColor("#F6F6F6"), QColor("#F6F6F6"), QColor("#57595B")};
-    skin_color func = {QColor("#E4E4E4"), QColor("#E4E4E4"), QColor("#E4E4E4"), QColor("#57595B")};
-    skin_color tab = {QColor("#F6F6F6"), QColor("#E4E4E4"), QColor("#F6F6F6"), QColor("#57595B")};
+    skin_color key = {QColor("#F6F6F6"), QColor("#F6F6F6"), QColor("#FFFFFF"), QColor("#57595B")};
+    skin_color func = {QColor("#E4E4E4"), QColor("#E4E4E4"), QColor("#FFFFFF"), QColor("#57595B")};
+    skin_color tab = {QColor("#F6F6F6"), QColor("#E4E4E4"), QColor("#FFFFFF"), QColor("#57595B")};
     return {theme, key, func, tab};
 }
 
 skin SettingManage::getSkyBlueSkin()
 {
     skin_color theme = {QColor("#EAF7FF"), QColor("#DEF0FE"), QColor("#C0DEF6"), QColor("#386487")};
-    skin_color key = {QColor("#DEF0FE"), QColor("#DEF0FE"), QColor("#DEF0FE"), QColor("#386487")};
-    skin_color func = {QColor("#C0DEF6"), QColor("#C0DEF6"), QColor("#C0DEF6"), QColor("#386487")};
-    skin_color tab = {QColor("#DEF0FE"), QColor("#C0DEF6"), QColor("#DEF0FE"), QColor("#386487")};
+    skin_color key = {QColor("#DEF0FE"), QColor("#DEF0FE"), QColor("#EEFEFF"), QColor("#386487")};
+    skin_color func = {QColor("#C0DEF6"), QColor("#C0DEF6"), QColor("#EEFEFF"), QColor("#386487")};
+    skin_color tab = {QColor("#DEF0FE"), QColor("#C0DEF6"), QColor("#EEFEFF"), QColor("#386487")};
     return {theme, key, func, tab};
 }
 
 skin SettingManage::getMagicBlack()
 {
     skin_color theme = {QColor("#363636"), QColor("#363636"), QColor("#242424"), QColor("#DCDCDC")};
-    skin_color key = {QColor("#363636"), QColor("#363636"), QColor("#363636"), QColor("#DCDCDC")};
-    skin_color func = {QColor("#242424"), QColor("#242424"), QColor("#242424"), QColor("#DCDCDC")};
-    skin_color tab = {QColor("#363636"), QColor("#202020"), QColor("#363636"), QColor("#DCDCDC")};
+    skin_color key = {QColor("#363636"), QColor("#363636"), QColor("#555555"), QColor("#DCDCDC")};
+    skin_color func = {QColor("#242424"), QColor("#242424"), QColor("#555555"), QColor("#DCDCDC")};
+    skin_color tab = {QColor("#363636"), QColor("#202020"), QColor("#555555"), QColor("#DCDCDC")};
     return {theme, key, func, tab};
 }
 
@@ -144,10 +148,10 @@ void SettingManage::setThemePalette()
                                 background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %3,stop:1 %4);\
                                 }\
                                 .QPushButton:hover,.QToolButton:hover{\
-                                background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %4,stop:1 %5);\
+                                background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %5,stop:1 %4);\
                                 }\
                                 .QPushButton:pressed,.QToolButton:pressed{\
-                                background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %3,stop:1 %4);\
+                                background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %5,stop:1 %3);\
                                 }\
                                 ")
                         .arg(tClolr.hover.name())
@@ -239,6 +243,26 @@ void SettingManage::setKeyTabDisplay(bool isDisplay)
 bool SettingManage::getKeyTabDisplay()
 {
     return mConfig.keyTabDisplay;
+}
+
+void SettingManage::setNavigationResident(bool isResident)
+{
+    mConfig.navigationResident = isResident;
+}
+
+bool SettingManage::getNavigationResident()
+{
+    return mConfig.navigationResident;
+}
+
+void SettingManage::setSmartKeyboard(bool isSmark)
+{
+    mConfig.smartKeyboard = isSmark;
+}
+
+bool SettingManage::getSmartKeyboard()
+{
+    return mConfig.smartKeyboard;
 }
 
 void SettingManage::setKeyboardSizeScale(double scale)

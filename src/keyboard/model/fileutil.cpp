@@ -30,13 +30,11 @@ bool FileUtil::writeFile(QString filePath, QString text)
 {
     QFile file(filePath);
     if (!file.open(QIODevice::ReadWrite | QIODevice::Append)){
-        perror("open");
         return false;
     }
     QTextStream streamFileOut(&file);
     streamFileOut << text;
     streamFileOut.flush();
     file.close();
-
     return true;
 }

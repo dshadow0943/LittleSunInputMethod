@@ -72,7 +72,7 @@ void KeyboardSidebar::setCurrentIndex(int index)
                                       border-style:none;\
                                       border:1px solid %4;\
                                       color:%1;\
-                                      padding:5px;\
+                                      padding:0px;\
                                       min-height:15px;\
                                       border-radius:5px;\
                                       background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %2,stop:0.4 %3,stop:0.6 %3,stop:1 %2);\
@@ -99,7 +99,7 @@ void KeyboardSidebar::setCurrentIndex(int index)
                                           border-style:none;\
                                           border:1px solid %4;\
                                           color:%1;\
-                                          padding:5px;\
+                                          padding:0px;\
                                           min-height:15px;\
                                           border-radius:5px;\
                                           background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 %2,stop:0.5 %3,stop:1 %2);\

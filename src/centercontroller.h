@@ -21,10 +21,13 @@
 #ifndef CENTERCONTROLLER_H
 #define CENTERCONTROLLER_H
 
-#include <QWidget>
 #include "softkeyboard.h"
 #include "handkeyboardtrain.h"
 #include "settingwindown.h"
+#include <QWidget>
+#include <QSystemTrayIcon>
+#include <QAction>
+#include <QMenu>
 
 namespace Ui {
 class CenterController;
@@ -49,9 +52,11 @@ public slots:
     int initView();
     int showView();
     int hideView();
-    void candidateCharacterSlots(QString character);
-    void deleteCharacterSlots();
+    void onCandidateCharacter(QString character);
+    void onDeleteCharacter();
     void onWindowClosed(int id);
+    void onQuit();
+    void onTrayClicked(QSystemTrayIcon::ActivationReason reason);
 
 signals:
     //发送字符
@@ -65,6 +70,8 @@ private slots:
 
 private:
     void showSoftKeyboard();
+    void initDbus();
+    void initTray();
 
 private:
     Ui::CenterController *ui;
@@ -72,9 +79,13 @@ private:
     HandKeyboardTrain* mHandkeyboatd = nullptr;
     SettingWindown *mSettingWindown = nullptr;
 
+    QMenu *mTrayMenu;//托盘菜单
+    QSystemTrayIcon *mTray;//托盘图标
+
     //无边框窗口移动相关参数
     QPoint cursorGlobalPos;
     bool isMousePress=false;
+    int mFlag = 0;
 };
 
 #endif // CENTERCONTROLLER_H

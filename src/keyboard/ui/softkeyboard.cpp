@@ -133,15 +133,17 @@ void SoftKeyboard::initTab()
     QImage Image;
     Image.load(":/icon/littlesun.png");
     QPixmap pixmap = QPixmap::fromImage(Image);
-    QPixmap fitpixmap = pixmap.scaled(80, 60, Qt::KeepAspectRatio);
+    QPixmap fitpixmap = pixmap.scaled(80, 45, Qt::KeepAspectRatio);
     mLog = new QLabel();
     mLog->setAlignment(Qt::AlignCenter);
     mLog->setPixmap(fitpixmap);
+//    mSite->setPixmap(QPixmap(":/icon/littlesun.svg"));
+    mLog->setMinimumHeight(10);
     vLayout->addWidget(mLog, 1);
 
     mTabSidebar = new KeyboardSidebar({"数字", "拼音", "手写", "符号"});
     connect(mTabSidebar, &KeyboardSidebar::sendCurrentIndex, this, &SoftKeyboard::onSwitchKeyBoard);
-    vLayout->addWidget(mTabSidebar, 8);
+    vLayout->addWidget(mTabSidebar, 7);
 
     ui->key_tabs->setLayout(vLayout);
 }
@@ -155,6 +157,7 @@ void SoftKeyboard::onArrowClicked()
 {
     switch(arrowStatus) {
         case ARROW_CLOSE:
+//        delete this;
              closeWindow();
         break;
         case ARROW_CAND: switchPreviousKey();    //（当前是查看更多候选词状态）返回上一界面
@@ -216,7 +219,6 @@ void SoftKeyboard::onKeyButtonClicked(KeyButtonBase* but)
         spaceClicked();
         break;
     case KeyButtonBase::KeyNum:
-//        switchKeyBoard(KEYBOARD_NUM);
         mTabSidebar->setCurrentIndex(KEYBOARD_NUM);
         break;
     case KeyButtonBase::keyPinyin:
@@ -242,16 +244,16 @@ void SoftKeyboard::onKeyButtonClicked(KeyButtonBase* but)
             break;
         }
         if (ButtonItem::getSwitchButton()->getIsEnglish()) {
-            addCandidateCharacterText(but->text());
+            addCandidateCharacterText(but->getText());
         } else {
             if (but->getType() == KeyButtonBase::PinyinNum) {
-                if (!mHTranslateView->selectPhrase(but->text().toInt())) {
-                    addCandidateCharacterText(but->text());
+                if (!mHTranslateView->selectPhrase(but->getText().toInt())) {
+                    addCandidateCharacterText(but->getText());
                 }
             } else if (but->getType() == KeyButtonBase::PinyinLetter) {
-                addCandidateLetter(but->text());
+                addCandidateLetter(but->getText());
             } else {
-                addCandidateCharacterText(but->text());
+                addCandidateCharacterText(but->getText());
             }
         }
     }
@@ -266,8 +268,8 @@ void SoftKeyboard::onKeyButtonClicked(KeyButtonBase* but)
 void SoftKeyboard::showEvent(QShowEvent* event)
 {
     QWidget::showEvent(event);
-    onKeyboardScaleChange();
     mTabSidebar->setCurrentIndex(SettingManage::getInstance()->getDefaultKeyboard());
+    onKeyboardScaleChange();
 }
 
 /**
@@ -278,7 +280,7 @@ void SoftKeyboard::showEvent(QShowEvent* event)
  */
 void SoftKeyboard::onSwitchKeyBoard(int type)
 {
-    //如需要切换SoftKeyboard::的键盘和当前显示的键盘是同一个则直接不做处理，放置多次重复点击
+    //如需要切换SoftKeyboard::的键盘和当前显示的键盘是同一个则直接不做处理，防止连续重复点击
     if (ui->key_page->currentIndex() == type && -1 != mPreviousKey){
         return;
     }
@@ -302,14 +304,16 @@ void SoftKeyboard::onSwitchKeyBoard(int type)
             return;
     }
 
-    mPreviousKey = ui->key_page->currentIndex();
-    ui->key_page->setCurrentIndex(type);        //更新QStackedWidget栈布局内容
-
-    //查看更多候选词界面切换时不用重新调节界面大小
-    if (type != KEYBOARD_CAND && mPreviousKey != KEYBOARD_CAND){
+    if (!(type == KEYBOARD_CAND || (ui->key_page->currentIndex() == KEYBOARD_CAND && type == mPreviousKey))) {
         clearHistory(); //重置清空候选词
         this->resize(w, h);    //更新窗口大小
     }
+
+    if (ui->key_page->currentIndex() != KEYBOARD_CAND) {
+        mPreviousKey = ui->key_page->currentIndex();
+    }
+
+    ui->key_page->setCurrentIndex(type);        //更新QStackedWidget栈布局内容
     onArrowChange();
 }
 
@@ -413,16 +417,19 @@ void SoftKeyboard::onKeyboardScaleChange()
         if (KEYBOARD_CAND == page) {
             page = mPreviousKey;
         }
+        int criticalValue = 500;
         switch (page) {
             case KEYBOARD_NUM:
             case KEYBOARD_HAND:
             case KEYBOARD_PUNC:
                 w = int(DEFAULT_WIDTH * winScale);
                 h = int(DEFAULT_HEIGHT * winScale);
+                criticalValue = 400;
                 break;
             case KEYBOARD_EN:
                 w = int(EN_DEFAULT_WIDTH * winScale);
                 h = int(EN_DEFAULT_HEIGHT * winScale);
+                criticalValue = 500;
             break;
             default:
                 return;
@@ -431,21 +438,21 @@ void SoftKeyboard::onKeyboardScaleChange()
         this->move((applicationRect.width()-width())/2, applicationRect.height()-height());       //移动窗口位置,默认出现在底端中部
 
         int size = ui->candidata_box->height()/3;
-        ScrollBarManage::getHCanditateView()->setUnitFontSize(size + int(winScale*4));
+        ScrollBarManage::getHCanditateView()->setUnitFontSize(size + int(winScale*3));
         mTabSidebar->setFontSize(ui->key_tabs->width()/3);
         QFont font = mLetterLabel->font();
         font.setPixelSize(size-1);
         mLetterLabel->setFont(font);
 
-        if (mTabLock && this->width() <= 500) {
+        if (mTabLock && this->width() <= criticalValue) {
             mTabLock = false;
             onKeyTabDisplayChange();
-        } else if (!mTabLock && this->width() > 500) {
+        } else if (!mTabLock && this->width() > criticalValue) {
             mTabLock = true;
             onKeyTabDisplayChange();
         }
     } else {
-        int w = int(applicationRect.width()*0.6);            //显示屏的宽
+        int w = int(applicationRect.width()*0.3);            //显示屏的宽
         int h = applicationRect.height();           //显示屏的高
 
         int winSizeW = EN_DEFAULT_WIDTH;   //键盘顶层布局宽度，默认(最大)1000

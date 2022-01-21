@@ -31,6 +31,9 @@
 
 SettingWindown::SettingWindown(int id, QWidget *parent) : WindowBase (id, parent)
 {
+    setWindowFlag(Qt::WindowFlags::enum_type::WindowDoesNotAcceptFocus);
+    setWindowTitle("应用设置");
+
     initUi();
 
     QPoint point = SettingManage::getInstance()->getConfigWindowPos();
@@ -60,8 +63,7 @@ void SettingWindown::initUi()
     mContentView = new SettingContentView(this);
     mContentTab = new SettingContentTab(this);
 
-    mContentView->resize(500, 300);
-
+    mContentView->setSize(QSize(500, 300));
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->addWidget(mContentTab, 1);
     layout->addWidget(mContentView, 5);
@@ -97,6 +99,7 @@ void SettingWindown::addBasicCard()
     skinLayout->addWidget(kindGrey);
     skinLayout->addWidget(skyBlue);
     skinLayout->addWidget(darkBlack);
+    skinLayout->addStretch();
 
     QButtonGroup *skinGroup = new QButtonGroup();
     skinGroup->addButton(lightWhite, lightWhite->getId());
@@ -126,6 +129,7 @@ void SettingWindown::addBasicCard()
     keyLayout->addWidget(numKeyBoard);
     keyLayout->addWidget(pinyinKeyBoard);
     keyLayout->addWidget(handKeyBoard);
+    keyLayout->addStretch();
 
     QButtonGroup *keyGroup = new QButtonGroup();
     keyGroup->addButton(numKeyBoard, numKeyBoard->getId());
@@ -141,6 +145,27 @@ void SettingWindown::addBasicCard()
     keyWgt->setLayout(keyLayout);
     card->appendWidget(keyWgt);
 
+    /*********************其他设置*************************/
+
+    CheckBoxBase* nBut = new CheckBoxBase("应用常驻", SettingManage::CheckNavigationResident);
+    nBut->setChecked(SettingManage::getInstance()->getNavigationResident());
+    CheckBoxBase* smarkCheck = new CheckBoxBase("智能键盘", SettingManage::CheckSmartKeyboard);
+    smarkCheck->setChecked(SettingManage::getInstance()->getSmartKeyboard());
+
+    QHBoxLayout *hLayout = new QHBoxLayout();
+    hLayout->addWidget(nBut);
+    hLayout->addWidget(smarkCheck);
+    hLayout->addStretch();
+    card->appendLayout(hLayout);
+
+    QLabel *carefulLabel = new QLabel("注：智能效果仅在小太阳输入法下有效！");
+    QFont cFont = carefulLabel->font();
+    cFont.setPointSize(8);
+    carefulLabel->setFont(cFont);
+    QPalette cPa = carefulLabel->palette();
+    cPa.setColor(QPalette::WindowText, Qt::red);
+    carefulLabel->setPalette(cPa);
+    card->appendWidget(carefulLabel);
 
     /*********************end*************************/
 
@@ -154,7 +179,7 @@ void SettingWindown::addKeyboardCard()
     SettingContentCard *card = new SettingContentCard(title);
 
     /*********************键盘侧边栏*************************/
-    CheckBoxBase* keyBut = new CheckBoxBase("显示键盘侧边栏", SettingManage::KeyTab);
+    CheckBoxBase* keyBut = new CheckBoxBase("显示键盘侧边栏", SettingManage::CheckKeyTab);
     keyBut->setChecked(SettingManage::getInstance()->getKeyTabDisplay());
     card->appendWidget(keyBut);
 
@@ -163,6 +188,7 @@ void SettingWindown::addKeyboardCard()
     SliderBase *kSlidr = new SliderBase(SettingManage::KeySizeSlider);
     double scale = SettingManage::getInstance()->getKeyboardSizeScale();
     kSlidr->setValue(int(scale*20));
+    kSlidr->setMinAndMaxNum(6, 40);
     card->appendWidget(kSlidr);
 
     mContentTab->appendTab(title);
@@ -174,9 +200,9 @@ void SettingWindown::addHelpCard()
     QString title = "帮助";
     SettingContentCard *card = new SettingContentCard(title);
 
-    QLabel *lable = new QLabel("感谢使用小太阳输入法\nThanks for using the little sun input method\n\n"
-                               "如在使用过程中遇到问题或者建议请发送邮件至\nIf you encounter problems or suggestions during use,\nplease send an email to"
-                               "\n\ndshadow@foxmail.com");
+    QLabel *lable = new QLabel("感谢使用小太阳输入法\nThanks for using the littleSun input method   \n\n"
+                               "如在使用过程中遇到问题或者建议请发送邮件至   \nIf you encounter problems or suggestions during use,\nplease send an email to   "
+                               "\n\ndshadow@foxmail.com   ");
     lable->setAlignment(Qt::AlignCenter);
     lable->setFixedSize(500, 230);
     card->appendWidget(lable);
@@ -204,8 +230,14 @@ void SettingWindown::onRadioButtonClicked(RadioButtonBase* but)
 void SettingWindown::onCheBoxClicked(CheckBoxBase* but)
 {
     switch (but->getId()) {
-    case SettingManage::KeyTab:
+    case SettingManage::CheckKeyTab:
         SettingManage::getInstance()->setKeyTabDisplay(but->isChecked());
+        break;
+    case SettingManage::CheckNavigationResident:
+        SettingManage::getInstance()->setNavigationResident(but->isChecked());
+        break;
+    case SettingManage::CheckSmartKeyboard:
+        SettingManage::getInstance()->setSmartKeyboard(but->isChecked());
         break;
     }
 }

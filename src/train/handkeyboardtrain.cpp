@@ -27,6 +27,7 @@
 HandKeyboardTrain::HandKeyboardTrain(int id, QWidget *parent) : WindowBase (id, parent)
 {
     setWindowFlag(Qt::WindowFlags::enum_type::WindowDoesNotAcceptFocus);
+    setWindowTitle("手写训练");
 
     QPoint point = SettingManage::getInstance()->getTrainWindowPos();
     move(point.x(), point.y());
@@ -102,6 +103,7 @@ void HandKeyboardTrain::enterPoint(CharacterEntity character)
             character.word = text;
             characters.push_back(character);
             mThesaurusManage->writeFile(character.toString() + "\n");
+            break;
         }
         if (!ok){
             break;

@@ -38,11 +38,9 @@ public:
 signals:
     void sendSwitchClicked(bool isEnflish);
 
-public slots:
-    void onClicked();
-
 private:
     void switchText(bool isEnglish);
+    void onClicked() override;
 
 private:
     QString str1, str2;  //需要显示的字符

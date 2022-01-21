@@ -42,9 +42,9 @@ void ThesaurusRetrieval::initDB()    //初始化
 void ThesaurusRetrieval::run()
 {
     //顺序比对算法
-    if (!mHandWrite.loadModelFile(mDirPath + "/numhandwriting.txt", CHAR_NUM)) {
-        mHandWrite.loadModelFile(":/numhandwriting.txt", CHAR_NUM);
-    }
+//    if (!mHandWrite.loadModelFile(mDirPath + "/numhandwriting.txt", CHAR_NUM)) {
+//        mHandWrite.loadModelFile(":/numhandwriting.txt", CHAR_NUM);
+//    }
 
     //树型比对算法
 //    if (!mHandTree.loadModelFile(dirPath + "/numhandwritingtree.txt", CHAR_NUM)) {

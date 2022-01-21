@@ -19,6 +19,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "mousethread.h"
+#include "globalsignaltransfer.h"
+#include "settingmanage.h"
 #include <QDBusMessage>
 #include <QDBusConnection>
 #include <QDebug>
@@ -34,8 +36,6 @@ MouseThread::MouseThread()
  */
 void MouseThread::run()
 {
-//    static int count  = 0;
-//    qInfo() << __FUNCTION__ << count++;
     QDBusMessage message = QDBusMessage::createMethodCall("org.fcitx.Fcitx",
                                 "/inputmethod",
                                 "org.fcitx.Fcitx.InputMethod",
@@ -50,7 +50,7 @@ void MouseThread::run()
         //发送消息
         QDBusMessage response = QDBusConnection::sessionBus().call(message);
         if (response.arguments().first().value<QString>() == "keyboard-littlesun") {
-            qApp->quit();
+            GlobalSignalTransfer::getInstance()->onAppQuit();
         }
     }
 }

@@ -33,8 +33,12 @@ signals:
     void sendShiftClicked(bool mIsCaps);
 
 public slots:
-    void onClicked();
+
     void onEnglishInput(bool isEnglish);
+
+protected:
+    void onClicked() override;
+    void paintEvent(QPaintEvent *event) override;
 
 private:
     bool mIsCaps = false;

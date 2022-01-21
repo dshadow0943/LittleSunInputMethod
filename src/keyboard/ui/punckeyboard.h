@@ -8,7 +8,6 @@
 #include "scrollbarmanage.h"
 #include <QWidget>
 #include <QList>
-#include <QGridLayout>
 #include <QToolButton>
 #include <QDebug>
 #include <QPropertyAnimation>
@@ -26,15 +25,18 @@ public:
 public slots:
     void onTabClicked(int);
 
+protected:
+    void showEvent(QShowEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
+
 private:
     VScrollBarView *mPunc;
     void initUi();
     void setPuncData(QStringList);
 
 private:
-    QGridLayout *gridLayout;
-
     QList<KeyButtonBase*> mButs;
+    KeyboardSidebar *mTabSider = nullptr;
 };
 
 #endif // PUNCKEYBOARD_H

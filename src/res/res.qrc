@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>handwriting.txt</file>
-        <file>symbol.txt</file>
         <file>icon/arrow_b.svg</file>
         <file>icon/arrow_r.svg</file>
         <file>icon/close.svg</file>
@@ -12,5 +11,6 @@
         <file>icon/littlesun.png</file>
         <file>numhandwritingtree.txt</file>
         <file>handwritingtree.txt</file>
+        <file>icon/app.ico</file>
     </qresource>
 </RCC>
