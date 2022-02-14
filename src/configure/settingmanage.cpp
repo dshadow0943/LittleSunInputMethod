@@ -61,7 +61,7 @@ void SettingManage::initConfig()
     mConfig.trainWindowPos = settings.value("trainWindowPos", QPoint(0, 0)).toPoint();
     mConfig.keyTabDisplay = settings.value("keyTabDisplay", true).toBool();
     mConfig.keyboardSizeScale = settings.value("keyboardSizeScale", -1).toDouble();
-    mConfig.navigationResident = settings.value("navigationResident", false).toBool();
+    mConfig.navigationResident = settings.value("navigationResident", true).toBool();
     mConfig.smartKeyboard = settings.value("smartKeyboard", false).toBool();
 
     settings.endGroup();

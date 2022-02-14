@@ -452,7 +452,7 @@ void SoftKeyboard::onKeyboardScaleChange()
             onKeyTabDisplayChange();
         }
     } else {
-        int w = int(applicationRect.width()*0.3);            //显示屏的宽
+        int w = int(applicationRect.width()*0.35);            //显示屏的宽
         int h = applicationRect.height();           //显示屏的高
 
         int winSizeW = EN_DEFAULT_WIDTH;   //键盘顶层布局宽度，默认(最大)1000

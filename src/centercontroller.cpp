@@ -117,7 +117,7 @@ void CenterController::initDbus()
     //发送消息
     QDBusMessage r = QDBusConnection::sessionBus().call(m);
 
-//    qInfo() << r.arguments().isEmpty();
+    qInfo() << r.arguments().isEmpty();
     if (r.arguments().isEmpty()) {
         return;
     }
@@ -231,18 +231,6 @@ int CenterController::showView()
     if (SettingManage::getInstance()->getSmartKeyboard()) {
         showSoftKeyboard();
     }
-
-//    QDBusMessage message = QDBusMessage::createMethodCall("org.fcitx.Fcitx",
-//                                "/inputmethod",
-//                                "org.fcitx.Fcitx.InputMethod",
-//                                "GetCurrentIM");
-//    //发送消息
-//    QDBusMessage response = QDBusConnection::sessionBus().call(message);
-//    if (response.arguments().first().value<QString>() == "keyboard-littlesun") {
-//        showSoftKeyboard();
-//    } else {
-//        onQuit();
-//    }
     return 0;
 }
 

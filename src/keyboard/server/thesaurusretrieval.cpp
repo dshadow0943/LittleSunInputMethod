@@ -24,17 +24,24 @@ ThesaurusRetrieval* ThesaurusRetrieval::getInstance()
 
 void ThesaurusRetrieval::initDB()    //初始化
 {
-    bool ret = mPinyin->initInputBase("./chineseBase/chinese.db");
-    if(!ret)
-    {
-        ret = mPinyin->initInputBase("./../../chineseBase/chinese.db");
-        if (!ret) {
-            ret = mPinyin->initInputBase(mDirPath + "/chineseBase/chinese.db");
+    bool ret = true;
+    QString filePath = mDirPath + "/chineseBase/chinese.db";
+    if (!QFile(filePath).exists()) {
+
+        if (!QDir(mDirPath + "/chineseBase").exists()){
+            QDir().mkpath(mDirPath + "/chineseBase");
+        }
+        if (QFile().copy("/usr/local/littlesun/chineseBase/chinese.db", filePath)) {
+        } else if (QFile().copy("./chineseBase/chinese.db", filePath)) {
+        } else if (QFile().copy("./../../chineseBase/chinese.db", filePath)) {
+        } else {
+            ret = false;
         }
     }
 
-    //如果最终还是加载失败，警告
-    if (!ret) {
+    if (ret) {
+        mPinyin->initInputBase(filePath);
+    } else {
         qCritical() << "Load lexicon failed!";
     }
 }
