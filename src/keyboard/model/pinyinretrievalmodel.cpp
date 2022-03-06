@@ -41,7 +41,7 @@ PinyinRetrievalModel::~PinyinRetrievalModel()
 
 bool PinyinRetrievalModel::initInputBase(const QString &path)
 {
-    return XYDB->openDatabaseFile(path);
+    return XYDB->initDatabaseFile(path);
 }
 
 void PinyinRetrievalModel::resetSearch()
@@ -125,9 +125,6 @@ QStringList PinyinRetrievalModel::getPunc(DBOperation::PuncType type)
 {
     QStringList datas;
     datas = XYDB->getInstance()->findPunc(type).split(" ");
-    if (datas.isEmpty()) {
-        return QStringList();
-    }
     return datas;
 }
 
@@ -731,7 +728,6 @@ QList<PhraseEntity> PinyinRetrievalModel::autoAssociational(const QString &text)
     }
 
     QString initial = pinyin.at(0);
-    qInfo() << initial;
     items.append(XYDB->findAssociational("userPinyin", text+"%"));
     QString table = QString("basePinyin_%1").arg(initial.toUpper());
     items.append(XYDB->findAssociational(table, text+"%"));

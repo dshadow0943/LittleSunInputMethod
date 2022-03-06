@@ -5,21 +5,29 @@
 #include <QDir>
 #include <QDateTime>
 
+Q_DECLARE_METATYPE(std::function<void()>);
+
 /**
  * @brief ChineseCharacterServer::ChineseCharacterServer
  * 服务类
  */
-ThesaurusRetrieval::ThesaurusRetrieval()
+ThesaurusRetrieval::ThesaurusRetrieval(QObject *parent) : QThread (parent)
 {
     mPinyin = PinyinRetrievalModel::getInstance();
     start();
-    initDB();
+
+    qRegisterMetaType<std::function<void()>>();
+    connect(this, &ThesaurusRetrieval::comming, this, &ThesaurusRetrieval::onConming);
 }
 
 ThesaurusRetrieval* ThesaurusRetrieval::getInstance()
 {
     static ThesaurusRetrieval obj;
     return &obj;
+}
+
+void ThesaurusRetrieval::onConming(std::function<void()> f){
+    f();
 }
 
 void ThesaurusRetrieval::initDB()    //初始化
@@ -42,7 +50,7 @@ void ThesaurusRetrieval::initDB()    //初始化
     if (ret) {
         mPinyin->initInputBase(filePath);
     } else {
-        qCritical() << "Load lexicon failed!";
+        qCritical() << "Load SqlDateBase failed!";
     }
 }
 
@@ -57,6 +65,8 @@ void ThesaurusRetrieval::run()
 //    if (!mHandTree.loadModelFile(dirPath + "/numhandwritingtree.txt", CHAR_NUM)) {
 //        mHandTree.loadModelFile(":/numhandwritingtree.txt", CHAR_NUM);
 //    }
+
+    initDB();
 
     if (!mHandTree.loadModelFile(mDirPath + "/handwritingtree.txt")) {
         mHandTree.loadModelFile(":/handwritingtree.txt");
@@ -85,10 +95,17 @@ QStringList ThesaurusRetrieval::getAssociateWords(QString word)
 
 QStringList ThesaurusRetrieval::getPunc(DBOperation::PuncType type)
 {
-    return mPinyin->getPunc(type);
+    return mPunc.getPunc(type);
 }
 
-QStringList ThesaurusRetrieval::getPhraseByPinyin(const QString &keyword, bool isEnglish)
+void ThesaurusRetrieval::updatePunc(QString& data, DBOperation::PuncType type)
+{
+    std::thread([=](){
+        mPunc.updatePunc(data, type);
+    }).detach();
+}
+
+QStringList ThesaurusRetrieval::getPhraseByPinyin(QString keyword, bool isEnglish)
 {
     return mPinyin->getCandidate(keyword, isEnglish);
 }
@@ -105,7 +122,7 @@ QStringList ThesaurusRetrieval::getPhraseByPinyin(const QString &text, int index
  * @return 候选词列表
  * 根据传进来的手写数据和数量查找到相应的候选词并返回
  */
-QStringList ThesaurusRetrieval::getChineseByHand(CharacterEntity& character, int count)
+QStringList ThesaurusRetrieval::getChineseByHand(CharacterEntity character, int count)
 {
     //清空候选词列表
     mResultWords.clear();

@@ -39,22 +39,22 @@ void ScrollBarManage::setCanditeData(QStringList& data)
 
 VScrollBarView* ScrollBarManage::getVCanditateView()
 {
-    static VScrollBarView view;
+    static VScrollBarView view(ScrollBarBase::Cand);
     return &view;
 }
 
 HScrollBarView* ScrollBarManage::getHCanditateView()
 {
-    static HScrollBarView view;
+    static HScrollBarView view(ScrollBarBase::Cand);
     return &view;
 }
 
-VScrollBarView* ScrollBarManage::getVSrcllBarView(QWidget *parent)
+VScrollBarView* ScrollBarManage::getVSrcllBarView(ScrollBarBase::ViewType type, QWidget *parent)
 {
-    return new VScrollBarView(parent);
+    return new VScrollBarView(type, parent);
 }
 
-HScrollBarView* ScrollBarManage::getHSrcllBarView(QWidget *parent)
+HScrollBarView* ScrollBarManage::getHSrcllBarView(ScrollBarBase::ViewType type, QWidget *parent)
 {
-    return new HScrollBarView(parent);
+    return new HScrollBarView(type, parent);
 }

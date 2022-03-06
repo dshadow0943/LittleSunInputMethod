@@ -9,7 +9,7 @@
  * @brief HTranslateView::HScrollBarView
  * 横向候选框
  */
-HScrollBarView::HScrollBarView(QWidget *parent) : ScrollBarBase(parent)
+HScrollBarView::HScrollBarView(ViewType type, QWidget *parent) : ScrollBarBase(type, parent)
 {
     setUnitMinWidth(30);
 }

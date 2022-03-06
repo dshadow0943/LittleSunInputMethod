@@ -11,7 +11,7 @@ class VScrollBarView : public ScrollBarBase
 public:
     void paintEvent(QPaintEvent *event);
 
-    explicit VScrollBarView(QWidget *parent = nullptr);
+    explicit VScrollBarView(ViewType type = Invavid, QWidget *parent = nullptr);
 };
 
 #endif // VTRANSLATEVIEW_H

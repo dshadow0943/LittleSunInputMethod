@@ -3,8 +3,9 @@
 #include <QEvent>
 #include <QMouseEvent>
 
-ScrollBarBase::ScrollBarBase(QWidget *parent) : QWidget(parent)
+ScrollBarBase::ScrollBarBase(ViewType type, QWidget *parent) : QWidget(parent)
 {
+    mType = type;
     connect(this, &ScrollBarBase::clicked, GlobalSignalTransfer::getInstance(), &GlobalSignalTransfer::onScrollBarclicked);
 }
 int ScrollBarBase::getUnitMinWidth() const
@@ -55,7 +56,7 @@ void ScrollBarBase::clearData()
 bool ScrollBarBase::selectPhrase(int index)
 {
     if (dataStrings.size() > index) {
-        emit clicked(dataStrings.at(index), index);
+        emit clicked(dataStrings.at(index), index, mType);
         return true;
     }
     return false;
@@ -93,7 +94,7 @@ bool ScrollBarBase::event(QEvent *e)
             if(!pressRect.isEmpty())
             {
                 int index = dataRects.indexOf(pressRect);
-                emit clicked(dataStrings.at(index), index);
+                emit clicked(dataStrings.at(index), index, mType);
             }
             update(pressRect);
             emit stringPressed("", QPoint());

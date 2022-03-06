@@ -24,6 +24,8 @@
 #include <QObject>
 #include <QSqlDatabase>
 #include <QList>
+#include <QMutex>
+#include <QThread>
 
 #define CONNECTIONNAME "LittleSunDB"
 
@@ -44,11 +46,15 @@ public:
     };
 
     bool createDatabaseFile(const QString &filePath, const QString &passwd = "", bool fource = false);
-    bool openDatabaseFile(const QString &filePath, const QString &passwd = "");
+    bool initDatabaseFile(const QString &filePath, const QString &passwd = "");
+    QSqlDatabase openDatabaseFile(const QString& connectionName);
 
     bool createInputTable();
     bool insertData(PhraseEntity item, const QString &table);
     bool insertData(const QList<PhraseEntity > &list, const QString &table);
+
+    bool updatePunc(QString& data, QStringList& ret, PuncType type);
+
     bool delItem(PhraseEntity item);
     QList<PhraseEntity > findData(const QString &key,
                                       const QString &number,
@@ -60,7 +66,10 @@ public:
     QString findPunc(PuncType type);
 
 private:
-    static DBOperation *DB;
+    static DBOperation *m_DB;
+    QString m_DBFilePath;
+    QString m_DBPasswod;
+    QMutex m_mutex;
 
 };
 

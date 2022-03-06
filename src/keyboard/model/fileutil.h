@@ -32,6 +32,8 @@ public:
 
     static bool writeFile(QString filePath, QString text);
     static bool readPointFile(QString filePath, QList<CharacterEntity>* Characters);
+    static QString strToBase64(QString str);
+    static QString base64ToStr(QString base);
 
 };
 

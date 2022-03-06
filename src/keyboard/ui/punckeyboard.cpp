@@ -8,7 +8,6 @@
 #include <QHBoxLayout>
 #include <QScrollArea>
 
-
 /**
  * @brief PuncKeyboard::PuncKeyboard
  * @param parent
@@ -31,9 +30,10 @@ void PuncKeyboard::initUi()
     connect(mTabSider, &KeyboardSidebar::sendCurrentIndex, this, &PuncKeyboard::onTabClicked);
     layout->addWidget(mTabSider, 4);
 
-    mPunc = ScrollBarManage::getVSrcllBarView(this);
+    mPunc = ScrollBarManage::getVSrcllBarView(ScrollBarBase::Punc, this);
     ScrollBarContainer *customViw = new ScrollBarContainer(this);
     customViw->setWidget(mPunc, ScrollBarContainer::Vertical, 2);
+    connect(mPunc, &VScrollBarView::clicked, this, &PuncKeyboard::onPuncClick);
 
     QHBoxLayout *hLayout = new QHBoxLayout(this);
     hLayout->addWidget(customViw, 6);
@@ -59,20 +59,27 @@ void PuncKeyboard::paintEvent(QPaintEvent *event)
 
 void PuncKeyboard::onTabClicked(int index)
 {
+    DBOperation::PuncType type = DBOperation::User;
     switch (index) {
     case 0:
-        setPuncData(ThesaurusRetrieval::getInstance()->getPunc(DBOperation::User));
+        type = DBOperation::User;
         break;
     case 1:
-        setPuncData(ThesaurusRetrieval::getInstance()->getPunc(DBOperation::Chinese));
+        type = DBOperation::Chinese;
         break;
     case 2:
-        setPuncData(ThesaurusRetrieval::getInstance()->getPunc(DBOperation::English));
+        type = DBOperation::English;
         break;
     case 3:
-        setPuncData(ThesaurusRetrieval::getInstance()->getPunc(DBOperation::Math));
+        type = DBOperation::Math;
         break;
     }
+
+    mPunc->move(0, 0);
+
+    ThesaurusRetrieval::getInstance()->asynExec<QStringList>([=](QStringList data){
+        this->setPuncData(data);
+    })->getPunc(type);
 }
 
 void PuncKeyboard::setPuncData(QStringList data)
@@ -80,6 +87,13 @@ void PuncKeyboard::setPuncData(QStringList data)
     if (nullptr == mPunc) {
         return;
     }
+
     mPunc->setData(data);
+}
+
+void PuncKeyboard::onPuncClick(QString text, int index)
+{
+    Q_UNUSED(index);
+    ThesaurusRetrieval::getInstance()->updatePunc(text, DBOperation::User);
 }
 

@@ -29,6 +29,9 @@ SoftKeyboard::SoftKeyboard(int id, QWidget *parent) :
     setAttribute(Qt::WA_TranslucentBackground,  true);
     mAnimation = new QPropertyAnimation(ui->keyboard, "geometry");
 
+    connect(this, &SoftKeyboard::sendRefreshCandidatePhrases, this, &SoftKeyboard::doRefreshCandidatePhrases);
+    connect(this, &SoftKeyboard::sendGotPhrase, this, &SoftKeyboard::onGotPhrase);
+
     //连接主题更改事件
     connect(SettingManage::getInstance(), &SettingManage::sendThemeChange, this, &SoftKeyboard::onThemeChange);
     //连接主题更改事件
@@ -86,7 +89,7 @@ void SoftKeyboard::initCandidate()
 
     mSite = new IconButton(":/icon/site.svg");
 
-    mArrow = new IconButton(":/icon/arrow_b.svg");
+    mArrow = new IconButton(":/icon/site.svg");
     onArrowChange();
     hLayout->addWidget(mSite);
     hLayout->addLayout(vLayout, 8);
@@ -318,7 +321,6 @@ void SoftKeyboard::onSwitchKeyBoard(int type)
  * 填充候选框文本(手写)
  */
 void SoftKeyboard::fillCandidateText(QStringList& strList){
-
     ScrollBarManage::getInstace()->setCanditeData(strList);  //填充候选词
     onArrowChange();  //更改箭头状态
 }
@@ -347,10 +349,10 @@ void SoftKeyboard::clearHistory()
     mThesaurusManage->reset();
 }
 
-void SoftKeyboard::refreshCandidatePhrases(QStringList data)
+void SoftKeyboard::doRefreshCandidatePhrases(QStringList data, QString letters)
 {
     ScrollBarManage::getInstace()->setCanditeData(data);
-    mLetterLabel->setText(PinyinRetrievalModel::getInstance()->getCurLetters());
+    mLetterLabel->setText(letters);
     onArrowChange();  //更新箭头状态
 }
 
@@ -360,15 +362,22 @@ void SoftKeyboard::refreshCandidatePhrases(QStringList data)
  * @param index
  * 拼音输入时点击候选词的处理方法
  */
-void SoftKeyboard::onSelectPhrase(QString text, int index)
+void SoftKeyboard::onSelectPhrase(QString text, int index, int viewType)
 {
-    QString showText;
-    QStringList data = PinyinRetrievalModel::getInstance()->getCandidate(text, index, showText);
-    mLetterLabel->setText(showText);
+    if (viewType == ScrollBarBase::Cand) {
+        mThesaurusManage->asynExec<QStringList>([=](QStringList data) {
+            emit this->sendGotPhrase(data, text, mThesaurusManage->mShowLetters);
+        })->getPhraseByPinyin(text, index);
+    } else if (viewType == ScrollBarBase::Punc) {
+        pushCandidateCharacterText(text);  //将数据发送出去
+    }
+}
 
+void SoftKeyboard::onGotPhrase(QStringList data, QString phrase, QString showText)
+{
     if(data.isEmpty()){        //点击候选词后无剩余候选字母
         //这里完成输入
-        QString word = mAlreadySelectTranslates.join("").append(text);
+        QString word = mAlreadySelectTranslates.join("").append(phrase);
         pushCandidateCharacterText(word);  //将数据发送出去
         clearHistory();        //清空数据
 
@@ -379,15 +388,15 @@ void SoftKeyboard::onSelectPhrase(QString text, int index)
         onArrowChange();
 
         //查找联想词
-        QStringList words = mThesaurusManage->getAssociateWords(text);
-        if (words.size() != 0) {
-            fillCandidateText(words);
-        }
+        mThesaurusManage->asynExec<QStringList>([=](QStringList data){
+            fillCandidateText(data);
+        })->getAssociateWords(phrase);
+
     }
     else    //如果还剩候选字母则留着等着再次处理
     {
-        mAlreadySelectTranslates.append(text);
-        ScrollBarManage::getInstace()->setCanditeData(data);
+        mAlreadySelectTranslates.append(phrase);
+        doRefreshCandidatePhrases(data, showText);
     }
 }
 
@@ -466,8 +475,12 @@ void SoftKeyboard::onKeyboardScaleChange()
 
 void SoftKeyboard::addCandidateLetter(QString letter)
 {
-    mAlreadyInputLetters.append(letter.toLower());
-    refreshCandidatePhrases(mThesaurusManage->getPhraseByPinyin(mAlreadyInputLetters));
+    QString letters = mAlreadyInputLetters.append(letter.toLower());
+    clearHistory();
+    mAlreadyInputLetters = letters;
+    mThesaurusManage->asynExec<QStringList>([=](QStringList data){
+        emit this->sendRefreshCandidatePhrases(data, mAlreadyInputLetters);
+    })->getPhraseByPinyin(mAlreadyInputLetters);
 }
 
 /* 重写事件 */
@@ -483,8 +496,9 @@ void SoftKeyboard::setMoveEnabled(bool moveEnabled) {
 
 void SoftKeyboard::onPointToChaeracter(CharacterEntity character)
 {
-    QStringList strs = mThesaurusManage->getChineseByHand(character, 20);
-    fillCandidateText(strs);
+    mThesaurusManage->asynExec<QStringList>([=](QStringList data){
+        fillCandidateText(data);
+    })->getChineseByHand(character, 20);
 }
 
 void SoftKeyboard::switchPreviousKey()
@@ -610,8 +624,12 @@ void SoftKeyboard::mouseReleaseEvent(QMouseEvent *event) {
 void SoftKeyboard::deleteClicked()
 {
     if (!mAlreadyInputLetters.isEmpty()){
-        mAlreadyInputLetters = mAlreadyInputLetters.mid(0, mAlreadyInputLetters.size()-1);
-        refreshCandidatePhrases(PinyinRetrievalModel::getInstance()->getCandidate(mAlreadyInputLetters));
+        QString letters = mAlreadyInputLetters.mid(0, mAlreadyInputLetters.size()-1);
+        clearHistory();
+        mAlreadyInputLetters = letters;
+        mThesaurusManage->asynExec<QStringList>([=](QStringList data){
+            emit this->sendRefreshCandidatePhrases(data, mAlreadyInputLetters);
+        })->getPhraseByPinyin(mAlreadyInputLetters);
     } else if (!mHTranslateView->dataStrings.isEmpty()){
         clearHistory();
         onArrowChange();

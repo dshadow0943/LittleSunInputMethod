@@ -21,9 +21,11 @@ class PuncKeyboard : public QWidget
     Q_OBJECT
 public:
     explicit PuncKeyboard(SoftKeyboard *parent = nullptr);
+    void setPuncData(QStringList);
 
 public slots:
     void onTabClicked(int);
+    void onPuncClick(QString text, int index);
 
 protected:
     void showEvent(QShowEvent *event) override;
@@ -32,7 +34,6 @@ protected:
 private:
     VScrollBarView *mPunc;
     void initUi();
-    void setPuncData(QStringList);
 
 private:
     QList<KeyButtonBase*> mButs;

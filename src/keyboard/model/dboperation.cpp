@@ -20,6 +20,7 @@
 */
 #include "dboperation.h"
 #include "phraseentity.h"
+#include "fileutil.h"
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
@@ -27,14 +28,14 @@
 #include <QVariant>
 #include <QDebug>
 
-DBOperation *DBOperation::DB = nullptr;
+DBOperation *DBOperation::m_DB = nullptr;
 DBOperation *DBOperation::getInstance()
 {
-    if (DB == nullptr)
+    if (m_DB == nullptr)
     {
-        DB = new DBOperation;
+        m_DB = new DBOperation;
     }
-    return DB;
+    return m_DB;
 }
 
 DBOperation::DBOperation(QObject *parent)
@@ -72,27 +73,41 @@ bool DBOperation::createDatabaseFile(const QString &filePath, const QString &pas
     return db.open();
 }
 
-bool DBOperation::openDatabaseFile(const QString &filePath, const QString &passwd)
+bool DBOperation::initDatabaseFile(const QString &filePath, const QString &passwd)
 {
-    QSqlDatabase db;
-    if(QSqlDatabase::contains(CONNECTIONNAME)){
-        db = QSqlDatabase::database(CONNECTIONNAME);
-        if(db.isOpen()){
-            return true;
-        }
-        db.setDatabaseName(filePath);
-        db.setPassword(passwd);
-    }else{
+    bool ret = false;
+    {
+        QSqlDatabase db;
         db = QSqlDatabase::addDatabase("QSQLITE", CONNECTIONNAME);
         db.setDatabaseName(filePath);
         db.setPassword(passwd);
         db.setConnectOptions("QSQLITE_CREATE_KEY");
+
+        ret = db.open();
+        if (ret) {
+            m_DBFilePath = filePath;
+            m_DBPasswod = passwd;
+        }
+        db.close();
     }
-
-    bool ret = db.open();
-    db.close();
-
+    QSqlDatabase::removeDatabase(CONNECTIONNAME);
     return ret;
+
+}
+
+QSqlDatabase DBOperation::openDatabaseFile(const QString& connectionName)
+{
+    m_mutex.lock();
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+    db.setDatabaseName(m_DBFilePath);
+    db.setPassword(m_DBPasswod);
+    db.setConnectOptions("QSQLITE_CREATE_KEY");
+    if (!db.open())
+    {
+        qDebug() << "open db failed!";
+    }
+    m_mutex.unlock();
+    return db;
 }
 
 bool DBOperation::createInputTable()
@@ -189,27 +204,32 @@ bool DBOperation::insertData(PhraseEntity item, const QString &table)
         field2 = "chinese";
     }
 
-    QSqlQuery query(QSqlDatabase::database(CONNECTIONNAME));
     bool ok = true;
-
-    query.prepare(QString("INSERT INTO %1 (id, %2, %3, extra, times, stick) "
-                              "VALUES (:id, :%4, :%5, :extra, :times, :stick);")
-                      .arg(table)
-                      .arg(field1)
-                      .arg(field2)
-                      .arg(field1)
-                      .arg(field2));
-        query.bindValue(QString(":%1").arg(field1), item.mCompletePinyin);
-        query.bindValue(QString(":%1").arg(field2), item.mPhrase);
-        query.bindValue(":extra", item.mExtra);
-        query.bindValue(":times", item.mTimes);
-        query.bindValue(":stick", item.mStick);
-        ok = query.exec();
-
-    if (!ok)
+    QString connectionName = QString::number(*static_cast<int*>(QThread::currentThreadId()));
     {
-        qDebug("error: %s", query.lastError().text().toUtf8().data());
+        QSqlDatabase db = openDatabaseFile(connectionName);
+        QSqlQuery query(db);
+        query.prepare(QString("INSERT INTO %1 (id, %2, %3, extra, times, stick) "
+                                  "VALUES (:id, :%4, :%5, :extra, :times, :stick);")
+                          .arg(table)
+                          .arg(field1)
+                          .arg(field2)
+                          .arg(field1)
+                          .arg(field2));
+            query.bindValue(QString(":%1").arg(field1), item.mCompletePinyin);
+            query.bindValue(QString(":%1").arg(field2), item.mPhrase);
+            query.bindValue(":extra", item.mExtra);
+            query.bindValue(":times", item.mTimes);
+            query.bindValue(":stick", item.mStick);
+            ok = query.exec();
+
+        if (!ok)
+        {
+            qDebug("error: %s", query.lastError().text().toUtf8().data());
+        }
+        db.close();
     }
+    QSqlDatabase::removeDatabase(connectionName);
     return ok;
 }
 
@@ -233,38 +253,106 @@ bool DBOperation::insertData(const QList<PhraseEntity > &list, const QString &ta
         field1 = "pinyin";
         field2 = "chinese";
     }
-    QSqlDatabase::database(CONNECTIONNAME).transaction();   //开始一个事务
-    QSqlQuery query(QSqlDatabase::database(CONNECTIONNAME));
     bool ok = true;
-    for (int i = 0; i < list.size(); ++i)
+    QString connectionName = QString::number(*static_cast<int*>(QThread::currentThreadId()));
     {
-        query.prepare(QString("INSERT INTO %1 (id, %2, %3, extra, times, stick) "
-                              "VALUES (:id, :%4, :%5, :extra, :times, :stick);")
-                      .arg(table)
-                      .arg(field1)
-                      .arg(field2)
-                      .arg(field1)
-                      .arg(field2));
-        query.bindValue(QString(":%1").arg(field1), list.at(i).mCompletePinyin);
-        query.bindValue(QString(":%1").arg(field2), list.at(i).mPhrase);
-        query.bindValue(":extra", list.at(i).mExtra);
-        query.bindValue(":times", list.at(i).mTimes);
-        query.bindValue(":stick", list.at(i).mStick);
-        ok = query.exec();
-        if (!ok)
+        QSqlDatabase db = openDatabaseFile(connectionName);
+        QSqlQuery query(db);
+        for (int i = 0; i < list.size(); ++i)
         {
-            qDebug("error: %s", query.lastError().text().toUtf8().data());
+            query.prepare(QString("INSERT INTO %1 (id, %2, %3, extra, times, stick) "
+                                  "VALUES (:id, :%4, :%5, :extra, :times, :stick);")
+                          .arg(table)
+                          .arg(field1)
+                          .arg(field2)
+                          .arg(field1)
+                          .arg(field2));
+            query.bindValue(QString(":%1").arg(field1), list.at(i).mCompletePinyin);
+            query.bindValue(QString(":%1").arg(field2), list.at(i).mPhrase);
+            query.bindValue(":extra", list.at(i).mExtra);
+            query.bindValue(":times", list.at(i).mTimes);
+            query.bindValue(":stick", list.at(i).mStick);
+            ok = query.exec();
+            if (!ok)
+            {
+                qDebug("error: %s", query.lastError().text().toUtf8().data());
+                break;
+            }
+        }
+        if (ok)
+        {
+            QSqlDatabase::database(CONNECTIONNAME).commit();
+        }
+        else
+        {
+            QSqlDatabase::database(CONNECTIONNAME).rollback();
+        }
+        db.close();
+    }
+    QSqlDatabase::removeDatabase(connectionName);
+    return ok;
+}
+
+bool DBOperation::updatePunc(QString& data, QStringList& ret, PuncType type)
+{
+    if (data == "") {
+        return false;
+    }
+    bool ok;
+    QString res = "";
+    QString connectionName = QString::number(*static_cast<int*>(QThread::currentThreadId()));
+    {
+        QSqlDatabase db = openDatabaseFile(connectionName);
+        QSqlQuery query(db);
+        QString pType = "";
+        switch (type) {
+        case User: pType = "user";
+            break;
+        case Chinese: pType = "chinese";
+            break;
+        case English: pType = "english";
+            break;
+        case Math: pType = "math";
             break;
         }
+        ok = query.exec(QString("SELECT punc FROM basePunc "
+                           "WHERE type = \'%1\';")
+                   .arg(pType));
+        if (ok)
+        {
+            if (query.next()) {
+                res = query.value(0).toString().trimmed();
+            }
+
+        } else {
+            qCritical("error: %s", query.lastError().text().toUtf8().data());
+        }
+
+        if (ok) {
+
+            ret = FileUtil::base64ToStr(res).split(" ");
+            ret.removeAll(data);
+            ret.push_front(data);
+
+            for (int i = ret.size() - 1; i >= 60; --i) {
+                ret.removeAt(i);
+            }
+
+            res = FileUtil::strToBase64(ret.join(" "));
+
+            ok = query.exec(QString("update basePunc set punc = \'%1\'"
+                               "WHERE type = \"%2\"")
+                       .arg(res)
+                       .arg(pType));
+
+            if (!ok)
+            {
+                qCritical("error: %s", query.lastError().text().toUtf8().data());
+            }
+        }
+        db.close();
     }
-    if (ok)
-    {
-        QSqlDatabase::database(CONNECTIONNAME).commit();
-    }
-    else
-    {
-        QSqlDatabase::database(CONNECTIONNAME).rollback();
-    }
+    QSqlDatabase::removeDatabase(connectionName);
     return ok;
 }
 
@@ -276,19 +364,26 @@ bool DBOperation::insertData(const QList<PhraseEntity > &list, const QString &ta
  */
 bool DBOperation::delItem(PhraseEntity item)
 {
-    QSqlQuery query(QSqlDatabase::database(CONNECTIONNAME));
-    if (item.mSource == "singlePinyin") // 理论上基础的几个表内容都不能删除，这里只不准删除单字的表
+    bool ok = false;
+    QString connectionName = QString::number(*static_cast<int*>(QThread::currentThreadId()));
     {
-        qDebug("Can't delete item in singlePinyin!");
-        return false;
+        QSqlDatabase db = openDatabaseFile(connectionName);
+        QSqlQuery query(db);
+        if (item.mSource == "singlePinyin") // 理论上基础的几个表内容都不能删除，这里只不准删除单字的表
+        {
+            qDebug("Can't delete item in singlePinyin!");
+            return false;
+        }
+        ok = query.exec(QString("DELETE FROM %1 WHERE id = %2;")
+                             .arg(item.mSource)
+                             .arg(item.mID));
+        if (!ok)
+        {
+            qDebug("error: %s", query.lastError().text().toUtf8().data());
+        }
+        db.close();
     }
-    bool ok = query.exec(QString("DELETE FROM %1 WHERE id = %2;")
-                         .arg(item.mSource)
-                         .arg(item.mID));
-    if (!ok)
-    {
-        qDebug("error: %s", query.lastError().text().toUtf8().data());
-    }
+    QSqlDatabase::removeDatabase(connectionName);
     return ok;
 }
 
@@ -345,34 +440,40 @@ QList<PhraseEntity > DBOperation::findData(const QString &key, const QString &nu
         field1 = "pinyin";
         field2 = "chinese";
     }
-    QSqlQuery query(QSqlDatabase::database(CONNECTIONNAME));
-    bool ok = query.exec(QString("SELECT id, %1, %2, extra, times, stick FROM %3 "
-                       "WHERE %4 like \"%5\" AND extra like \"%6\" "
-                       "ORDER BY times DESC LIMIT 0,%7;")
-               .arg(field1)
-               .arg(field2)
-               .arg(table_fact)
-               .arg(field1)
-               .arg(key)
-               .arg(number)
-               .arg(max));
-
-    if (!ok)
+    QString connectionName = QString::number(*static_cast<int*>(QThread::currentThreadId()));
     {
-        qCritical("error: %s", query.lastError().text().toUtf8().data());
-    }
+        QSqlDatabase db = openDatabaseFile(connectionName);
+        QSqlQuery query(db);
+        bool ok = query.exec(QString("SELECT id, %1, %2, extra, times, stick FROM %3 "
+                           "WHERE %4 like \"%5\" AND extra like \"%6\" "
+                           "ORDER BY times DESC LIMIT 0,%7;")
+                   .arg(field1)
+                   .arg(field2)
+                   .arg(table_fact)
+                   .arg(field1)
+                   .arg(key)
+                   .arg(number)
+                   .arg(max));
 
-    while (query.next())
-    {
-        list.append(PhraseEntity(table_fact,
-                                        query.value(2).toString().trimmed(),
-                                        query.value(1).toString().trimmed(),
-                                        query.value(3).toString().trimmed(),
-                                        query.value(0).toInt(),
-                                        query.value(4).toInt(),
-                                        query.value(5).toBool()));
-    }
+        if (!ok)
+        {
+            qCritical("error: %s", query.lastError().text().toUtf8().data());
+        }
 
+        while (query.next())
+        {
+            list.append(PhraseEntity(table_fact,
+                                            query.value(2).toString().trimmed(),
+                                            query.value(1).toString().trimmed(),
+                                            query.value(3).toString().trimmed(),
+                                            query.value(0).toInt(),
+                                            query.value(4).toInt(),
+                                            query.value(5).toBool()));
+        }
+
+        db.close();
+    }
+    QSqlDatabase::removeDatabase(connectionName);
     comein = false;
     haveFind = true;
     return list;
@@ -380,53 +481,64 @@ QList<PhraseEntity > DBOperation::findData(const QString &key, const QString &nu
 
 bool DBOperation::findPinyinByChinese(const QString& chinese, QString& pinyin)
 {
-    QSqlQuery query(QSqlDatabase::database(CONNECTIONNAME));
-    bool ok = query.exec(QString("SELECT pinyin FROM singlePinyin "
-                                 "WHERE chinese like \"%1\";")
-                         .arg(chinese));
-    if (!ok)
+    bool ret = false;
+    QString connectionName = QString::number(*static_cast<int*>(QThread::currentThreadId()));
     {
-        qCritical("error: %s", query.lastError().text().toUtf8().data());
+        QSqlDatabase db = openDatabaseFile(connectionName);
+        QSqlQuery query(db);
+        bool ok = query.exec(QString("SELECT pinyin FROM singlePinyin "
+                                     "WHERE chinese like \"%1\";")
+                             .arg(chinese));
+        if (!ok)
+        {
+            qCritical("error: %s", query.lastError().text().toUtf8().data());
+        }
+
+        if (query.next()) {
+            pinyin = query.value(0).toString().trimmed();
+            ret = true;
+        }
+        db.close();
     }
-    if (query.next()) {
-        qInfo() << query.value(0).toString().trimmed();
-        pinyin = query.value(0).toString().trimmed();
-        return true;
-    }
-    return false;
+    QSqlDatabase::removeDatabase(connectionName);
+
+    return ret;
 }
 
 QList<PhraseEntity> DBOperation::findAssociational(const QString& table, const QString& head)
 {
-    QSqlQuery query(QSqlDatabase::database(CONNECTIONNAME));
-    bool ok = query.exec(QString("SELECT id, pinyin, chinese, extra, times, stick FROM %1 "
-                       "WHERE chinese like \"%2\" "
-                       "ORDER BY times DESC;")
-               .arg(table)
-               .arg(head));
-    if (!ok)
-    {
-        qCritical("error: %s", query.lastError().text().toUtf8().data());
-    }
-
     QList<PhraseEntity > list;
-
-    while (query.next())
+    QString connectionName = QString::number(*static_cast<int*>(QThread::currentThreadId()));
     {
-        list.append(PhraseEntity(table,
-                                        query.value(2).toString().trimmed(),
-                                        query.value(1).toString().trimmed(),
-                                        query.value(3).toString().trimmed(),
-                                        query.value(0).toInt(),
-                                        query.value(4).toInt(),
-                                        query.value(5).toBool()));
+        QSqlDatabase db = openDatabaseFile(connectionName);
+        QSqlQuery query(db);
+        bool ok = query.exec(QString("SELECT id, pinyin, chinese, extra, times, stick FROM %1 "
+                           "WHERE chinese like \"%2\" "
+                           "ORDER BY times DESC;")
+                   .arg(table)
+                   .arg(head));
+        if (!ok)
+        {
+            qCritical("error: %s", query.lastError().text().toUtf8().data());
+        }
+        while (query.next())
+        {
+            list.append(PhraseEntity(table,
+                                            query.value(2).toString().trimmed(),
+                                            query.value(1).toString().trimmed(),
+                                            query.value(3).toString().trimmed(),
+                                            query.value(0).toInt(),
+                                            query.value(4).toInt(),
+                                            query.value(5).toBool()));
+        }
+        db.close();
     }
+    QSqlDatabase::removeDatabase(connectionName);
     return list;
 }
 
 QString DBOperation::findPunc(PuncType type)
 {
-    QSqlQuery query(QSqlDatabase::database(CONNECTIONNAME));
     QString pType = "";
     switch (type) {
     case User: pType = "user";
@@ -438,16 +550,26 @@ QString DBOperation::findPunc(PuncType type)
     case Math: pType = "math";
         break;
     }
-    bool ok = query.exec(QString("SELECT punc FROM basePunc "
-                       "WHERE type = \'%1\';")
-               .arg(pType));
-    if (!ok)
+    QString res = "";
+    QString connectionName = QString::number(*static_cast<int*>(QThread::currentThreadId()));
     {
-        qCritical("error: %s", query.lastError().text().toUtf8().data());
+        QSqlDatabase db = openDatabaseFile(connectionName);
+        QSqlQuery query(db);
+
+        bool ok = query.exec(QString("SELECT punc FROM basePunc "
+                           "WHERE type = \'%1\';")
+                   .arg(pType));
+        if (!ok)
+        {
+            qCritical("error: %s", query.lastError().text().toUtf8().data());
+        }
+        if (query.next()) {
+            res = query.value(0).toString().trimmed();
+        }
+        db.close();
     }
-    if (query.next()) {
-        return query.value(0).toString().trimmed();
-    }
-    return "";
+    QSqlDatabase::removeDatabase(connectionName);
+    res = FileUtil::base64ToStr(res);
+    return res;
 }
 

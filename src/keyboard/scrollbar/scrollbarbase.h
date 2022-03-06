@@ -7,7 +7,14 @@ class ScrollBarBase : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ScrollBarBase(QWidget *parent = nullptr);
+
+    enum ViewType{
+        Invavid,
+        Cand,
+        Punc,
+    };
+
+    explicit ScrollBarBase(ViewType type = Invavid, QWidget *parent = nullptr);
 
     int getUnitMinWidth() const;
     void setUnitMinWidth(int value);
@@ -25,7 +32,7 @@ public:
 
 signals:
     void stringPressed(const QString &text, const QPoint &pos);
-    void clicked(QString text, int index);
+    void clicked(QString text, int index, int type);
 
 public slots:
     void onDataChange(QStringList data);
@@ -45,6 +52,7 @@ protected:
     int unitFontSize = 20;
     QRect pressRect;
 
+    ViewType mType;
 
     friend class EnKeyboard;
     friend class SoftKeyboard;

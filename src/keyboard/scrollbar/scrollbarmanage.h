@@ -33,8 +33,8 @@ public:
     static ScrollBarManage* getInstace();
     static VScrollBarView* getVCanditateView();
     static HScrollBarView* getHCanditateView();
-    static VScrollBarView* getVSrcllBarView(QWidget *parent = nullptr);
-    static HScrollBarView* getHSrcllBarView(QWidget *parent = nullptr);
+    static VScrollBarView* getVSrcllBarView(ScrollBarBase::ViewType type = ScrollBarBase::Invavid, QWidget *parent = nullptr);
+    static HScrollBarView* getHSrcllBarView(ScrollBarBase::ViewType type = ScrollBarBase::Invavid, QWidget *parent = nullptr);
 
     void setCanditeData(QStringList& data);
 

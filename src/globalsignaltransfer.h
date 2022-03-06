@@ -44,7 +44,7 @@ signals:
     void sendKeyButtonClicked(KeyButtonBase* but);
     void sendRadioButtonClicked(RadioButtonBase* but);
     void sendWindowClosed(int id);
-    void sendScrollBarClosed(QString text, int index);
+    void sendScrollBarClosed(QString text, int index, int type);
     void sendCheckBoxClicked(CheckBoxBase *but);
     void sendSliderValueChange(SliderBase *but);
     void sendAppQuit();
@@ -54,7 +54,7 @@ private slots:
     void onKeyButtonClicked(KeyButtonBase* but);
     void onRadioButtonClicked(RadioButtonBase* but);
     void onWindowClosed(int id);
-    void onScrollBarclicked(QString text, int index);
+    void onScrollBarclicked(QString text, int index, int type);
     void onCheckBoxClicked(CheckBoxBase *but);
     void onSliderValueChange(SliderBase *but);
     void onAppQuit();

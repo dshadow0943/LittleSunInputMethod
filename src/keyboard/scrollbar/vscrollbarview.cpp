@@ -8,7 +8,7 @@
  * @brief VTranslateView::VScrollBarView
  * 纵向候选框
  */
-VScrollBarView::VScrollBarView(QWidget *parent) : ScrollBarBase(parent)
+VScrollBarView::VScrollBarView(ViewType type, QWidget *parent) : ScrollBarBase(type, parent)
 {
     setUnitMinWidth(50);
 }

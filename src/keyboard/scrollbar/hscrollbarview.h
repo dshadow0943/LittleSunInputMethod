@@ -8,7 +8,7 @@ class HScrollBarView : public ScrollBarBase
 {
     Q_OBJECT
 public:
-    explicit HScrollBarView(QWidget *parent = nullptr);
+    explicit HScrollBarView(ViewType type = Invavid, QWidget *parent = nullptr);
 
 protected:
     void paintEvent(QPaintEvent *event);

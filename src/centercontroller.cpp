@@ -117,7 +117,6 @@ void CenterController::initDbus()
     //发送消息
     QDBusMessage r = QDBusConnection::sessionBus().call(m);
 
-    qInfo() << r.arguments().isEmpty();
     if (r.arguments().isEmpty()) {
         return;
     }
@@ -143,8 +142,8 @@ void CenterController::initDbus()
 
     r = QDBusConnection::sessionBus().call(m);
 
-//    qInfo() << "r: " << r.arguments().isEmpty();
     if (!r.arguments().isEmpty()) {
+        qInfo() << __FUNCTION__ << "没有检测到插件";
         QMessageBox::warning(nullptr, "警告", QString("检测到系统未安装或未正确安装小太阳输入法插件，因此应用使用将会受限"), QMessageBox::Yes);
     }
 }

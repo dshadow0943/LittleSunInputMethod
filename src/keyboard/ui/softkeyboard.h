@@ -53,13 +53,14 @@ signals:
     void sendCandidateCharacter(QString character);
     void sendDeleteCharacter();
     void sendSiteClicked();
+    void sendRefreshCandidatePhrases(QStringList data, QString letters);
+    void sendGotPhrase(QStringList data, QString phrase, QString showText);
 
 private:
     void deleteClicked();   //删除输入的响应槽
     void enterClicked();    //回车被按下的响应槽
     void spaceClicked();    //空格被按下的响应槽
     void clearHistory();    //重置候选框
-    void refreshCandidatePhrases(QStringList data); //刷新候选词组
     void switchPreviousKey();
 
     void pushCandidateCharacterText(QString character);  //非中文输入时的添加字符到输入框 / 中文输入时将选中的候选框的文字添加到候选框
@@ -73,10 +74,12 @@ private slots:
     void onThemeChange();
     void onKeyTabDisplayChange();
     void onKeyboardScaleChange();
-    void onSelectPhrase(QString, int);    //选择候选词组的处理方法
+    void onSelectPhrase(QString, int, int);    //选择候选词组的处理方法
     void onKeyButtonClicked(KeyButtonBase* but);    //键盘点击事件响应
     void onPointToChaeracter(CharacterEntity character);
     void onSwitchKeyBoard(int type);      //切换键盘
+    void doRefreshCandidatePhrases(QStringList data, QString letters); //刷新候选词组
+    void onGotPhrase(QStringList data, QString phrase, QString showText);
 
 protected:
     /* 重写的相关函数 */
