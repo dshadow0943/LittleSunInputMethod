@@ -44,6 +44,7 @@ public:
     };
 
     enum KeyId {
+        KeyInvalid = 0,
         KeyNum,  //数字
         keyPinyin,  //拼音
         keyHand, //手写

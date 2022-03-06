@@ -9,12 +9,14 @@
 #include "thesaurusretrieval.h"
 #include "scrollbarmanage.h"
 #include "windowbase.h"
+#include "iconbutton.h"
 
 #include <QWidget>
 #include <QStackedWidget>
 #include <QLineEdit>
 #include <QLabel>
 #include <QPushButton>
+#include <QPropertyAnimation>
 
 #define KEYBOARD_NUM 0
 #define KEYBOARD_EN 1
@@ -43,6 +45,8 @@ public:
     explicit SoftKeyboard(int id = 0, QWidget *parent = nullptr);
     ~SoftKeyboard() override;
 
+    void showKeyboard();
+    void hideKeyboard();
     void setMoveEnabled(bool moveEnabled=true);//设置无边框窗口移动使能
 signals:
     //发送字符
@@ -58,7 +62,7 @@ private:
     void refreshCandidatePhrases(QStringList data); //刷新候选词组
     void switchPreviousKey();
 
-    void addCandidateCharacterText(QString character);  //非中文输入时的添加字符到输入框 / 中文输入时将选中的候选框的文字添加到候选框
+    void pushCandidateCharacterText(QString character);  //非中文输入时的添加字符到输入框 / 中文输入时将选中的候选框的文字添加到候选框
     void addCandidateLetter(QString letter);
 
 
@@ -93,7 +97,6 @@ private:
     double winScale = 1;    //默认缩放比例
     int mPreviousKey = -1;   //上一次键盘
     ThesaurusRetrieval *mThesaurusManage = nullptr;
-    QImage *arrowIcon = nullptr; //关闭按钮的图像对象
     int    arrowStatus = ARROW_CLOSE;         //记录箭头状态
     bool   arrowPressed = false;     //记录箭头按下状态
     QRect  arrowRect;            //记录箭头按钮的矩形框
@@ -106,20 +109,20 @@ private:
     bool mIsMousePress=false;
     bool mIsMoveEnabled;
 
+    QPropertyAnimation *mAnimation;   //键盘移动控制
+
     QString mAlreadyInputLetters; //用户输入的所有字母
     QStringList mAlreadySelectTranslates; //用户选择的所有中文词组
 
     VScrollBarView *mVTranslateView;
     HScrollBarView *mHTranslateView;
     QLabel *mLetterLabel = nullptr;               //输入字母显示控件，同时提供对键盘的移动操作
-    QLabel *mArrow = nullptr;
-    QLabel *mSite = nullptr;
-    QLabel *mLog = nullptr;
+    IconButton *mArrow = nullptr;
+    IconButton *mSite = nullptr;
+    IconButton *mLog = nullptr;
 
 private:
-
     /* 控件相关初始化方法 */
-    void initView();            //初始化函数
     void initUi();
     void initKeyboard();    //初始化键盘
     void initCandidate();   //初始化候选框

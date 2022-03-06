@@ -30,7 +30,6 @@ GlobalApplication::GlobalApplication(int& argc,char **argv):
 }
 bool GlobalApplication::notify(QObject *obj, QEvent *e)
 {
-//    qInfo() << __FUNCTION__ << e->type() << obj;
     if (e->type() == QEvent::MetaCall) {
         m.start();
     }

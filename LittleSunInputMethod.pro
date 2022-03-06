@@ -1,4 +1,4 @@
-QT       += core gui sql dbus
+QT       += core gui sql dbus svg
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11

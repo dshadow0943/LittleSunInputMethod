@@ -42,6 +42,11 @@ public slots:
     void onScrollValueChange(int value);
     void onItemChange(int index);
 
+protected:
+    void mouseMoveEvent(QMouseEvent *e) override;
+    void mousePressEvent(QMouseEvent *e) override;
+    void mouseReleaseEvent(QMouseEvent *e) override;
+
 private:
     void initUi();
 
@@ -50,6 +55,9 @@ private:
     QVBoxLayout *mRow {nullptr};
     QList<SettingContentCard*> mCardList;
     QSize mSize = QSize(500, 300);
+
+    bool mPressed = false;
+    QPoint mPressPos;
 };
 
 #endif // SETTINGCONTENTVIEW_H

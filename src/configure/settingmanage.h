@@ -52,6 +52,7 @@ struct config {
 
     bool keyTabDisplay = true;
     bool navigationResident = false;
+    bool appAutoStart = true;
     bool smartKeyboard = false;
     int defaultKeyboard = 0;  //初始键盘类型
     int themeType = 0;     //主题类型
@@ -94,6 +95,7 @@ public:
         CheckKeyTab,
         CheckSmartKeyboard,
         CheckNavigationResident,
+        AppAutoStart,
         KeySizeSlider,
 
         WindowKeyboard,
@@ -119,6 +121,8 @@ public:
     bool getKeyTabDisplay();
     void setNavigationResident(bool);
     bool getNavigationResident();
+    void setAppAutoStart(bool);
+    bool getAppAutoStart();
     void setSmartKeyboard(bool);
     bool getSmartKeyboard();
     void setKeyboardSizeScale(double scale);
@@ -150,4 +154,5 @@ private:
     config mConfig;
 };
 
+#define lSetting SettingManage::getInstance()
 #endif // SETTINGMANAGE_H

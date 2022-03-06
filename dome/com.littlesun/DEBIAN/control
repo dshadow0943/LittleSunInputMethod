@@ -1,0 +1,18 @@
+package: littlesun                 
+version: 2.0.1                                   
+architecture: amd64                 
+Build-Depends:
+ debhelper (>= 11),
+ libglib2.0-0 (>= 2.12.0),
+ libqt5core5a (>= 5.7.0),
+ libqt5dbus5 (>= 5.0.2),
+ libqt5gui5 (>= 5.11.0~rc1),
+ libqt5sql5 (>= 5.0.2),
+ qttools5-dev-tools,
+ libsqlite3-dev,
+ qtbase5-private-dev,
+ qtmultimedia5-dev,
+ libqt5widgets5 (>= 5.7.0),
+ libxcb1-dev
+maintainer: dshadow <dshadow@foxmail.com>                     
+description: 一款可进行手写的软键盘输入法

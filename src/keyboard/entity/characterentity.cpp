@@ -6,10 +6,8 @@ CharacterEntity::CharacterEntity()
     clear();
 }
 
-void CharacterEntity::initSize(int tmpWidth, int tmpHeight){
-}
 
-bool CharacterEntity::addPoint(int strokeId, double x, double y){
+bool CharacterEntity::addPoint(int strokeId, int x, int y){
     if(strokeId < 0)
         return false;
     if(strokeId != lastStrokeId){

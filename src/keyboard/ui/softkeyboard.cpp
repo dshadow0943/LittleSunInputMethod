@@ -26,8 +26,8 @@ SoftKeyboard::SoftKeyboard(int id, QWidget *parent) :
     initUi();
 
     setMoveEnabled();
-
-//    mTabSidebar->setCurrentIndex(SettingManage::getInstance()->getDefaultKeyboard());
+    setAttribute(Qt::WA_TranslucentBackground,  true);
+    mAnimation = new QPropertyAnimation(ui->keyboard, "geometry");
 
     //连接主题更改事件
     connect(SettingManage::getInstance(), &SettingManage::sendThemeChange, this, &SoftKeyboard::onThemeChange);
@@ -46,6 +46,7 @@ SoftKeyboard::SoftKeyboard(int id, QWidget *parent) :
 SoftKeyboard::~SoftKeyboard()
 {
     delete ui;
+    delete mAnimation;
 }
 
 void SoftKeyboard::initUi()
@@ -58,16 +59,6 @@ void SoftKeyboard::initUi()
     initCandidate();
     initKeyboard();
     initTab();
-    initView();
-}
-
-/**
- * @brief SoftKeyboard::init
- * 窗口初始化函数
- */
-void SoftKeyboard::initView(){
-
-
 }
 
 /**
@@ -92,14 +83,15 @@ void SoftKeyboard::initCandidate()
     QHBoxLayout *hLayout = new QHBoxLayout();
     hLayout->setMargin(0);
     hLayout->setMargin(0);
-    mSite = new QLabel();
-    mSite->setPixmap(QPixmap(":/icon/site.svg"));  //设置设置图标
 
-    mArrow = new QLabel();
+    mSite = new IconButton(":/icon/site.svg");
+
+    mArrow = new IconButton(":/icon/arrow_b.svg");
     onArrowChange();
     hLayout->addWidget(mSite);
     hLayout->addLayout(vLayout, 8);
     hLayout->addWidget(mArrow);
+    hLayout->setContentsMargins(2, 0, 4, 0);
 
     ui->candidata_box->setLayout(hLayout);
 }
@@ -130,14 +122,7 @@ void SoftKeyboard::initTab()
     vLayout->setMargin(0);
     vLayout->setSpacing(5);
 
-    QImage Image;
-    Image.load(":/icon/littlesun.png");
-    QPixmap pixmap = QPixmap::fromImage(Image);
-    QPixmap fitpixmap = pixmap.scaled(80, 45, Qt::KeepAspectRatio);
-    mLog = new QLabel();
-    mLog->setAlignment(Qt::AlignCenter);
-    mLog->setPixmap(fitpixmap);
-//    mSite->setPixmap(QPixmap(":/icon/littlesun.svg"));
+    mLog = new IconButton(":/icon/littlesun.png");
     mLog->setMinimumHeight(10);
     vLayout->addWidget(mLog, 1);
 
@@ -158,7 +143,8 @@ void SoftKeyboard::onArrowClicked()
     switch(arrowStatus) {
         case ARROW_CLOSE:
 //        delete this;
-             closeWindow();
+            hideKeyboard();
+            closeWindow();
         break;
         case ARROW_CAND: switchPreviousKey();    //（当前是查看更多候选词状态）返回上一界面
         break;
@@ -169,21 +155,19 @@ void SoftKeyboard::onArrowClicked()
 
 void SoftKeyboard::onArrowChange()
 {
-    if (nullptr == arrowIcon) {
-        arrowIcon = new QImage;
-    }
+    QString path;
 
     if (mHTranslateView->dataStrings.isEmpty()){
-        arrowIcon->load(":/icon/arrow_b.svg");
+        path = ":/icon/arrow_b.svg";
         arrowStatus = ARROW_CLOSE;
     } else if (ui->key_page->currentIndex() == KEYBOARD_CAND){
-        arrowIcon->load(":/icon/arrow_b.svg");
+        path = ":/icon/arrow_b.svg";
         arrowStatus = ARROW_CAND;
     } else {
-        arrowIcon->load(":/icon/arrow_r.svg");
+        path = ":/icon/arrow_r.svg";
         arrowStatus = ARROW_SHOW;
     }
-    mArrow->setPixmap(QPixmap::fromImage(*arrowIcon));  //加载图标
+    mArrow->setIconPath(path);  //加载图标
 }
 
 /**
@@ -243,17 +227,21 @@ void SoftKeyboard::onKeyButtonClicked(KeyButtonBase* but)
         if (but->getType() == KeyButtonBase::Tab || but->getType() == KeyButtonBase::Func) {
             break;
         }
-        if (ButtonItem::getSwitchButton()->getIsEnglish()) {
-            addCandidateCharacterText(but->getText());
+        if (ButtonItem::getSwitchButton()->isEnglish()) {
+            pushCandidateCharacterText(but->getText());
+            break;
         } else {
             if (but->getType() == KeyButtonBase::PinyinNum) {
                 if (!mHTranslateView->selectPhrase(but->getText().toInt())) {
-                    addCandidateCharacterText(but->getText());
+                    pushCandidateCharacterText(but->getText());
+                    break;
                 }
             } else if (but->getType() == KeyButtonBase::PinyinLetter) {
                 addCandidateLetter(but->getText());
+                break;
             } else {
-                addCandidateCharacterText(but->getText());
+                pushCandidateCharacterText(but->getText());
+                break;
             }
         }
     }
@@ -268,8 +256,14 @@ void SoftKeyboard::onKeyButtonClicked(KeyButtonBase* but)
 void SoftKeyboard::showEvent(QShowEvent* event)
 {
     QWidget::showEvent(event);
+    //设置显示键盘类型
     mTabSidebar->setCurrentIndex(SettingManage::getInstance()->getDefaultKeyboard());
+    //调整键盘大小
     onKeyboardScaleChange();
+    //拼音键盘设置为英文输入状态
+    ButtonItem::getSwitchButton()->switchText(true);
+    //展示动画
+    showKeyboard();
 }
 
 /**
@@ -307,6 +301,7 @@ void SoftKeyboard::onSwitchKeyBoard(int type)
     if (!(type == KEYBOARD_CAND || (ui->key_page->currentIndex() == KEYBOARD_CAND && type == mPreviousKey))) {
         clearHistory(); //重置清空候选词
         this->resize(w, h);    //更新窗口大小
+        ui->keyboard->resize(this->size());
     }
 
     if (ui->key_page->currentIndex() != KEYBOARD_CAND) {
@@ -333,7 +328,7 @@ void SoftKeyboard::fillCandidateText(QStringList& strList){
  * @param character
  * 将字符添加到输出框中
  */
-void SoftKeyboard::addCandidateCharacterText(QString character)
+void SoftKeyboard::pushCandidateCharacterText(QString character)
 {
     emit sendCandidateCharacter(character);
 }
@@ -374,7 +369,7 @@ void SoftKeyboard::onSelectPhrase(QString text, int index)
     if(data.isEmpty()){        //点击候选词后无剩余候选字母
         //这里完成输入
         QString word = mAlreadySelectTranslates.join("").append(text);
-        addCandidateCharacterText(word);  //将数据发送出去
+        pushCandidateCharacterText(word);  //将数据发送出去
         clearHistory();        //清空数据
 
         //如果是查看更多候选词界面则模拟点击箭头返回到原来界面
@@ -435,6 +430,7 @@ void SoftKeyboard::onKeyboardScaleChange()
                 return;
         }
         this->resize(w, h);    //更新窗口大小
+        ui->keyboard->resize(this->size());
         this->move((applicationRect.width()-width())/2, applicationRect.height()-height());       //移动窗口位置,默认出现在底端中部
 
         int size = ui->candidata_box->height()/3;
@@ -494,6 +490,48 @@ void SoftKeyboard::onPointToChaeracter(CharacterEntity character)
 void SoftKeyboard::switchPreviousKey()
 {
     onSwitchKeyBoard(mPreviousKey);
+}
+
+void SoftKeyboard::showKeyboard()
+{
+    ui->keyboard->move(0, height());
+//    ui->keyboard->hide();
+    mAnimation->setDuration(100);
+
+    int w = ui->keyboard->width();
+    int h = ui->keyboard->height();
+    int x = 0;
+    int y = 0;
+
+    if (ui->keyboard->isHidden())
+    {
+//        ui->keyboard->move(0, height());
+        ui->keyboard->show();
+    }
+    mAnimation->setStartValue(ui->keyboard->geometry());
+
+    mAnimation->setEndValue(QRect(x, y, w, h));
+    mAnimation->setEasingCurve(QEasingCurve::Linear); //设置动画效果
+
+    mAnimation->start();
+}
+
+void SoftKeyboard::hideKeyboard()
+{
+//    mAnimation->setTargetObject(ui->keyboard);
+
+    mAnimation->setDuration(100);
+
+    int w = ui->keyboard->width();
+    int h = ui->keyboard->height();
+    int x = 0;
+    int y = ui->keyboard->height();
+
+    mAnimation->setStartValue(ui->keyboard->geometry());
+    mAnimation->setEndValue(QRect(x, y, w, h));
+    mAnimation->setEasingCurve(QEasingCurve::Linear); //设置动画效果
+
+    mAnimation->start();
 }
 
 /**
@@ -586,11 +624,11 @@ void SoftKeyboard::enterClicked()
 {
     if(mLetterLabel->text().isEmpty())
     {
-        addCandidateCharacterText("\r");
+        pushCandidateCharacterText("\r");
         return;
     }
     else if(mHTranslateView->dataStrings.size() > 0){
-        addCandidateCharacterText(mAlreadyInputLetters);
+        pushCandidateCharacterText(mAlreadyInputLetters);
     }
     clearHistory();
 }
@@ -598,7 +636,7 @@ void SoftKeyboard::enterClicked()
 void SoftKeyboard::spaceClicked()
 {
     if (!mHTranslateView->selectPhrase(0)) {
-        addCandidateCharacterText(" ");
+        pushCandidateCharacterText(" ");
     }
 }
 
@@ -606,8 +644,9 @@ void SoftKeyboard::setThemeStyleSheet()
 {
     skin_color s = SettingManage::getInstance()->getSkinColor(SkinType::Theme);
 
-    setStyleSheet(QString(".SoftKeyboard{background:qradialgradient("
+    ui->keyboard->setStyleSheet(QString("QWidget#keyboard{border-radius: 10px; background:qradialgradient("
                           "spread:pad, cx:0.5, cy:0.5, radius:0.8, fx:0.5, fy:0.5,stop:0 %1,stop:1 %2);}")
                   .arg(s.normal.name())
                   .arg(s.pressed.name()));
+
 }

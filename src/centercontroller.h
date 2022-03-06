@@ -50,7 +50,7 @@ protected:
 
 public slots:
     int initView();
-    int showView();
+    int showView(bool force = false);
     int hideView();
     void onCandidateCharacter(QString character);
     void onDeleteCharacter();

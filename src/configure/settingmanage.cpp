@@ -62,6 +62,7 @@ void SettingManage::initConfig()
     mConfig.keyTabDisplay = settings.value("keyTabDisplay", true).toBool();
     mConfig.keyboardSizeScale = settings.value("keyboardSizeScale", -1).toDouble();
     mConfig.navigationResident = settings.value("navigationResident", true).toBool();
+    mConfig.appAutoStart = settings.value("appAutoStart", true).toBool();
     mConfig.smartKeyboard = settings.value("smartKeyboard", false).toBool();
 
     settings.endGroup();
@@ -82,6 +83,7 @@ void SettingManage::saveConfig()
     settings.setValue("keyTabDisplay", mConfig.keyTabDisplay);
     settings.setValue("keyboardSizeScale", mConfig.keyboardSizeScale);
     settings.setValue("navigationResident", mConfig.navigationResident);
+    settings.setValue("appAutoStart", mConfig.appAutoStart);
     settings.setValue("smartKeyboard", mConfig.smartKeyboard);
 
     settings.endGroup();
@@ -253,6 +255,16 @@ void SettingManage::setNavigationResident(bool isResident)
 bool SettingManage::getNavigationResident()
 {
     return mConfig.navigationResident;
+}
+
+void SettingManage::setAppAutoStart(bool isAuto)
+{
+    mConfig.appAutoStart = isAuto;
+}
+
+bool SettingManage::getAppAutoStart()
+{
+    return mConfig.appAutoStart;
 }
 
 void SettingManage::setSmartKeyboard(bool isSmark)

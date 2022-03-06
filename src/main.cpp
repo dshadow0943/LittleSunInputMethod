@@ -20,16 +20,23 @@
 */
 #include "centercontroller.h"
 #include "keyboardAdaptor.h"
+#include "globalapplication.h"
+#include "settingmanage.h"
 #include <QCoreApplication>
 #include <QDBusConnection>
 #include <QDebug>
 #include <QDBusError>
 #include <QApplication>
-#include "globalapplication.h"
 
 int main(int argc, char *argv[])
 {
     GlobalApplication a(argc, argv);
+
+#ifdef QT_NO_DEBUG
+    if (!lSetting->getAppAutoStart() && !(argc == 2 && QString(argv[1]) == "-desktop")) {
+        return 0;
+    }
+#endif
 
     //建立到session bus的连接
     QDBusConnection connection = QDBusConnection::sessionBus();
@@ -44,6 +51,11 @@ int main(int argc, char *argv[])
     //注册名为/keyboard的对象，把类Object所有槽函数和信号导出
     connection.registerObject("/keyboard", &w);
     ServerAdaptor server(&w);
-//    w.show();
+
+#ifdef QT_NO_DEBUG
+    if ((argc == 2 && QString(argv[1]) == "-desktop")) {
+        w.showView(true);
+    }
+#endif
     return a.exec();
 }

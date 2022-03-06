@@ -18,25 +18,25 @@ NumKeyboard::NumKeyboard(SoftKeyboard *parent) : QWidget(parent)
 void NumKeyboard::initKeyValue()
 {
 
-    mButLine.push_back(ButtonItem::getNumButton("+", 0, KeyButtonBase::Punc, this));
+    mButLine.push_back(ButtonItem::getNumButton("+", KeyButtonBase::KeyInvalid, KeyButtonBase::Punc, this));
     mButLine.push_back(ButtonItem::getNumButton("1", Qt::Key_1, KeyButtonBase::Num, this));
     mButLine.push_back(ButtonItem::getNumButton("2", Qt::Key_2, KeyButtonBase::Num, this));
     mButLine.push_back(ButtonItem::getNumButton("3", Qt::Key_3, KeyButtonBase::Num, this));
     mButLine.push_back(ButtonItem::getNumButton("←", Qt::Key_Backspace, KeyButtonBase::Func, this));
 
-    mButLine.push_back(ButtonItem::getNumButton("-", 0, KeyButtonBase::Punc, this));
+    mButLine.push_back(ButtonItem::getNumButton("-", KeyButtonBase::KeyInvalid, KeyButtonBase::Punc, this));
     mButLine.push_back(ButtonItem::getNumButton("4", Qt::Key_4, KeyButtonBase::Num, this));
     mButLine.push_back(ButtonItem::getNumButton("5", Qt::Key_5, KeyButtonBase::Num, this));
     mButLine.push_back(ButtonItem::getNumButton("6", Qt::Key_6, KeyButtonBase::Num, this));
     mButLine.push_back(ButtonItem::getNumButton("0", Qt::Key_0, KeyButtonBase::Num, this));
 
-    mButLine.push_back(ButtonItem::getNumButton("*", 0, KeyButtonBase::Punc, this));
+    mButLine.push_back(ButtonItem::getNumButton("*", KeyButtonBase::KeyInvalid, KeyButtonBase::Punc, this));
     mButLine.push_back(ButtonItem::getNumButton("7", Qt::Key_7, KeyButtonBase::Num, this));
     mButLine.push_back(ButtonItem::getNumButton("8", Qt::Key_8, KeyButtonBase::Num, this));
     mButLine.push_back(ButtonItem::getNumButton("9", Qt::Key_9, KeyButtonBase::Num, this));
     mButLine.push_back(ButtonItem::getNumButton("@", Qt::Key_At, KeyButtonBase::Num, this));
 
-    mButLine.push_back(ButtonItem::getNumButton("/", 0, KeyButtonBase::Punc, this));
+    mButLine.push_back(ButtonItem::getNumButton("/", KeyButtonBase::KeyInvalid, KeyButtonBase::Punc, this));
     mButLine.push_back(ButtonItem::getNumButton("?符", KeyButtonBase::keyPunc, KeyButtonBase::Func, this));
     mButLine.push_back(ButtonItem::getNumButton(" ", Qt::Key_Space, KeyButtonBase::Num, this));
     mButLine.push_back(ButtonItem::getNumButton("abc", KeyButtonBase::keyPinyin, KeyButtonBase::Func, this));

@@ -33,13 +33,13 @@ class CE_SwitchButton : public KeyButtonBase
 public:
     explicit CE_SwitchButton(QString str1 = "En", QString str2 = "中", int id = KeySwitch, KeyType type = Func, QWidget *parent = nullptr);
 
-    bool getIsEnglish();
+    void switchText(bool isEnglish);
+    bool isEnglish();
 
 signals:
     void sendSwitchClicked(bool isEnflish);
 
 private:
-    void switchText(bool isEnglish);
     void onClicked() override;
 
 private:

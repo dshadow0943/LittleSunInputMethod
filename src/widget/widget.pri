@@ -10,7 +10,8 @@ HEADERS += \
     $$PWD/windowbase.h \
     $$PWD/checkboxbase.h \
     $$PWD/sliderbase.h \
-    $$PWD/slidebar.h
+    $$PWD/slidebar.h \
+    $$PWD/iconbutton.h
 
 SOURCES += \
     $$PWD/englishbutton.cpp \
@@ -24,4 +25,5 @@ SOURCES += \
     $$PWD/windowbase.cpp \
     $$PWD/checkboxbase.cpp \
     $$PWD/sliderbase.cpp \
-    $$PWD/slidebar.cpp
+    $$PWD/slidebar.cpp \
+    $$PWD/iconbutton.cpp

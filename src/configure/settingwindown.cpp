@@ -146,14 +146,19 @@ void SettingWindown::addBasicCard()
     card->appendWidget(keyWgt);
 
     /*********************其他设置*************************/
+    QLabel *smartCenter = new QLabel("智能中心");
+    card->appendWidget(smartCenter);
 
     CheckBoxBase* nBut = new CheckBoxBase("应用常驻", SettingManage::CheckNavigationResident);
     nBut->setChecked(SettingManage::getInstance()->getNavigationResident());
+    CheckBoxBase* nAuto = new CheckBoxBase("应用自启", SettingManage::AppAutoStart);
+    nAuto->setChecked(SettingManage::getInstance()->getAppAutoStart());
     CheckBoxBase* smarkCheck = new CheckBoxBase("智能键盘", SettingManage::CheckSmartKeyboard);
     smarkCheck->setChecked(SettingManage::getInstance()->getSmartKeyboard());
 
     QHBoxLayout *hLayout = new QHBoxLayout();
     hLayout->addWidget(nBut);
+    hLayout->addWidget(nAuto);
     hLayout->addWidget(smarkCheck);
     hLayout->addStretch();
     card->appendLayout(hLayout);
@@ -238,6 +243,9 @@ void SettingWindown::onCheBoxClicked(CheckBoxBase* but)
         break;
     case SettingManage::CheckSmartKeyboard:
         SettingManage::getInstance()->setSmartKeyboard(but->isChecked());
+        break;
+    case SettingManage::AppAutoStart:
+        SettingManage::getInstance()->setAppAutoStart(but->isChecked());
         break;
     }
 }

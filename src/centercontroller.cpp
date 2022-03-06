@@ -226,9 +226,9 @@ int CenterController::initView()
     return 0;
 }
 
-int CenterController::showView()
+int CenterController::showView(bool force)
 {
-    if (SettingManage::getInstance()->getSmartKeyboard()) {
+    if (force || SettingManage::getInstance()->getSmartKeyboard()) {
         showSoftKeyboard();
     }
     return 0;
