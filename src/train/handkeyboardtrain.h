@@ -1,3 +1,8 @@
+/*
+*
+* Author:     leilong <dshadow@foxmail.com>
+*
+*/
 #ifndef HANDKEYBOARDTRAIN_H
 #define HANDKEYBOARDTRAIN_H
 
@@ -10,13 +15,14 @@
 #include <QPainter>
 #include "characterentity.h"
 #include "handviewtrain.h"
-#include "chinesecharacterserver.h"
+#include "thesaurusretrieval.h"
+#include "windowbase.h"
 
-class HandKeyboardTrain : public QWidget
+class HandKeyboardTrain : public WindowBase
 {
     Q_OBJECT
 public:
-    explicit HandKeyboardTrain(QWidget *parent = nullptr);
+    explicit HandKeyboardTrain(int id = 0, QWidget *parent = nullptr);
 
 private:
     void setRightToolWidget();
@@ -39,7 +45,7 @@ private:
 
 private:
 
-    ChineseCharacterServer server;
+    ThesaurusRetrieval *mThesaurusManage;
 
     void enterPoint(CharacterEntity);
 

@@ -1,9 +1,12 @@
 #include "punckeyboard.h"
+#include "keyboardsidebar.h"
+#include "thesaurusretrieval.h"
 #include <QColorDialog>
 #include <QFontDialog>
-#include <QGridLayout>
+#include <QScrollArea>
 #include <QFile>
 #include <QHBoxLayout>
+#include <QScrollArea>
 
 /**
  * @brief PuncKeyboard::PuncKeyboard
@@ -12,108 +15,85 @@
  */
 PuncKeyboard::PuncKeyboard(SoftKeyboard *parent) : QWidget(parent)
 {
-    this->parent = parent;
+    initUi();
+}
 
-    punctuations->dataStrings = loadSymbols(":/symbol.txt");
-    punctuations->setUnitMinHeight(40);
-    punctuations->setUnitMinWidth(50);
-    customViw = new CustomWidget(this);
-    customViw->init(punctuations,CustomWidget::VERTICAL1);
-    customViw->setMouseSensitivity(5);
+void PuncKeyboard::initUi()
+{
+    QVBoxLayout *layout = new QVBoxLayout();
+    layout->setMargin(0);
+    layout->setSpacing(4);
 
+    layout->addWidget(ButtonItem::getNumButton("返回", KeyButtonBase::KeyBack, KeyButtonBase::Func, this), 1);
+    layout->addWidget(ButtonItem::getNumButton("←", Qt::Key_Backspace, KeyButtonBase::Func, this), 1);
+    mTabSider = new KeyboardSidebar({"常用", "中文", "英文", "数学"}, this);
+    connect(mTabSider, &KeyboardSidebar::sendCurrentIndex, this, &PuncKeyboard::onTabClicked);
+    layout->addWidget(mTabSider, 4);
 
-    setRightToolWidget();
+    mPunc = ScrollBarManage::getVSrcllBarView(ScrollBarBase::Punc, this);
+    ScrollBarContainer *customViw = new ScrollBarContainer(this);
+    customViw->setWidget(mPunc, ScrollBarContainer::Vertical, 2);
+    connect(mPunc, &VScrollBarView::clicked, this, &PuncKeyboard::onPuncClick);
+
     QHBoxLayout *hLayout = new QHBoxLayout(this);
-    hLayout->addWidget(customViw, 5);
+    hLayout->addWidget(customViw, 6);
     QWidget *w = new QWidget;
     w->setLayout(layout);
     hLayout->addWidget(w, 1);
-    layout->setSpacing(4);
     hLayout->setMargin(0);
-    hLayout->setSpacing(0);
-
-    connect(punctuations, &VTranslateView::clicked, this, &PuncKeyboard::userSelectPunctuation);
+    hLayout->setSpacing(1);
+    this->setLayout(hLayout);
 }
 
-void PuncKeyboard::setParent(SoftKeyboard *parent){
-    this->parent = parent;
-    connect(btnBack, &CustomPushButton::clicked1, parent, &SoftKeyboard::switchPreviousKey);
-    connect(btnDel, &CustomPushButton::clicked1, parent, &SoftKeyboard::deleteSlot);
-}
-
-void PuncKeyboard::userSelectPunctuation(const QString &text, int index)
+void PuncKeyboard::showEvent(QShowEvent *event)
 {
-    Q_UNUSED(index);
-    parent->addCandidateCharacterText(text);
+    QWidget::showEvent(event);
+    mTabSider->setCurrentIndex(0);
 }
 
-/**
- * @brief PunctuationsView::setRightToolWidget
- * 设置右工具栏
- */
-void PuncKeyboard::setRightToolWidget()
+void PuncKeyboard::paintEvent(QPaintEvent *event)
 {
-    layout = new QVBoxLayout;
-    //删除按钮
-    btnDel = new CustomPushButton("删除", Qt::Key_Backspace, this);
-
-
-    //确认按钮
-    btnSure = new CustomPushButton(" ",0,this);
-
-    //abc按钮
-    btnabc = new CustomPushButton(" ",0,this);
-
-    //123按钮
-    btn123 = new CustomPushButton(" ",0,this);
-
-    //上一页
-    btnLast = new CustomPushButton(" ",0,this);
-
-    //下一页
-    btnBack = new CustomPushButton("返回",Qt::Key_Back, this);
-
-//    设置按钮在布局中大小变化的属性，设置成随着布局的变化变化
-    btnDel->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-    btnSure->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-    btnabc->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-    btn123->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-    btnLast->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-    btnBack->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-
-    //设置右侧工具栏布局
-    layout->addWidget(btnDel,1);
-    layout->addWidget(btnSure,1);
-    layout->addWidget(btnabc,1);
-    layout->addWidget(btn123,1);
-    layout->addWidget(btnLast,1);
-    layout->addWidget(btnBack,1);
-    layout->setContentsMargins(0,0,0,0);
-    layout->setSpacing(1);
-
-    /*将布局设置给右侧工具栏部件*/
-//    ui->rightTool->setLayout(layout);
+    QWidget::paintEvent(event);
+    mTabSider->setFontSize(height()/6/3);
 }
 
-QStringList PuncKeyboard::loadSymbols(const QString &file)
+void PuncKeyboard::onTabClicked(int index)
 {
-    QFile symbol_file(file);
-    QStringList symbols;
-    if (symbol_file.open(QIODevice::ReadOnly))
-    {
-        QString lineSymbols;
-        while (!symbol_file.atEnd())
-        {
-            lineSymbols = QString::fromUtf8(symbol_file.readLine());
-            lineSymbols = lineSymbols.trimmed();
-            for (int i = 0; i < lineSymbols.size(); ++i)
-            {
-                symbols.append(lineSymbols.at(i));
-            }
-        }
-        symbol_file.close();
+    DBOperation::PuncType type = DBOperation::User;
+    switch (index) {
+    case 0:
+        type = DBOperation::User;
+        break;
+    case 1:
+        type = DBOperation::Chinese;
+        break;
+    case 2:
+        type = DBOperation::English;
+        break;
+    case 3:
+        type = DBOperation::Math;
+        break;
     }
 
-    return symbols;
+    mPunc->move(0, 0);
+
+    ThesaurusRetrieval::getInstance()->asynExec<QStringList>([=](QStringList data){
+        this->setPuncData(data);
+    })->getPunc(type);
+}
+
+void PuncKeyboard::setPuncData(QStringList data)
+{
+    if (nullptr == mPunc) {
+        return;
+    }
+
+    mPunc->setData(data);
+}
+
+void PuncKeyboard::onPuncClick(QString text, int index)
+{
+    Q_UNUSED(index);
+    ThesaurusRetrieval::getInstance()->updatePunc(text, DBOperation::User);
 }
 

@@ -1,3 +1,8 @@
+/*
+*
+* Author:     leilong <dshadow@foxmail.com>
+*
+*/
 #include "globalapplication.h"
 #include <QDebug>
 #include <QDBusMessage>
@@ -10,6 +15,9 @@ GlobalApplication::GlobalApplication(int& argc,char **argv):
 }
 bool GlobalApplication::notify(QObject *obj, QEvent *e)
 {
-    m.start();
+    if (e->type() == QEvent::MetaCall) {
+        m.start();
+    }
+
     return QApplication::notify(obj,e);
 }

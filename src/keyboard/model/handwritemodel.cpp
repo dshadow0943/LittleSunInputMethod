@@ -1,3 +1,8 @@
+/*
+*
+* Author:     leilong <dshadow@foxmail.com>
+*
+*/
 #include "handwritemodel.h"
 #include <fstream>
 #include <cmath>
@@ -27,7 +32,7 @@ bool HandWriteModel::loadModelFile(const QString filePath, int charType)
     QFile ifs(filePath);
 
     if(!ifs.open(QIODevice::ReadOnly)){
-        perror("open");
+//        perror("open");
         return false;
     }
 
@@ -39,7 +44,6 @@ bool HandWriteModel::loadModelFile(const QString filePath, int charType)
     } else {
         return  false;
     }
-
 
     while(!ifs.atEnd()){
 

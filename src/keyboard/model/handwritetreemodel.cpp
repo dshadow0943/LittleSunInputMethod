@@ -1,3 +1,8 @@
+/*
+*
+* Author:     leilong <dshadow@foxmail.com>
+*
+*/
 #include "handwritetreemodel.h"
 #include <fstream>
 #include <cmath>
@@ -23,7 +28,7 @@ bool HandwriteTreeModel::loadModelFile(const QString filePath, int charType)
     QFile ifs(filePath);
 
     if(!ifs.open(QIODevice::ReadOnly)){
-        perror("open");
+//        perror("open");
         return false;
     }
 
@@ -72,7 +77,6 @@ bool HandwriteTreeModel::wirteFile(const QString& filePath)
 {
     QFile file(filePath);
     if (!file.open(QIODevice::ReadWrite)){
-        perror("open");
         return false;
     }
     QTextStream streamFileOut(&file);
@@ -97,8 +101,8 @@ bool HandwriteTreeModel::recognize(CharacterEntity& character, QStringList* resu
     if(character.strokeCount == 0)
         return false;
     getTurnPoints(&character);
-    qDebug() << "recognize: " << character.strokes[0].points[0].direc;
-    qDebug() << "recognize: " << character.toDireString();
+//    qDebug() << "recognize: " << character.strokes[0].points[0].direc;
+//    qDebug() << "recognize: " << character.toDireString();
     QList<WordEntity> words;
 
     QList<CharacterItem>* cItems = &numItems;

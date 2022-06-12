@@ -23,9 +23,9 @@ HandView::HandView(QWidget *parent) : QWidget(parent)
     });
 }
 
-//重写绘画事件
-void HandView::paintEvent(QPaintEvent *)
+void HandView::paintEvent(QPaintEvent *event)
 {
+    Q_UNUSED(event)
     //创建画家
     QPainter painter(this);
     //设置抗锯齿
@@ -44,7 +44,6 @@ void HandView::paintEvent(QPaintEvent *)
             painter.drawLine(stroke.points[j].x, stroke.points[j].y, stroke.points[j+1].x, stroke.points[j+1].y);
         }
     }
-
 }
 //鼠标离开事件
 void HandView::mouseReleaseEvent(QMouseEvent* e)
@@ -60,7 +59,7 @@ void HandView::mouseReleaseEvent(QMouseEvent* e)
             mouseReleaseTimer->start(inputInterval);
         }
         //发送数据
-        emit charToParent(character);
+        emit sendPonit(character);
     }
     return QWidget::mouseReleaseEvent(e);
 }
@@ -82,7 +81,6 @@ void HandView::mousePressEvent(QMouseEvent* e)
     if (strokeId == 0){
         character.clear();
     }
-//    qDebug() << "鼠标按下事件";
     //按下时判断鼠标离开定时器是否在计时，如果正在计时就将其关闭
     if(mouseReleaseTimer->isActive()){
         mouseReleaseTimer->stop();

@@ -18,8 +18,7 @@ public:
     QString word;
     QList<StrokeEntity> strokes;
 
-    void initSize(int width, int height);
-    bool addPoint(int strokeId, double x, double y);
+    bool addPoint(int strokeId, int x, int y);
     void clear();
     QString toString();
     QString toDireString();

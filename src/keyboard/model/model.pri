@@ -1,11 +1,15 @@
 HEADERS += \
-    $$PWD/filereadandwrite.h \
     $$PWD/handwritemodel.h \
     $$PWD/handwritetreemodel.h \
-    $$PWD/wordassociatemodel.h
+    $$PWD/dboperation.h \
+    $$PWD/pinyinretrievalmodel.h \
+    $$PWD/fileutil.h \
+    $$PWD/puncretrirvalmode.h
 
 SOURCES += \
-    $$PWD/filereadandwrite.cpp \
     $$PWD/handwritemodel.cpp \
     $$PWD/handwritetreemodel.cpp \
-    $$PWD/wordassociatemodel.cpp
+    $$PWD/dboperation.cpp \
+    $$PWD/pinyinretrievalmodel.cpp \
+    $$PWD/fileutil.cpp \
+    $$PWD/puncretrirvalmode.cpp

@@ -1,35 +1,31 @@
+/*
+*
+* Author:     leilong <dshadow@foxmail.com>
+*
+*/
 #include "centercontroller.h"
 #include "keyboardAdaptor.h"
+#include "globalapplication.h"
+#include "settingmanage.h"
 #include <QCoreApplication>
 #include <QDBusConnection>
 #include <QDebug>
 #include <QDBusError>
 #include <QApplication>
-#include "globalapplication.h"
 
 int main(int argc, char *argv[])
 {
     GlobalApplication a(argc, argv);
 
-    qApp->setPalette(QPalette(QColor("#EAF7FF")));
-    qApp->setStyleSheet(".QPushButton,.QToolButton{ \
-                            border-style:none;\
-                            border:1px solid #C0DCF2;\
-                            color:#386487;\
-                            padding:5px;\
-                            min-height:15px;\
-                            border-radius:5px;\
-                            background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #DEF0FE,stop:1 #C0DEF6);\
-                            }\
-                            .QPushButton:hover,.QToolButton:hover{\
-                            background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #F2F9FF,stop:1 #DAEFFF);\
-                            }\
-                            .QPushButton:pressed,.QToolButton:pressed{\
-                            background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #DEF0FE,stop:1 #C0DEF6);\
-                            }\
-                            ");
+#ifdef QT_NO_DEBUG
+    if (!lSetting->getAppAutoStart() && !(argc == 2 && QString(argv[1]) == "-desktop")) {
+        return 0;
+    }
+#endif
+
     //建立到session bus的连接
     QDBusConnection connection = QDBusConnection::sessionBus();
+    connection.interface();
     //在session bus上注册名为com.fcitx.littlesun.server的服务
     if(!connection.registerService("com.fcitx.littlesun.server"))
     {
@@ -40,6 +36,11 @@ int main(int argc, char *argv[])
     //注册名为/keyboard的对象，把类Object所有槽函数和信号导出
     connection.registerObject("/keyboard", &w);
     ServerAdaptor server(&w);
-    w.show();
+
+#ifdef QT_NO_DEBUG
+    if ((argc == 2 && QString(argv[1]) == "-desktop")) {
+        w.showView(true);
+    }
+#endif
     return a.exec();
 }

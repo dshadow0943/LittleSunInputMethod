@@ -1,5 +1,5 @@
 HEADERS += \
-    $$PWD/chinesecharacterserver.h
+    $$PWD/thesaurusretrieval.h
 
 SOURCES += \
-    $$PWD/chinesecharacterserver.cpp
+    $$PWD/thesaurusretrieval.cpp

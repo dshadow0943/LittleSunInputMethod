@@ -1,3 +1,8 @@
+/*
+*
+* Author:     leilong <dshadow@foxmail.com>
+*
+*/
 #include "handviewtrain.h"
 #include "handwritemodel.h"
 

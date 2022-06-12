@@ -1,3 +1,8 @@
+/*
+*
+* Author:     leilong <dshadow@foxmail.com>
+*
+*/
 #ifndef HANDWRITEMODEL_H
 #define HANDWRITEMODEL_H
 
@@ -8,8 +13,8 @@
 
 #define MAXDIST 100000
 #define MAX_DIFF_PER_STROKE 35000
-#define VERTICAL 1001
-#define HORIZONTAL 1002
+//#define VERTICAL 1001
+//#define HORIZONTAL 1002
 
 #define CHAR_CHINESE 0
 #define CHAR_NUM 1

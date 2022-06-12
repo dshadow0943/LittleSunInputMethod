@@ -1,9 +1,18 @@
+/*
+*
+* Author:     leilong <dshadow@foxmail.com>
+*
+*/
 #ifndef CENTERCONTROLLER_H
 #define CENTERCONTROLLER_H
 
-#include <QWidget>
 #include "softkeyboard.h"
 #include "handkeyboardtrain.h"
+#include "settingwindown.h"
+#include <QWidget>
+#include <QSystemTrayIcon>
+#include <QAction>
+#include <QMenu>
 
 namespace Ui {
 class CenterController;
@@ -26,10 +35,13 @@ protected:
 
 public slots:
     int initView();
-    int showView();
+    int showView(bool force = false);
     int hideView();
-    void candidateCharacterSlots(QString character);
-    void deleteCharacterSlots();
+    void onCandidateCharacter(QString character);
+    void onDeleteCharacter();
+    void onWindowClosed(int id);
+    void onQuit();
+    void onTrayClicked(QSystemTrayIcon::ActivationReason reason);
 
 signals:
     //发送字符
@@ -37,21 +49,28 @@ signals:
 
 private slots:
     void on_btn_key_clicked();
-
     void on_btn_hand_clicked();
-
     void on_btn_close_clicked();
-
     void on_btn_site_clicked();
 
 private:
+    void showSoftKeyboard();
+    void initDbus();
+    void initTray();
+
+private:
     Ui::CenterController *ui;
-    SoftKeyboard* softKeyboard = nullptr;
-    HandKeyboardTrain* handkeyboatd = nullptr;
+    SoftKeyboard* mSoftKeyboard = nullptr;
+    HandKeyboardTrain* mHandkeyboatd = nullptr;
+    SettingWindown *mSettingWindown = nullptr;
+
+    QMenu *mTrayMenu;//托盘菜单
+    QSystemTrayIcon *mTray;//托盘图标
 
     //无边框窗口移动相关参数
     QPoint cursorGlobalPos;
     bool isMousePress=false;
+    int mFlag = 0;
 };
 
 #endif // CENTERCONTROLLER_H

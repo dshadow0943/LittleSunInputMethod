@@ -1,3 +1,8 @@
+/*
+*
+* Author:     leilong <dshadow@foxmail.com>
+*
+*/
 #ifndef HANDVIEWTRAIN_H
 #define HANDVIEWTRAIN_H
 
