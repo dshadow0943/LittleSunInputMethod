@@ -118,7 +118,7 @@ public:
 
 signals:
     void sendThemeChange();
-    void sendKetTabCheBoxClicked();
+    void sendKeyTabStatusChange();
     void sendKeyboardScaleChange();
 
 public slots:

@@ -35,7 +35,7 @@ SoftKeyboard::SoftKeyboard(int id, QWidget *parent) :
     //连接主题更改事件
     connect(SettingManage::getInstance(), &SettingManage::sendThemeChange, this, &SoftKeyboard::onThemeChange);
     //连接主题更改事件
-    connect(SettingManage::getInstance(), &SettingManage::sendKetTabCheBoxClicked, this, &SoftKeyboard::onKeyTabDisplayChange);
+    connect(SettingManage::getInstance(), &SettingManage::sendKeyTabStatusChange, this, &SoftKeyboard::onKeyTabDisplayChange);
     //键盘大小更改事件
     connect(SettingManage::getInstance(), &SettingManage::sendKeyboardScaleChange, this, &SoftKeyboard::onKeyboardScaleChange);
     //连接键盘按键点击事件

@@ -205,6 +205,11 @@ void SettingWindown::addSkinCard()
 {
 }
 
+/**
+ * @brief SettingWindown::onRadioButtonClicked
+ * 单选按钮点击事件
+ * @param but
+ */
 void SettingWindown::onRadioButtonClicked(RadioButtonBase* but)
 {
     switch (but->getType()) {
@@ -217,6 +222,11 @@ void SettingWindown::onRadioButtonClicked(RadioButtonBase* but)
     }
 }
 
+/**
+ * @brief SettingWindown::onCheBoxClicked
+ * 复选框按钮点击事件
+ * @param but
+ */
 void SettingWindown::onCheBoxClicked(CheckBoxBase* but)
 {
     switch (but->getId()) {
@@ -235,6 +245,11 @@ void SettingWindown::onCheBoxClicked(CheckBoxBase* but)
     }
 }
 
+/**
+ * @brief SettingWindown::onSliderValueChange
+ * 滑动条滚动事件
+ * @param but
+ */
 void SettingWindown::onSliderValueChange(SliderBase* but)
 {
     switch (but->getId()) {

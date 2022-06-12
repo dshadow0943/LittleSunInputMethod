@@ -1,3 +1,0 @@
-[D-BUS Service]
-Name=com.fcitx.littlesun.server
-Exec=/usr/local/littlesun/LittleSunInputMethod -dbus

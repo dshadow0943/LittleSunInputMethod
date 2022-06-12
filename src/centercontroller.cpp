@@ -21,7 +21,7 @@ CenterController::CenterController(QWidget *parent) :
     ui(new Ui::CenterController)
 {
     ui->setupUi(this);
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool | Qt::WindowDoesNotAcceptFocus);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowDoesNotAcceptFocus);
 
     this->move(SettingManage::getInstance()->getNavigationWindowPos());
     connect(GlobalSignalTransfer::getInstance(), &GlobalSignalTransfer::sendWindowClosed,
@@ -41,7 +41,7 @@ CenterController::CenterController(QWidget *parent) :
     initTray();
     initDbus();
 }
-
+//we
 CenterController::~CenterController()
 {
     delete SettingManage::getInstance();

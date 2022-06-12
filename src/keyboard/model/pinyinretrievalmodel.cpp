@@ -205,32 +205,32 @@ QString PinyinRetrievalModel::splitPinyin(const QString &pinyin, int &num)
         }
         return result;
     }
-    int cur_index = 0;
-    while (cur_index < pinyin.size())
+    int curIndex = 0;
+    while (curIndex < pinyin.size())
     {
         //以声母开头
-        if (initial.contains(pinyin.at(cur_index))) // 是声母
+        if (initial.contains(pinyin.at(curIndex))) // 是声母
         {
             int ym = 1; //韵母偏移量
             int h = 0; // zh ch sh标记
             // zh ch sh 多加一位
-            if (zcs.contains(pinyin.at(cur_index)) && cur_index + 1 < pinyin.size() && pinyin.at(cur_index + 1) == 'h')
+            if (zcs.contains(pinyin.at(curIndex)) && curIndex + 1 < pinyin.size() && pinyin.at(curIndex + 1) == 'h')
             {
                 h = 1;
                 ym++;
             }
 
             //获取声母可匹配的所有韵母
-            QStringList vowels = getVowelsByInitial(pinyin.at(cur_index));
+            QStringList vowels = getVowelsByInitial(pinyin.at(curIndex));
 
             // 贪心查找 （尽可能长的找到满足的）
-            while ((ym + cur_index) < pinyin.size())
+            while ((ym + curIndex) < pinyin.size())
             {
                 bool find = false;
                 for (int i = 0; i < vowels.size(); ++i)
                 {
                     QString c_py = vowels.at(i);
-                    if (c_py.startsWith(pinyin.mid(cur_index + 1 + h, ym - h)))
+                    if (c_py.startsWith(pinyin.mid(curIndex + 1 + h, ym - h)))
                     {
                         find = true;
                     }
@@ -250,8 +250,8 @@ QString PinyinRetrievalModel::splitPinyin(const QString &pinyin, int &num)
             {
                 result += "%\'";
             }
-            result += pinyin.mid(cur_index, ym + 1);
-            cur_index += ym;
+            result += pinyin.mid(curIndex, ym + 1);
+            curIndex += ym;
         }
         //上一组拼音以g n r结尾
         else
@@ -276,22 +276,22 @@ QString PinyinRetrievalModel::splitPinyin(const QString &pinyin, int &num)
                 if (last.size() > 0 && getVowelsByInitial(last.at(0)).contains(last.mid(1)))
                 {
                     result.remove(result.size() - 1, 1);
-                    cur_index -= 1;
+                    curIndex -= 1;
                     continue;
                 }
             }
 
             //以a o e 开头
-            if (vowelList.contains(pinyin.at(cur_index)))
+            if (vowelList.contains(pinyin.at(curIndex)))
             {
                 int ym = 0;
-                while ((ym + cur_index) < pinyin.size())
+                while ((ym + curIndex) < pinyin.size())
                 {
                     bool find = false;
                     for (int i = 0; i < vowelList.size(); ++i)
                     {
                         QString c_py = vowelList.at(i);
-                        if (c_py.startsWith(pinyin.mid(cur_index, ym + 1)))
+                        if (c_py.startsWith(pinyin.mid(curIndex, ym + 1)))
                         {
                             find = true;
                         }
@@ -310,8 +310,8 @@ QString PinyinRetrievalModel::splitPinyin(const QString &pinyin, int &num)
                 {
                     result += "%\'";
                 }
-                result += pinyin.mid(cur_index, ym);
-                cur_index += ym - 1;
+                result += pinyin.mid(curIndex, ym);
+                curIndex += ym - 1;
             }
             //最后的不再作处理
             else
@@ -320,12 +320,12 @@ QString PinyinRetrievalModel::splitPinyin(const QString &pinyin, int &num)
                 {
                     result += "%\'";
                 }
-                result += pinyin.at(cur_index);
+                result += pinyin.at(curIndex);
             }
         }
 
         num++;
-        cur_index++;
+        curIndex++;
     }
     if (num == 0)
     {

@@ -29,7 +29,6 @@ SettingManage* SettingManage::getInstance()
     if (nullptr == obj) {
         obj = new SettingManage();
     }
-
     return obj;
 }
 
@@ -148,6 +147,12 @@ void SettingManage::setThemePalette()
                         .arg(bClolr.pressed.name()));
 }
 
+/**
+ * @brief SettingManage::getSkinColor
+ *  获取系统主题配色
+ * @param type  部件类别
+ * @return  系统主题配色
+ */
 skin_color SettingManage::getSkinColor(SkinType type)
 {
     int key = mConfig.themeType;
@@ -169,11 +174,21 @@ skin_color SettingManage::getSkinColor(SkinType type)
     return mSkinMap[key].theme;
 }
 
+/**
+ * @brief SettingManage::setNavigationWindowPos
+ * 设置导航栏位置
+ * @param point 坐标点
+ */
 void SettingManage::setNavigationWindowPos(QPoint point)
 {
     mConfig.navigationWindowPos = point;
 }
 
+/**
+ * @brief SettingManage::setNavigationWindowPos
+ * 获取导航栏位置
+ * @param point 坐标点
+ */
 QPoint SettingManage::getNavigationWindowPos()
 {
     return mConfig.navigationWindowPos;
@@ -199,13 +214,25 @@ QPoint SettingManage::getTrainWindowPos()
     return mConfig.trainWindowPos;
 }
 
+/**
+ * @brief SettingManage::setThemeType
+ * 设置当前主题类型
+ * @param type
+ */
 void SettingManage::setThemeType(int type)
 {
     mConfig.themeType = type;
+    //更改系统主题
     setThemePalette();
+    //发送主题变化信号
     emit sendThemeChange();
 }
 
+/**
+ * @brief SettingManage::getThemeType
+ * 获取当前主题类型
+ * @return
+ */
 int SettingManage::getThemeType()
 {
     return mConfig.themeType;
@@ -224,7 +251,7 @@ int SettingManage::getDefaultKeyboard()
 void SettingManage::setKeyTabDisplay(bool isDisplay)
 {
     mConfig.keyTabDisplay = isDisplay;
-    emit sendKetTabCheBoxClicked();
+    emit sendKeyTabStatusChange();
 }
 
 bool SettingManage::getKeyTabDisplay()
